@@ -1,0 +1,10 @@
+{% extends '_base.html' %}
+
+{% block content %}
+    <div>
+        <span>Cześć, {{ user.first_name }}!</span>
+    </div>
+    <div>
+        <a href="{% url 'allocation_timetable_allocations' user.pk %}">Zobacz plany</a>
+    </div>
+{% endblock %}

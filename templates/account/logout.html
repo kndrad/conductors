@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+
+{% block extra_title %}Wyloguj | {% endblock %}
+
+{% block main %}
+    <form method="post" action="{% url 'account_logout' %}">
+      {% csrf_token %}
+      {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+      {% endif %}
+        <button type="submit">Wyloguj się</button>
+    </form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends '_base.html' %}
+
+{% block extra_title %}Załoga {{ train_crew.train_number }} | {% endblock %}
+
+{% block content %}
+    <div>
+        <span>Ostatnia aktualizacja: {{ train_crew.last_updated_local }}</span>
+    </div>
+    <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
+        {% csrf_token %}
+        <button>Zaktualizuj</button>
+    </form>
+    {% if train_crew.traincrewmember_set.exists %}
+        {% for crew_member in train_crew.traincrewmember_set.all %}
+            <div>{{ crew_member }}</div>
+        {% endfor %}
+    {% else %}
+        <span>Brak danych</span>
+    {% endif %}
+    <div>
+        <a href="{% url 'allocation_timetable_allocations' user.pk %}">
+            <span>Wróć</span>
+        </a>
+    </div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends '_base.html' %}
+
+{% block extra_title %}{{ allocation.title }} | {% endblock %}
+
+{% block content %}
+    {% if allocation.allocationdetail_set.exists %}
+        <div>
+            <span>Ostatnia aktualizacja: {{ allocation.last_updated_local }}</span>
+        </div>
+        <form method='POST' action='{% url 'update_allocation' allocation.pk %}'>
+            {% csrf_token %}
+            <button>Zaktualizuj</button>
+        </form>
+        {% for detail in allocation.allocationdetail_set.all %}
+            {% if detail.train_number %}
+            <div>
+                <a href="{% url 'train_crew' detail.train_number detail.formatted_action_date %}"
+                   title="Zobacz załogę">
+                    {{ detail }}
+                </a>
+            </div>
+            {% else %}
+            <div>{{ detail }}</div>
+            {% endif %}
+        {% endfor %}
+    {% else %}
+        <span>Brak danych</span>
+    {% endif %}
+    <div>
+        <a href="{% url 'allocation_timetable_allocations' user.pk %}">
+            <span>Wróć</span>
+        </a>
+    </div>
+{% endblock %}

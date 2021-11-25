@@ -1,0 +1,13 @@
+{% extends '_base.html' %}
+
+{% block extra_title %}Import | {% endblock %}
+
+
+{% block content %}
+    <div>
+        <form method="post">{% csrf_token %}
+            {{ form }}
+            <input type="submit" value="Importuj plan">
+        </form>
+    </div>
+{% endblock %}
