@@ -26,3 +26,4 @@ class AllocationTimetableImportForm(forms.ModelForm):
         self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
         self.fields['user'].initial = self.user
+

@@ -3,7 +3,7 @@ import concurrent.futures
 from bs4 import BeautifulSoup
 from bs4.element import SoupStrainer
 
-from polish_trains.expressions import (
+from .expressions import (
     timeline_regex, start_container_selector_regex, end_container_selector_regex, time_container_selector_regex,
     common_hour_regex,
     overall_info_container_selector_regex, common_num_regex,
@@ -102,7 +102,7 @@ class ScheduleRowMarkupParser:
         return parsed_row
 
 
-class TrainScheduleMarkupParser:
+class RailroadScheduleParser:
 
     def __init__(self, schedule_markup):
         self._markup = schedule_markup

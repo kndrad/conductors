@@ -8,7 +8,7 @@ class CalDAVAccountForm(forms.ModelForm):
     class Meta:
         model = CalDAVAccount
         fields = '__all__'
-        exclude = ('last_updated', )
+        exclude = ('last_updated',)
         widgets = {
             'user': forms.HiddenInput(),
             'password': forms.PasswordInput(),
@@ -30,10 +30,16 @@ class CalDAVAccountForm(forms.ModelForm):
 
         try:
             client.principal()
-        except (caldav.error.AuthorizationError, Exception):
+        except caldav.error.AuthorizationError:
             return self.add_error(
                 None,
                 'Błąd autoryzacji ze strony serwera CalDAV. Sprawdź dane logowania.'
+            )
+        except caldav.error.DAVError:
+            return self.add_error(
+                None,
+                'Wystąpij błąd podczas próby połączenia z serwerem CalDAV.\n'
+                'Upewnij się, czy kalendarz obsługuje aplikacje trzecie.'
             )
 
         return cleaned_data

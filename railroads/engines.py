@@ -12,22 +12,22 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from polish_trains.expressions import website_date_regex, common_hour_regex
-from polish_trains.parsers import TrainScheduleMarkupParser
+from .expressions import website_date_regex, common_hour_regex
+from .parsers import RailroadScheduleParser
 
 
-class IdenticalStationsSubmitError(Exception):
+class StationsSubmitError(Exception):
     """Raised when submitted stations (departure station, arrival station) are identical.
     """
 
 
-class PolishTrainsSearchEngine:
+class RailroadSearchEngine:
 
     def __init__(self):
         options = Options()
         for argument in ['--disable-extensions', '--incognito', ]:
             options.add_argument(argument)
-        options.headless = False
+        options.headless = True
 
         service = Service(os.path.join(Path(__file__).resolve().parent, 'geckodriver'))
 
@@ -67,8 +67,10 @@ class PolishTrainsSearchEngine:
         if not self._found_page_elements:
             self.find_page_elements()
 
-        if departure_station == arrival_station:
-            raise IdenticalStationsSubmitError('departure station must be different than arrival station.')
+        if departure_station.lower() == arrival_station.lower():
+            raise StationsSubmitError(
+                'departure station must be different than arrival station, or vice versa.'
+            )
 
         station_page_elements = [
             self._found_page_elements['departure_page_element'],
@@ -76,7 +78,7 @@ class PolishTrainsSearchEngine:
         ]
 
         for station_page_element, submit_value in zip(station_page_elements, [departure_station, arrival_station]):
-            station_page_element.send_keys(submit_value.title())
+            station_page_element.send_keys(submit_value)
 
     def submit_dates(self, time_start, date_start):
         if not self._found_page_elements:
@@ -86,7 +88,7 @@ class PolishTrainsSearchEngine:
             raise ValueError("invalid date provided; must be in pattern e.g. '12.11.2021' or 12-11-2021 ")
 
         if not common_hour_regex.match(time_start):
-            raise ValueError("invalid time provided; must be in pattern e.g. '21:31'")
+            raise ValueError("invalid time provided; must be in pattern e.g. '21:37'")
 
         date_page_elements = [
             self._found_page_elements['time_start_page_element'],
@@ -112,7 +114,7 @@ class PolishTrainsSearchEngine:
         enter_btn_page_element.send_keys(Keys.ENTER)
 
     def await_schedule(self):
-        timeout = 10
+        timeout = 3
         wait = WebDriverWait(self._driver, timeout)
         xpath = '/html/body/div[6]/div[1]/div[1]/div[2]/h2'
         schedule_presence = ec.presence_of_element_located((By.XPATH, xpath))
@@ -148,6 +150,23 @@ class PolishTrainsSearchEngine:
             self._driver.quit()
             return markup
 
+    def check_stations_existence(self, departure_station, arrival_station):
+        """Verifies stations existence by submitting them to webpage fields and
+        awaiting schedule appearance. When the schedule appears, the stations are correct, otherwise not.
+        """
+        self.open_webpage()
+        self.find_page_elements()
+        self.submit_stations(departure_station, arrival_station)
+        self.click_enter_btn()
+
+        try:
+            self.await_schedule()
+        except TimeoutException:
+            self._driver.quit()
+            return False
+        else:
+            return True
+
     def use_engine(self, departure_station, arrival_station, time_start, date_start) -> dict:
         """Final function for searching trains using this engine,
         departure_station and arrival_station cannot be the same,
@@ -175,13 +194,6 @@ class PolishTrainsSearchEngine:
         schedule_markup = self.request_schedule_markup(
             departure_station, arrival_station, time_start, date_start
         )
-        parser = TrainScheduleMarkupParser(schedule_markup)
+        parser = RailroadScheduleParser(schedule_markup)
         trains = parser.parse_schedule()
         return trains
-
-
-if __name__ == '__main__':
-    engine = PolishTrainsSearchEngine()
-    trains = engine.use_engine('gliwice', 'katowice', '14:47', '27.11.2021')
-    for train in trains:
-        print(train)

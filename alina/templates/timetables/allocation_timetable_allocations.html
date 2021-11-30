@@ -8,15 +8,37 @@
     <div>
         <a href="{% url 'home' %}">Strona główna</a>
     </div>
-    <div>
+    {% if messages %}
+     {% for message in messages %}
+         <div>
+             {{ message|safe }}
+         </div>
+     {% endfor %}
+    {% endif %}
     <div>
         {% if not user.caldav_account %}
-        <a href="{% url 'create_caldav_account' %}">Utwórz konto CalDAV</a>
+        <a href="{% url 'create_caldav_account' %}">
+            Utwórz konto CalDAV
+        </a>
         {% else %}
-        <a href="{% url 'update_caldav_account' user.caldav_account.pk %}">Aktualizuj konto CalDAV</a>
+        <a href="{% url 'update_caldav_account' user.caldav_account.pk %}">
+            Aktualizuj konto CalDAV
+        </a>
         {% endif %}
         <a href="{% url 'import_allocation_timetable' %}">Importuj plan</a>
     </div>
+        <div>
+        {% if not user.railroad_account %}
+        <a href="{% url 'create_railroad_account' %}">
+            Utwórz konto kolejowe
+        </a>
+        {% else %}
+        <a href="{% url 'update_railroad_account' user.railroad_account.pk %}">
+            Aktualizuj konto kolejowe
+        </a>
+        {% endif %}
+    </div>
+    <a href="{% url 'import_allocation_timetable' %}">Importuj plan</a>
     <div>
         <ul>
             {% for timetable in timetables %}

@@ -20,6 +20,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('caldavs/', include('users.caldavs.urls')),
+    path('railroads/', include('railroads.urls')),
     path('timetables/', include('alina.timetables.urls')),
     path('allocations/', include('alina.allocations.urls')),
     path('crews/', include('alina.crews.urls')),
