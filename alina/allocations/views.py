@@ -7,12 +7,12 @@ from django.views.generic.detail import SingleObjectMixin
 from alina.models import Allocation
 
 
-class AllocationMixin(LoginRequiredMixin):
+class AllocationViewMixin(LoginRequiredMixin, View):
     model = Allocation
     context_object_name = 'allocation'
 
 
-class AllocationView(AllocationMixin, DetailView):
+class AllocationView(AllocationViewMixin, DetailView):
     template_name = 'allocations/allocation_detail.html'
 
     def get_object(self, queryset=None):
@@ -21,7 +21,7 @@ class AllocationView(AllocationMixin, DetailView):
         return self.object
 
 
-class UpdateAllocationView(AllocationMixin, SingleObjectMixin, View):
+class UpdateAllocationView(AllocationViewMixin, SingleObjectMixin):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):

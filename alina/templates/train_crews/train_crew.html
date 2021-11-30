@@ -1,10 +1,11 @@
 {% extends '_base.html' %}
+{% load date_representations %}
 
 {% block extra_title %}Załoga {{ train_crew.train_number }} | {% endblock %}
 
 {% block content %}
     <div>
-        <span>Ostatnia aktualizacja: {{ train_crew.last_updated_local }}</span>
+        <span>Ostatnia aktualizacja: {{ train_crew.last_updated|represent_date}}</span>
     </div>
     <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
         {% csrf_token %}

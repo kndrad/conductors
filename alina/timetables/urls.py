@@ -1,7 +1,8 @@
 from django.urls import path
 
 from alina.timetables.views import (
-    AllocationTimetableAllocationsView, ImportAllocationTimetableFormView, UpdateAllocationTimetableAllocationsView
+    AllocationTimetableAllocationsView, ImportAllocationTimetableFormView, UpdateAllocationTimetableAllocationsView,
+    SendAllocationTimetableToDAVClientView
 )
 
 urlpatterns = [
@@ -16,6 +17,10 @@ urlpatterns = [
     path(
         'update/<uuid:pk>/', UpdateAllocationTimetableAllocationsView.as_view(),
         name='update_allocations'
+    ),
+    path(
+        'send/<uuid:pk>/', SendAllocationTimetableToDAVClientView.as_view(),
+        name='send_allocation_timetable_to_dav_client',
     ),
 
 ]

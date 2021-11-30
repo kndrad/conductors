@@ -1,22 +1,22 @@
 {% load static %}
 
 <head>
-<title>{% block extra_title %}{% endblock %}Conductors</title>
-{% block head_extra %}
-{% endblock %}
+    <title>{% block extra_title %}{% endblock %}Conductors</title>
+    {% block head_extra %}
+    {% endblock %}
 </head>
 
 <body>
-    <!--- MAIN--->
-    {% block main %}
-        <!--- OVERRIDE BLOCK CONTENT IN TEMPLATES --->
-        {% block content %}no content{% endblock content %}
-        <!---->
-        {% if request.user.is_authenticated %}
-            <div>
-                <a href="{% url 'account_logout' %}">Wyloguj się</a>
-            </div>
-        {% endif %}
-    {% endblock %}
-    <!--- END OF MAIN BLOCK --->
+<!--- MAIN--->
+{% block main %}
+    <!--- OVERRIDE BLOCK CONTENT IN TEMPLATES --->
+    {% block content %}no content{% endblock content %}
+    <!---->
+    {% if request.user.is_authenticated %}
+        <div>
+            <a href="{% url 'account_logout' %}">Wyloguj się</a>
+        </div>
+    {% endif %}
+{% endblock %}
+<!--- END OF MAIN BLOCK --->
 </body>

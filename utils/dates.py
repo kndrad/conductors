@@ -1,7 +1,7 @@
 import datetime
 from collections import UserDict
 
-from django.utils.timezone import now
+REPRESENTATIVE_DATE_FORMAT = "%H:%M %d.%m.%Yr."
 
 
 class YEARS:

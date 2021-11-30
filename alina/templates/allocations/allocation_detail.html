@@ -1,28 +1,33 @@
 {% extends '_base.html' %}
 
+{% load alina_dates %}
+{% load date_representations %}
+
 {% block extra_title %}{{ allocation.title }} | {% endblock %}
 
 {% block content %}
     {% if allocation.allocationdetail_set.exists %}
         <div>
-            <span>Ostatnia aktualizacja: {{ allocation.last_updated_local }}</span>
+            <span>Ostatnia aktualizacja: {{ allocation.last_updated|represent_date }}</span>
         </div>
         <form method='POST' action='{% url 'update_allocation' allocation.pk %}'>
             {% csrf_token %}
             <button>Zaktualizuj</button>
         </form>
         {% for detail in allocation.allocationdetail_set.all %}
+            <span>----------------------------------------------------</span>
             {% if detail.train_number %}
-            <div>
-                <a href="{% url 'train_crew' detail.train_number detail.formatted_action_date %}"
-                   title="Zobacz załogę">
-                    {{ detail }}
-                </a>
-            </div>
+                <div>{{ detail }}</div>
+                <div>
+                    <a href="{% url 'train_crew' detail.train_number detail.action_date|date_for_alina %}">
+                        <button>Zobacz załogę</button>
+                    </a>
+                </div>
             {% else %}
-            <div>{{ detail }}</div>
+                <div>{{ detail }}</div>
             {% endif %}
         {% endfor %}
+        <span>----------------------------------------------------</span>
     {% else %}
         <span>Brak danych</span>
     {% endif %}

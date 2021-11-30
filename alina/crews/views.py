@@ -7,12 +7,12 @@ from django.views.generic.detail import SingleObjectMixin
 from alina.models import TrainCrew
 
 
-class TrainCrewMixin(LoginRequiredMixin):
+class TrainCrewViewMixin(LoginRequiredMixin, View):
     model = TrainCrew
     context_object_name = 'train_crew'
 
 
-class TrainCrewView(TrainCrewMixin, DetailView):
+class TrainCrewView(TrainCrewViewMixin, DetailView):
     template_name = 'train_crews/train_crew.html'
 
     def get_object(self, queryset=None):
@@ -20,15 +20,15 @@ class TrainCrewView(TrainCrewMixin, DetailView):
         formatted_action_date = self.kwargs.get('formatted_action_date')
 
         self.object, created = self.model.objects.get_or_create(
-                train_number=train_number, date=formatted_action_date,
-            )
+            train_number=train_number, date=formatted_action_date,
+        )
         if created:
             self.object.add_members_on_request(self.request)
 
         return self.object
 
 
-class UpdateTrainCrewView(TrainCrewMixin, SingleObjectMixin, View):
+class UpdateTrainCrewView(TrainCrewViewMixin, SingleObjectMixin):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):

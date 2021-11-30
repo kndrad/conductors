@@ -4,8 +4,9 @@ from bs4 import BeautifulSoup
 from bs4.element import SoupStrainer
 
 from polish_trains.expressions import (
-    timeline_pattern, timeline_start_container_cls, timeline_end_container_cls, time_container_cls, time_pattern,
-    overall_info_container_cls, number_pattern,
+    timeline_regex, start_container_selector_regex, end_container_selector_regex, time_container_selector_regex,
+    common_hour_regex,
+    overall_info_container_selector_regex, common_num_regex,
 )
 
 
@@ -15,13 +16,13 @@ class ScheduleRowMarkupParser:
         self._markup = row_markup
 
     def get_location_information(self, timeline):
-        if not timeline_pattern.match(timeline):
+        if not timeline_regex.match(timeline):
             raise ValueError("unable to get location info; given timeline must be either 'start' or 'end'.")
 
         if timeline == 'start':
-            timeline_container_cls = timeline_start_container_cls
+            timeline_container_cls = start_container_selector_regex
         else:
-            timeline_container_cls = timeline_end_container_cls
+            timeline_container_cls = end_container_selector_regex
 
         tag = 'div'
         timeline_start_container = self._markup.find(name=tag, class_=timeline_container_cls)
@@ -39,7 +40,7 @@ class ScheduleRowMarkupParser:
         }
 
     def get_datetime(self, timeline):
-        if not timeline_pattern.match(timeline):
+        if not timeline_regex.match(timeline):
             raise ValueError("unable to get date and time; given timeline must be either 'start' or 'end'.")
 
         if timeline == 'start':
@@ -53,16 +54,16 @@ class ScheduleRowMarkupParser:
         tag = 'span'
         date_container_cls = 'stime search-results__item-date'
         date = datetime_container.find(name=tag, class_=date_container_cls)
-        time = datetime_container.find(name=tag, class_=time_container_cls)
+        time = datetime_container.find(name=tag, class_=time_container_selector_regex)
 
         return {
             'date': date.text.strip(),
-            'time': time_pattern.match(time.text.strip()).group()
+            'time': common_hour_regex.match(time.text.strip()).group()
         }
 
     def get_carrier(self):
         tag = 'div'
-        overall_info_container = self._markup.find(name=tag, class_=overall_info_container_cls)
+        overall_info_container = self._markup.find(name=tag, class_=overall_info_container_selector_regex)
 
         tag = 'p'
         carrier_container_cls = 'item-label'
@@ -77,7 +78,7 @@ class ScheduleRowMarkupParser:
         tag = 'p'
         train_number_container_cls = 'search-results__item-train-nr'
         train_number = self._markup.find(name=tag, class_=train_number_container_cls)
-        train_number = number_pattern.search(train_number.text.strip()).group()
+        train_number = common_num_regex.search(train_number.text.strip()).group()
         return train_number
 
     def parse_row(self):

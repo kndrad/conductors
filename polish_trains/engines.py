@@ -12,8 +12,8 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+from polish_trains.expressions import website_date_regex, common_hour_regex
 from polish_trains.parsers import TrainScheduleMarkupParser
-from polish_trains.expressions import website_date_pattern, time_pattern
 
 
 class IdenticalStationsSubmitError(Exception):
@@ -27,7 +27,7 @@ class PolishTrainsSearchEngine:
         options = Options()
         for argument in ['--disable-extensions', '--incognito', ]:
             options.add_argument(argument)
-        options.headless = True
+        options.headless = False
 
         service = Service(os.path.join(Path(__file__).resolve().parent, 'geckodriver'))
 
@@ -82,10 +82,10 @@ class PolishTrainsSearchEngine:
         if not self._found_page_elements:
             self.find_page_elements()
 
-        if not website_date_pattern.match(date_start):
+        if not website_date_regex.match(date_start):
             raise ValueError("invalid date provided; must be in pattern e.g. '12.11.2021' or 12-11-2021 ")
 
-        if not time_pattern.match(time_start):
+        if not common_hour_regex.match(time_start):
             raise ValueError("invalid time provided; must be in pattern e.g. '21:31'")
 
         date_page_elements = [
@@ -178,3 +178,10 @@ class PolishTrainsSearchEngine:
         parser = TrainScheduleMarkupParser(schedule_markup)
         trains = parser.parse_schedule()
         return trains
+
+
+if __name__ == '__main__':
+    engine = PolishTrainsSearchEngine()
+    trains = engine.use_engine('gliwice', 'katowice', '14:47', '27.11.2021')
+    for train in trains:
+        print(train)

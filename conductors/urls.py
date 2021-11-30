@@ -19,8 +19,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('alina.urls')),
+    path('caldavs/', include('users.caldavs.urls')),
     path('timetables/', include('alina.timetables.urls')),
     path('allocations/', include('alina.allocations.urls')),
     path('crews/', include('alina.crews.urls')),
+    path('', include('pages.urls')),
 ]

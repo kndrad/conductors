@@ -1,8 +1,8 @@
 import abc
 
 from alina.tools.expressions import (
-    irena_date_pattern, irena_hour_pattern, irena_text_pattern, allocation_information_container_pattern,
-    allocation_timeline_pattern
+    irena_date_regex, common_hour_regex, common_word_regex, allocation_information_container_regex,
+    allocation_timeline_regex
 )
 
 
@@ -26,12 +26,12 @@ class IrenaAllocationContainerParser(IrenaContainerParser):
         self._information_container = self._get_information_container()
 
     def _get_information_container(self):
-        container = self._container.find('div', class_=allocation_information_container_pattern)
+        container = self._container.find('div', class_=allocation_information_container_regex)
         return container
 
     def _get_title(self):
         found_title = self._information_container.find('div', class_='title-text').text.strip()
-        title = irena_text_pattern.search(found_title).group()
+        title = common_word_regex.search(found_title).group()
         return title
 
     def _get_signature(self):
@@ -40,17 +40,17 @@ class IrenaAllocationContainerParser(IrenaContainerParser):
         return allocatable_id
 
     def _get_hour(self, timeline):
-        if not allocation_timeline_pattern.match(timeline):
-            raise ValueError(f'{timeline} expression does not match {allocation_timeline_pattern}.')
+        if not allocation_timeline_regex.match(timeline):
+            raise ValueError(f'{timeline} expression does not match {allocation_timeline_regex}.')
 
         found_hour = self._information_container.find('span', class_=f'time {timeline}').text.strip()
-        hour = irena_hour_pattern.search(found_hour).group()
+        hour = common_hour_regex.search(found_hour).group()
         return hour
 
     def _get_date(self):
         attribute = 'data-date'
         found_date = self._container[attribute]
-        date = irena_date_pattern.search(found_date).group()
+        date = irena_date_regex.search(found_date).group()
         return date
 
     def parse_container(self):

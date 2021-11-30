@@ -5,7 +5,7 @@ from alina.irena.parsers.responses import (
     IrenaAllocationDetailsRequestResponseParser, IrenaRequestResponseParser, IrenaTripCrewMembersRequestResponseParser
 )
 from alina.tools import DateExpressionPatternError, TextExpressionPatternError
-from alina.tools.expressions import irena_date_pattern, irena_text_pattern
+from alina.tools.expressions import irena_date_regex, common_word_regex
 
 
 class IrenaRequest(Request):
@@ -28,8 +28,9 @@ class IrenaDatedRequest(IrenaRequest):
     """Create a class that is able to parse dates.
     It starts by checking if the date has a pattern in it, and then if not, it raises an error.
     """
+
     def __init__(self, date, *args, **kwargs):
-        if not irena_date_pattern.match(date):
+        if not irena_date_regex.match(date):
             raise DateExpressionPatternError(date)
         super().__init__(*args, **kwargs)
 
@@ -39,8 +40,9 @@ class IrenaTitledRequest(IrenaRequest):
     It starts by checking if the string has a pattern in it (in this case word like pattern),
     and then if not, it raises an error.
     """
+
     def __init__(self, text, *args, **kwargs):
-        if not irena_text_pattern.match(text):
+        if not common_word_regex.match(text):
             raise TextExpressionPatternError(text)
         super().__init__(*args, **kwargs)
 

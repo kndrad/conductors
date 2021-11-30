@@ -4,8 +4,8 @@ from django.core.exceptions import ValidationError
 
 from users.models import User
 from .interface import Alina
-from .tools.utils import STORED_PASSWORD_KEY
 from .irena import IrenaCredentialsDeniedError
+from .tools.utils import STORED_PASSWORD_KEY
 
 
 class AlinaAuthenticationBackend(AuthenticationBackend):

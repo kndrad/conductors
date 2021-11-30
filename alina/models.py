@@ -1,5 +1,7 @@
 import datetime
 
+import caldav
+import icalendar
 from dateutil.parser import parse as dateutil_parse
 from django.conf import settings
 from django.db import models
@@ -10,21 +12,16 @@ from django.utils.dates import MONTHS
 from django.utils.timezone import make_aware
 
 from alina.interface import Alina
-from alina.tools.utils import credentials_from_request, parse_alina_date
-from alina.tools.utils import parse_alina_timetable_date
-from utils.dates import YEARS
+from alina.tools.utils import credentials_from_request, parse_date_for_alina
+from alina.tools.utils import parse_timetable_date_for_alina
+from utils.dates import YEARS, REPRESENTATIVE_DATE_FORMAT
+from utils.icals import ICalConvertable, TriggeredAlarm
 from utils.models import UUIDCommonModel
-
-VIEW_DATE_FORMAT = "%H:%M %d.%m.%Yr."
 
 
 class AllocationTimetable(UUIDCommonModel):
-    month = models.PositiveIntegerField(
-        verbose_name='Miesiąc', default=timezone.now().month, choices=list(MONTHS.items())
-    )
-    year = models.PositiveIntegerField(
-        verbose_name='Rok', default=timezone.now().year, choices=list(YEARS().items())
-    )
+    month = models.PositiveIntegerField('Miesiąc', default=timezone.now().month, choices=list(MONTHS.items()))
+    year = models.PositiveIntegerField('Rok', default=timezone.now().year, choices=list(YEARS().items()))
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name='Użytkownik', null=True, blank=True, on_delete=models.CASCADE
@@ -57,7 +54,7 @@ class AllocationTimetable(UUIDCommonModel):
             email, password = credentials_from_request(request)
 
             alina = Alina(email, password)
-            formatted_date = parse_alina_timetable_date(self)
+            formatted_date = parse_timetable_date_for_alina(self)
             parsed_allocations = alina.timetable_allocations(formatted_date)
 
             for parsed_allocation_data in parsed_allocations:
@@ -86,11 +83,25 @@ class AllocationTimetable(UUIDCommonModel):
             self.allocation_set.clear()
         return self.add_allocations_on_request(request)
 
+    @property
+    def name(self):
+        return f'Służby {self.month}-{self.year}'
 
-class Allocation(UUIDCommonModel):
-    title = models.CharField(verbose_name='Tytuł', max_length=32)
-    start_date = models.DateTimeField(verbose_name='Data rozpoczęcia')
-    end_date = models.DateTimeField(verbose_name='Data zakończenia')
+    def to_icalendar_component(self):
+        component = icalendar.Calendar()
+        component.add('summary', self.name)
+        components = [
+            allocation.ical_component() for allocation in self.allocation_set.all()
+        ]
+        for component in components:
+            component.add_component(component)
+        return component
+
+
+class Allocation(UUIDCommonModel, ICalConvertable):
+    title = models.CharField('Tytuł', max_length=32)
+    start_date = models.DateTimeField('Data rozpoczęcia')
+    end_date = models.DateTimeField('Data zakończenia')
 
     timetable = models.ForeignKey(
         AllocationTimetable, verbose_name='Plan służb', null=True, blank=True, on_delete=models.CASCADE
@@ -107,8 +118,8 @@ class Allocation(UUIDCommonModel):
         ordering = ['start_date']
 
     def __str__(self):
-        start_date_local = timezone.localtime(self.start_date).strftime(VIEW_DATE_FORMAT)
-        end_date_local = timezone.localtime(self.end_date).strftime(VIEW_DATE_FORMAT)
+        start_date_local = timezone.localtime(self.start_date).strftime(REPRESENTATIVE_DATE_FORMAT)
+        end_date_local = timezone.localtime(self.end_date).strftime(REPRESENTATIVE_DATE_FORMAT)
         return f'{start_date_local} {self.title} {end_date_local}'
 
     def __repr__(self):
@@ -123,7 +134,7 @@ class Allocation(UUIDCommonModel):
         else:
             email, password = credentials_from_request(request)
             alina = Alina(email, password)
-            date = parse_alina_date(self.start_date)
+            date = parse_date_for_alina(self.start_date)
             parsed_details = alina.allocation_details(title=self.title, date=date)
 
             for parsed_detail_data in parsed_details:
@@ -135,13 +146,9 @@ class Allocation(UUIDCommonModel):
                     action_date += datetime.timedelta(days=1)
 
                 detail, _ = AllocationDetail.objects.get_or_create(
-                    train_number=parsed_detail_data['train_number'],
                     action_date=action_date,
-                    action=parsed_detail_data['action'],
-                    start_location=parsed_detail_data['start_location'],
-                    start_hour=start_hour,
-                    end_location=parsed_detail_data['end_location'],
-                    end_hour=parsed_detail_data['end_hour']
+                    **parsed_detail_data,
+
                 )
                 self.allocationdetail_set.add(detail)
 
@@ -154,15 +161,35 @@ class Allocation(UUIDCommonModel):
             self.allocationdetail_set.clear()
         return self.add_details_on_request(request)
 
+    def ical_component(self):
+        calendar = icalendar.Calendar()
+        event = icalendar.Event()
+        event.add('summary', self.title)
+        event.add('dtstart', self.start_date)
+        alarm = TriggeredAlarm(hours=12)
+        event.add_component(alarm)
+        event.add('dtend', self.end_date)
+
+        description = ""
+        for detail in self.allocationdetail_set.all():
+            description += f'{detail.icalendar_description()} \n'
+        event.add('description', description)
+        calendar.add_component(event)
+        return calendar
+
+    def add_to_dav_calendar(self, calendar):
+        component = self.ical_component()
+        return calendar.save_event(component.to_ical())
+
 
 class AllocationDetail(models.Model):
-    train_number = models.CharField(verbose_name='Number pociągu', max_length=32, null=True)
-    action_date = models.DateTimeField(verbose_name='Data akcji', null=True)
-    action = models.CharField(verbose_name='Akcja', max_length=128, null=True)
-    start_location = models.CharField(verbose_name='Lokalizacja początkowa', max_length=128, null=True)
-    start_hour = models.CharField(verbose_name='Godzina', max_length=32, null=True)
-    end_location = models.CharField(verbose_name='lokalizacja końcowa', max_length=128, null=True)
-    end_hour = models.CharField(verbose_name='Godzina', max_length=32, null=True)
+    train_number = models.CharField('Numer pociągu', max_length=32, null=True)
+    action_date = models.DateTimeField('Data akcji', null=True)
+    action = models.CharField('Akcja', max_length=128, null=True)
+    start_location = models.CharField('Lokalizacja początkowa', max_length=128, null=True)
+    start_hour = models.CharField('Godzina', max_length=32, null=True)
+    end_location = models.CharField('Lokalizacja końcowa', max_length=128, null=True)
+    end_hour = models.CharField('Godzina', max_length=32, null=True)
 
     allocation = models.ForeignKey(
         Allocation, verbose_name='Służba', null=True, blank=True, on_delete=models.CASCADE
@@ -180,15 +207,22 @@ class AllocationDetail(models.Model):
         {self.end_location} {self.end_hour}
         """
 
-    @property
-    def formatted_action_date(self):
-        formatted_action_date = parse_alina_date(self.action_date)
-        return formatted_action_date
+    def icalendar_description(self):
+        if self.train_number:
+            return f"""{self.train_number} {self.action}
+        {self.start_location} {self.start_hour} 
+        {self.end_location} {self.end_hour}
+        """
+        else:
+            return f"""{self.action}
+        {self.start_location} {self.start_hour} 
+        {self.end_location} {self.end_hour}
+        """
 
 
 class TrainCrew(UUIDCommonModel):
-    train_number = models.CharField(verbose_name='Numer pociągu', max_length=32)
-    date = models.CharField(verbose_name='Data', max_length=32)
+    train_number = models.CharField('Numer pociągu', max_length=32)
+    date = models.CharField('Data', max_length=32)
 
     class Meta:
         verbose_name = 'Załoga pociągu'
@@ -210,11 +244,7 @@ class TrainCrew(UUIDCommonModel):
 
             for parsed_member_data in parsed_crew_members:
                 crew_member, _ = TrainCrewMember.objects.get_or_create(
-                    person=parsed_member_data['person'],
-                    phone_number=parsed_member_data['phone_number'],
-                    profession=parsed_member_data['profession'],
-                    start_location=parsed_member_data['start_location'],
-                    end_location=parsed_member_data['end_location'],
+                    **parsed_member_data
                 )
                 self.traincrewmember_set.add(crew_member)
 
@@ -233,15 +263,15 @@ class TrainCrewMember(UUIDCommonModel):
         TrainCrew, verbose_name="Członek załogi", related_query_name='members', on_delete=models.CASCADE,
         null=True, blank=True
     )
-    person = models.CharField(max_length=128, verbose_name='Osoba')
-    phone_number = models.CharField(max_length=32, verbose_name='Numer telefonu')
-    profession = models.CharField(max_length=32, verbose_name='Stanowisko')
-    start_location = models.CharField(max_length=32, verbose_name='Lokalizacja początkowa')
-    end_location = models.CharField(max_length=32, verbose_name='Lokalizacja końcowa')
+    person = models.CharField('Osoba', max_length=128)
+    phone_number = models.CharField('Numer telefonu', max_length=32)
+    profession = models.CharField('Stanowisko', max_length=32)
+    start_location = models.CharField('Lokalizacja początkowa', max_length=32)
+    end_location = models.CharField('Lokalizacja końcowa', max_length=32)
 
     class Meta:
         verbose_name = 'Członek załogi pociągu'
-        verbose_name_plural = 'Członkowie załogi pociągu'
+        verbose_name_plural = 'Członkowie załogi pociągów'
 
     def __str__(self):
         return f"""

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('alina', '0006_allocationdetail_date_of_action'),
     ]
@@ -12,7 +11,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='allocationdetail',
-            options={'ordering': ['action_date'], 'verbose_name': 'Detail służby', 'verbose_name_plural': 'Detale służb'},
+            options={'ordering': ['action_date'], 'verbose_name': 'Detail służby',
+                     'verbose_name_plural': 'Detale służb'},
         ),
         migrations.RemoveField(
             model_name='allocationdetail',

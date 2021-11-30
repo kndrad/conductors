@@ -9,7 +9,7 @@ from alina.irena.parsers.containers import (
     IrenaCrewMemberContainerParser
 )
 from alina.tools.expressions import (
-    allocation_id_pattern, allocation_component_pattern
+    allocation_id_regex, allocation_component_regex
 )
 
 
@@ -65,7 +65,7 @@ class IrenaAllocationSignatureRequestResponseParser(IrenaRequestResponseParser):
     def _get_signature(self):
         attribute = 'data-url'
         data = self._container[attribute]
-        signature = allocation_id_pattern.search(data)['id']
+        signature = allocation_id_regex.search(data)['id']
         return signature
 
     def parse_response(self):
@@ -83,7 +83,7 @@ class IrenaAllocationDetailsRequestResponseParser(IrenaRequestResponseParser):
         self._soup = BeautifulSoup(markup=response.content, features='html.parser', parse_only=strainer)
 
     def get_containers(self):
-        return self._soup.find_all('tr', class_=allocation_component_pattern)
+        return self._soup.find_all('tr', class_=allocation_component_regex)
 
 
 class IrenaTripCrewMembersRequestResponseParser(IrenaRequestResponseParser):

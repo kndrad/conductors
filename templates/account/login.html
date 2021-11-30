@@ -3,11 +3,11 @@
 {% block extra_title %}Logowanie | {% endblock %}
 
 {% block content %}
-<span>Pamiętaj, aby użyć danych logowania z portalu pracowniczego.</span>
-<span>Twoje hasło nie będzie przechowywane.</span>
+    <span>Pamiętaj, aby użyć danych logowania z portalu pracowniczego.</span>
+    <span>Twoje hasło nie będzie przechowywane.</span>
 
-<form method="POST">{% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Zaloguj się">
-</form>
+    <form method="POST">{% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Zaloguj się">
+    </form>
 {% endblock %}

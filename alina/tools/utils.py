@@ -10,12 +10,12 @@ def credentials_from_request(request):
     return email, password
 
 
-def parse_alina_date(date):
+def parse_date_for_alina(date):
     date = date.strftime(ALINA_DATE_FORMAT)
     return date
 
 
-def parse_alina_timetable_date(timetable):
+def parse_timetable_date_for_alina(timetable):
     date = datetime.date(year=timetable.year, month=timetable.month, day=1)
-    formatted_date = parse_alina_date(date)
+    formatted_date = parse_date_for_alina(date)
     return formatted_date

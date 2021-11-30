@@ -8,6 +8,7 @@ class AllocationTimetableImportForm(forms.ModelForm):
     """Contains only month and year fields.
     Takes user instance in it's constructor to provide user initial value in this form field.
     """
+
     class Meta:
         model = AllocationTimetable
         fields = '__all__'

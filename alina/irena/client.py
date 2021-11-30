@@ -1,6 +1,6 @@
 from requests import Session
-from alina.irena import IrenaCredentialsDeniedError, UnauthenticatedIrenaClientError
 
+from alina.irena import IrenaCredentialsDeniedError, UnauthenticatedIrenaClientError
 from alina.irena.requests import IrenaRequest
 
 

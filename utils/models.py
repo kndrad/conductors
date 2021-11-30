@@ -15,7 +15,3 @@ class UUIDCommonModel(models.Model):
         self.last_updated = timezone.now()
         self.save()
         return self.last_updated
-
-    def last_updated_local(self):
-        last_updated_local = timezone.localtime(self.last_updated)
-        return last_updated_local.strftime("%H:%M %d.%m.%Yr")
