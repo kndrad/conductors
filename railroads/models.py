@@ -105,7 +105,7 @@ class PublicRailroadTrain(models.Model, ICalComponentable):
         try:
             return "".join([names[0][0], names[1][0]])
         except IndexError:
-            return self.carrier.title()
+            return self.carrier
 
     def get_as_ical_component(self):
         cal = icalendar.Calendar()
