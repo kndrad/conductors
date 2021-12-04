@@ -6,11 +6,11 @@
 
 {% block content %}
     {% if messages %}
-     {% for message in messages %}
-         <div>
-             {{ message|safe }}
-         </div>
-     {% endfor %}
+         {% for message in messages %}
+             <div>
+                 {{ message|safe }}
+             </div>
+         {% endfor %}
     {% endif %}
     <div>
         {% if not user.caldav_account %}
