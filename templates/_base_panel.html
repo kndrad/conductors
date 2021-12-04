@@ -1,0 +1,19 @@
+{% extends '_base.html' %}
+{% load static %}
+
+{% block main %}
+    <div class="flex flex-col items-center m-5 bg-white bg-opacity-10 rounded-lg">
+        <div class="w-full object-contain object-top p-4">
+            {% block navbar %}
+                <a href="{% url 'home' %}">
+                    <img alt="Strona Główna" src="{% static 'img/logo.png' %}">
+                </a>
+            {% endblock navbar %}
+        </div>
+        <div class="flex flex-col items-center w-5/6 p-4 mb-6 space-y-3 bg-white bg-opacity-20 rounded-md">
+            {% block content %}
+                (no content)
+            {% endblock content %}
+        </div>
+    </div>
+{% endblock %}

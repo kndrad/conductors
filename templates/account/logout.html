@@ -1,8 +1,8 @@
-{% extends '_base.html' %}
+{% extends '_base_panel.html' %}
 
 {% block extra_title %}Wyloguj | {% endblock %}
 
-{% block main %}
+{% block content %}
     <form method="post" action="{% url 'account_logout' %}">
         {% csrf_token %}
         {% if redirect_field_value %}

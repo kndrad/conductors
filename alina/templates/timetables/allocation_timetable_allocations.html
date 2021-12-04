@@ -5,9 +5,6 @@
 {% block extra_title %}Plany | {% endblock %}
 
 {% block content %}
-    <div>
-        <a href="{% url 'home' %}">Strona główna</a>
-    </div>
     {% if messages %}
      {% for message in messages %}
          <div>
@@ -58,7 +55,7 @@
                     {% if timetable.allocation_set.exists %}
                         <form method='POST' action='{% url 'send_allocation_timetable_to_dav_client' timetable.pk %}'>
                             {% csrf_token %}
-                            <button>Wyślij do serwera CalDAV</button>
+                            <button>Wyślij kalendarz</button>
                         </form>
                         {% for allocation in timetable.allocation_set.all %}
                             <span>----------------------------------------------------------</span>
