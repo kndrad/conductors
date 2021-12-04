@@ -75,9 +75,9 @@ class IrenaAllocationDetailRowContainerParser(IrenaContainerParser):
         value = cell.find('span', class_='value').text.strip()
         return value
 
-    def _get_trip_number(self):
-        trip_number = self._get_cell_value('trip_numbers mdl-data-table__cell--non-numeric')
-        return trip_number
+    def _get_train_number(self):
+        train_number = self._get_cell_value('trip_numbers mdl-data-table__cell--non-numeric')
+        return train_number
 
     def _get_action(self):
         action = self._get_cell_value('type_long_name mdl-data-table__cell--non-numeric')
@@ -99,7 +99,7 @@ class IrenaAllocationDetailRowContainerParser(IrenaContainerParser):
         """
         try:
             return {
-                'train_number': self._get_trip_number(),
+                'train_number': self._get_train_number(),
                 'action': self._get_action(),
                 'start_location': self._get_location('start'),
                 'start_hour': self._get_hour('start'),
@@ -129,7 +129,7 @@ class IrenaCrewMemberContainerParser(IrenaContainerParser):
         try:
             number = self._get_column_value('Numer telefonu')
         except AttributeError:
-            return 'BRAK NUMERU TELEFONU'
+            return 'Nie znaleziono numeru telefonu'
         else:
             return number.text
 
@@ -137,11 +137,11 @@ class IrenaCrewMemberContainerParser(IrenaContainerParser):
         profession = self._get_column_value('Typ załogi')
         return profession.text
 
-    def _get_start_location_data(self):
+    def _get_start_location(self):
         location = self._get_column_value('Lokalizacja początkowa i początkowa')
         return location.text
 
-    def _get_end_location_data(self):
+    def _get_end_location(self):
         location = self._get_column_value('Koniec i cel')
         return location.text
 
@@ -153,8 +153,8 @@ class IrenaCrewMemberContainerParser(IrenaContainerParser):
                 'person': self._get_person().title(),
                 'phone_number': self._get_phone_number(),
                 'profession': self._get_profession(),
-                'start_location': self._get_start_location_data(),
-                'end_location': self._get_end_location_data(),
+                'start_location': self._get_start_location(),
+                'end_location': self._get_end_location(),
             }
         except AttributeError:
             return

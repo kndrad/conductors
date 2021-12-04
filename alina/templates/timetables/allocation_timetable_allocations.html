@@ -61,10 +61,35 @@
                             <button>Wyślij do serwera CalDAV</button>
                         </form>
                         {% for allocation in timetable.allocation_set.all %}
+                            <span>----------------------------------------------------------</span>
                             <div>
-                                <a href="{% url 'allocation_details' allocation.pk %}">
+                                {% if not allocation.train.before %}
+                                <form method='POST' action="{% url 'search_train_before_allocation' allocation.pk %}">
+                                    {% csrf_token %}
+                                    <button>Wyszukaj pociąg przed</button>
+                                </form>
+                                {% else %}
+                                    <a href="{% url 'train_detail' allocation.train.before.pk %}">
+                                    {{ allocation.train.before }}
+                                    </a>
+                                {% endif %}
+
+                                <div>
+                                    <a href="{% url 'allocation_details' allocation.pk %}">
                                     {{ allocation }}
-                                </a>
+                                    </a>
+                                </div>
+
+                                {% if not allocation.train.after %}
+                                <form method='POST' action="{% url 'search_train_after_allocation' allocation.pk %}">
+                                    {% csrf_token %}
+                                    <button>Wyszukaj pociąg po</button>
+                                </form>
+                                {% else %}
+                                    <a href="{% url 'train_detail' allocation.train.after.pk %}">
+                                    {{ allocation.train.after }}
+                                    </a>
+                                {% endif %}
                             </div>
                         {% endfor %}
                     {% else %}
@@ -72,7 +97,7 @@
                             <span>Brak służb</span>
                         </div>
                     {% endif %}
-                    <span>--------------------------------------------------------------------</span>
+                    <span>****************************************************************************</span>
                 </div>
             {% endfor %}
         </ul>

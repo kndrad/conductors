@@ -77,7 +77,7 @@ class Alina:
         """
         signature = self.allocation_signature(title, date)
         if not signature:
-            return dict()
+            return {}
         else:
             factory = IrenaAllocationDetailsFactory(self._client, signature, date)
             details = factory.produce()
@@ -86,7 +86,7 @@ class Alina:
     def train_crew(self, train_number, date):
         """ Returns train crew on a given date.
         Returns list of dictionaries:
-            {'person': 'Imię nazwisko', 'phone_number': '838 382 932', 'profession': 'PM', 'start_location':
+            {'person': '...', 'phone_number': '838 382 932', 'profession': 'PM', 'start_location':
             '10:38 GDY_PO', 'end_location': '13:59 WWO'}
             {'person': '...', 'phone_number': '...', 'profession': 'M', 'start_location': '10:38 GDY_PO',
             'end_location': '13:56 WWO'}

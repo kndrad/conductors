@@ -14,8 +14,10 @@ from django.utils.timezone import make_aware
 from alina.interface import Alina
 from alina.tools.utils import credentials_from_request, parse_date_for_alina
 from alina.tools.utils import parse_timetable_date_for_alina
+from railroads.models import PublicRailroadTrain
+from railroads.services import nearest_arriving_train, nearest_departing_train
 from utils.dates import YEARS, REPRESENTATIVE_DATE_FORMAT
-from utils.icals import ICalConvertable, TriggeredAlarm
+from utils.icals import ICalComponentable, TriggeredAlarm
 from utils.models import UUIDCommonModel
 
 
@@ -87,18 +89,8 @@ class AllocationTimetable(UUIDCommonModel):
     def name(self):
         return f'Służby {self.month}-{self.year}'
 
-    def to_icalendar_component(self):
-        component = icalendar.Calendar()
-        component.add('summary', self.name)
-        components = [
-            allocation.ical_component() for allocation in self.allocation_set.all()
-        ]
-        for component in components:
-            component.add_component(component)
-        return component
 
-
-class Allocation(UUIDCommonModel, ICalConvertable):
+class Allocation(UUIDCommonModel, ICalComponentable):
     title = models.CharField('Tytuł', max_length=32)
     start_date = models.DateTimeField('Data rozpoczęcia')
     end_date = models.DateTimeField('Data zakończenia')
@@ -161,25 +153,61 @@ class Allocation(UUIDCommonModel, ICalConvertable):
             self.allocationdetail_set.clear()
         return self.add_details_on_request(request)
 
-    def ical_component(self):
-        calendar = icalendar.Calendar()
+    def get_as_ical_component(self):
+        cal = icalendar.Calendar()
         event = icalendar.Event()
         event.add('summary', self.title)
         event.add('dtstart', self.start_date)
+        event.add('dtend', self.end_date)
+
         alarm = TriggeredAlarm(hours=12)
         event.add_component(alarm)
-        event.add('dtend', self.end_date)
 
         description = ""
         for detail in self.allocationdetail_set.all():
-            description += f'{detail.icalendar_description()} \n'
+            description += f'{detail.ical_description()} \n'
         event.add('description', description)
-        calendar.add_component(event)
-        return calendar
+        cal.add_component(event)
+        return cal
 
-    def add_to_dav_calendar(self, calendar):
-        component = self.ical_component()
-        return calendar.save_event(component.to_ical())
+
+class AllocationTrain(models.Model):
+    allocation = models.OneToOneField(
+        Allocation, verbose_name='Pociąg dla służby', related_name='train',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+    before = models.OneToOneField(
+        PublicRailroadTrain, verbose_name='Pociąg przed służbą', related_name='before',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+    after = models.OneToOneField(
+        PublicRailroadTrain, verbose_name='Pociąg po służbie', related_name='after',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = 'Pociąg dla służby'
+        verbose_name_plural = 'Pociągi dla służb'
+
+    def __str__(self):
+        return f'Pociągi dla {self.allocation}, przed: {self.before}, po: {self.after}.'
+
+    def __repr__(self):
+        return f'AllocationTrain({repr(self.allocation)}, {repr(self.before)}, {repr(self.after)})'
+
+    def search_before(self, departure_station, arrival_station, spare_time=10):
+        date = self.allocation.start_date - datetime.timedelta(minutes=int(spare_time))
+        train = nearest_arriving_train(date, departure_station, arrival_station)
+        self.before = train
+        self.save()
+        return self.before
+
+    def search_after(self, departure_station, arrival_station, spare_time=10):
+        date = self.allocation.end_date + datetime.timedelta(minutes=int(spare_time))
+        train = nearest_departing_train(date, departure_station, arrival_station)
+        self.after = train
+        self.save()
+        return self.after
 
 
 class AllocationDetail(models.Model):
@@ -207,7 +235,7 @@ class AllocationDetail(models.Model):
         {self.end_location} {self.end_hour}
         """
 
-    def icalendar_description(self):
+    def ical_description(self):
         if self.train_number:
             return f"""{self.train_number} {self.action}
         {self.start_location} {self.start_hour} 

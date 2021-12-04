@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, DetailView
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
 from utils.views import HiddenUserFormMixin
 from .forms import RailroadAccountForm
-from .models import RailroadAccount
+from .models import RailroadAccount, PublicRailroadTrain
 
 
 class RailroadAccountViewMixin(LoginRequiredMixin, HiddenUserFormMixin, ModelFormMixin, ProcessFormView):
@@ -23,3 +23,9 @@ class RailroadAccountCreateView(RailroadAccountViewMixin, CreateView):
 class RailroadAccountUpdateView(RailroadAccountViewMixin, UpdateView):
     """RailroadAccount update view.
     """
+
+
+class PublicRailroadTrainDetailView(DetailView):
+    model = PublicRailroadTrain
+    context_object_name = 'train'
+    template_name = 'train_detail.html'

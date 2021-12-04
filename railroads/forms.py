@@ -3,7 +3,7 @@ from django.core.exceptions import NON_FIELD_ERRORS
 
 from .models import RailroadStation
 from .models import RailroadAccount
-from .engines import RailroadSearchEngine, StationsSubmitError
+from .engines import RailroadSearchEngine, WaypointStationSubmitError
 
 
 class RailroadAccountForm(forms.ModelForm):

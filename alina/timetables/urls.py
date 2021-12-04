@@ -1,7 +1,9 @@
 from django.urls import path
 
 from alina.timetables.views import (
-    AllocationTimetableAllocationsView, ImportAllocationTimetableFormView, UpdateAllocationTimetableAllocationsView,
+    AllocationTimetableAllocationsView,
+    ImportAllocationTimetableFormView,
+    UpdateAllocationTimetableAllocationsView,
     SendAllocationTimetableToDAVClientView
 )
 

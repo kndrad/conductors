@@ -18,7 +18,9 @@ class TriggeredAlarm(icalendar.Alarm):
         self.add('trigger', trigger)
 
 
-class ICalConvertable:
+class ICalComponentable:
+    """Interface for any instance that can be converted to ical event or calendar component.
+    """
     @abc.abstractmethod
-    def ical_component(self):
+    def get_as_ical_component(self):
         return NotImplemented

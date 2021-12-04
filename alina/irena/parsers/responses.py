@@ -30,13 +30,13 @@ class IrenaRequestResponseParser(abc.ABC):
         Once all of the tasks have been completed, they are gathered together using result() method.
         """
         containers = self.get_containers()
-        container_parsers = [self.container_parser(container) for container in containers]
+        parsers = [self.container_parser(container) for container in containers]
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            tasks = [executor.submit(parser.parse_container) for parser in container_parsers]
-            parsed_containers = [task.result() for task in tasks]
+            tasks = [executor.submit(parser.parse_container) for parser in parsers]
+            parsed_results = [task.result() for task in tasks]
 
-        return [parsed_container for parsed_container in parsed_containers if parsed_container]
+        return [result for result in parsed_results if result]
 
 
 class IrenaAllocationTimetableRequestResponseParser(IrenaRequestResponseParser):

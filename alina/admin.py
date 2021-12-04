@@ -1,11 +1,16 @@
 from django.contrib import admin
 
-from alina.models import Allocation, AllocationDetail, AllocationTimetable, TrainCrew, TrainCrewMember
+from alina.models import Allocation, AllocationDetail, AllocationTimetable, TrainCrew, TrainCrewMember, AllocationTrain
 
 
 class AllocationAdmin(admin.ModelAdmin):
     list_display = (
         'title', 'start_date', 'end_date', 'last_updated',
+    )
+
+class AllocationTrainAdmin(admin.ModelAdmin):
+    list_display = (
+        'allocation', 'before', 'after',
     )
 
 
@@ -34,6 +39,7 @@ class TrainCrewMemberAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Allocation, AllocationAdmin)
+admin.site.register(AllocationTrain, AllocationTrainAdmin)
 admin.site.register(AllocationDetail, AllocationDetailAdmin)
 admin.site.register(AllocationTimetable, AllocationTimetableAdmin)
 admin.site.register(TrainCrew, TrainCrewAdmin)

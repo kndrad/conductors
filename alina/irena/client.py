@@ -20,12 +20,14 @@ class IrenaClient:
             if response.request.path_url == '/mbweb/login?login-status=failed':
                 raise IrenaCredentialsDeniedError(self._credentials)
 
-        self._authenticated = True
-        return self._authenticated
+        return True
 
     def __init__(self, username, password, authenticate=True):
         self._session = Session()
-        self._credentials = dict(j_username=username.lower().strip(), j_password=password.strip())
+        self._credentials = {
+            'j_username': username.lower().strip(),
+            'j_password': password.strip(),
+        }
 
         if authenticate:
             self._authenticated = self.authenticate()

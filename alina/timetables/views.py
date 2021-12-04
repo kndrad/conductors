@@ -75,9 +75,8 @@ class SendAllocationTimetableToDAVClientView(AllocationTimetableViewMixin, Singl
     def post(self, request, **kwargs):
         self.object = self.get_object()
 
-        user = request.user
-        if hasattr(user, 'caldav_account'):
-            client = user.caldav_account.get_client()
+        if request.user.caldav_account:
+            client = request.user.caldav_account.get_client()
             principal = client.principal()
 
             try:
@@ -90,7 +89,23 @@ class SendAllocationTimetableToDAVClientView(AllocationTimetableViewMixin, Singl
 
             for allocation in self.object.allocation_set.all():
                 allocation.add_details_on_request(self.request)
-                allocation.add_to_dav_calendar(calendar)
+
+                component = allocation.get_as_ical_component()
+                ical = component.to_ical()
+                calendar.save_event(ical)
+
+                if hasattr(allocation, 'train'):
+                    if allocation.train.before:
+                        train = allocation.train.before
+                        component = train.get_as_ical_component()
+                        ical = component.to_ical()
+                        calendar.save_event(ical)
+
+                    if allocation.train.after:
+                        train = allocation.train.after
+                        component = train.get_as_ical_component()
+                        ical = component.to_ical()
+                        calendar.save_event(ical)
         else:
             messages.warning(
                 self.request, "Aby wysłać służby do serwera CalDAV, potrzebna jest konfiguracja konta."

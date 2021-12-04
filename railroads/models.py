@@ -1,7 +1,11 @@
+import icalendar
 from django.conf import settings
 from django.db import models
 from django.db.models import Q, F
+from django.urls import reverse
+from django.utils import timezone
 
+from utils.icals import ICalComponentable, TriggeredAlarm
 from utils.models import UUIDCommonModel
 
 
@@ -12,6 +16,18 @@ class RailroadAccount(UUIDCommonModel):
     )
     homeplace = models.CharField('Stacja kolejowa w miejscu zamieszkania', max_length=64)
     workplace = models.CharField('Stacja kolejowa w miejscu pracy', max_length=64)
+
+    class SpareTime(models.IntegerChoices):
+        VERY_SHORT = 10, '10 minut'
+        SHORT = 20, '20 minut'
+        MEDIUM = 30, '30 minut'
+        LONG = 40, '40 minut'
+        VERY_LONG = 50, '50 minut'
+        LONGEST = 60, '60 minut'
+
+    spare_time = models.PositiveIntegerField(
+        'Czas dojścia ze stacji kolejowej', choices=SpareTime.choices, default=SpareTime.VERY_SHORT
+    )
 
     class Meta:
         verbose_name = 'Konto kolejowe użytkownika'
@@ -44,3 +60,69 @@ class RailroadStation(models.Model):
         return f'RailroadStation({self.name})'
 
 
+class PublicRailroadTrain(models.Model, ICalComponentable):
+    number = models.CharField('Numer', max_length=64)
+    carrier = models.CharField('Przewoźnik', max_length=64, null=True, blank=True)
+
+    departure_date = models.DateTimeField('Czas odjazdu')
+    departure_station = models.CharField('Odjazd ze stacji', max_length=64)
+    departure_platform = models.CharField('Odjazd z peronu', max_length=32)
+
+    arrival_date = models.DateTimeField('Czas przyjazdu')
+    arrival_station = models.CharField('Przyjazd na stację', max_length=64)
+    arrival_platform = models.CharField('Przyjazd na peron', max_length=32)
+
+    class Meta:
+        verbose_name = 'Publiczny pociąg'
+        verbose_name_plural = 'Publiczne pociągi'
+
+    def __str__(self):
+        fmt = '%H:%M'
+        local_departure_date = timezone.localtime(self.departure_date)
+        departure_hour = local_departure_date.strftime(fmt)
+        local_arrival_date = timezone.localtime(self.arrival_date)
+        arrival_hour = local_arrival_date.strftime(fmt)
+        return f'{departure_hour} {self.carrier_initials} {self.number} {arrival_hour}'
+
+    def __repr__(self):
+        return f"""
+        PublicRailroadTransport(
+        {self.number}, {self.carrier}, 
+        {self.departure_station}, {self.departure_platform}, {self.departure_date}, 
+        {self.arrival_station}, {self.arrival_platform}, {self.arrival_date})
+        """
+
+    def get_absolute_url(self):
+        return reverse('train_detail', kwargs={'pk': self.pk})
+
+    @property
+    def carrier_initials(self):
+        if not self.carrier:
+            return
+        if 'PKP' in self.carrier:
+            return 'PKP'
+        names = self.carrier.split()
+        try:
+            return "".join([names[0][0], names[1][0]])
+        except IndexError:
+            return self.carrier.title()
+
+    def get_as_ical_component(self):
+        cal = icalendar.Calendar()
+        event = icalendar.Event()
+        summary = (
+            f'{self.carrier_initials} | {self.departure_station.title()} -> {self.arrival_station.title()}'
+        )
+        event.add('summary', summary)
+        event.add('dtstart', self.departure_date)
+        for alarm in [TriggeredAlarm(hours=2), TriggeredAlarm(minutes=30)]:
+            event.add_component(alarm)
+        event.add('dtend', self.arrival_date)
+        description = (
+            f'{self.carrier}\n'
+            f'Odjazd z peronu: {self.departure_platform}\n'
+            f'Przyjazd na peron: {self.arrival_platform}\n'
+        )
+        event.add('description', description)
+        cal.add_component(event)
+        return cal

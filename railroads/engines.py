@@ -12,22 +12,22 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
-from .expressions import website_date_regex, common_hour_regex
+from .expressions import search_engine_date_regex, hour_regex
 from .parsers import RailroadScheduleParser
 
 
-class StationsSubmitError(Exception):
+class WaypointStationSubmitError(Exception):
     """Raised when submitted stations (departure station, arrival station) are identical.
     """
 
 
 class RailroadSearchEngine:
 
-    def __init__(self):
+    def __init__(self, hide_actions=True):
         options = Options()
         for argument in ['--disable-extensions', '--incognito', ]:
             options.add_argument(argument)
-        options.headless = True
+        options.headless = hide_actions
 
         service = Service(os.path.join(Path(__file__).resolve().parent, 'geckodriver'))
 
@@ -35,129 +35,125 @@ class RailroadSearchEngine:
             options=options,
             service=service
         )
-        self._found_page_elements = None
-        self._webpage_opened = False
+        self._input_elements = None
 
-    def open_webpage(self):
+    def start_engine(self):
         self._driver.get("https://portalpasazera.pl/Wyszukiwarka/Index")
-        self._webpage_opened = True
+        self._search_input_elements()
+        return self
 
-    def find_page_elements(self):
-        if not self._webpage_opened:
-            self.open_webpage()
+    def _search_input_elements(self):
+        self._input_elements = {}
 
-        self._found_page_elements = dict()
-        page_elements = [
+        elements = [
             ('departure_page_element', '//*[@id="departureFrom"]'),
             ('arrival_page_element', '//*[@id="arrivalTo"]'),
-            ('date_start_page_element', '//*[@id="main-search__dateStart"]'),
-            ('time_start_page_element', '//*[@id="main-search__timeStart"]'),
+            ('date_page_element', '//*[@id="main-search__dateStart"]'),
+            ('hour_page_element', '//*[@id="main-search__timeStart"]'),
             ('direct_btn_page_element', '//*[@id="dirChck"]'),
             ('enter_btn_page_element', '/html/body/div[6]/div/form/div[6]/div[1]/div[1]/div/div/input',)
         ]
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            for page_element_name, xpath in page_elements:
-                find_page_element_process = executor.submit(self._driver.find_element, By.XPATH, xpath)
-                self._found_page_elements[page_element_name] = find_page_element_process.result()
+            for name, xpath in elements:
+                found_element = executor.submit(self._driver.find_element, By.XPATH, xpath)
+                self._input_elements[name] = found_element.result()
 
-        return self._found_page_elements
+        return self._input_elements
 
-    def submit_stations(self, departure_station, arrival_station):
-        if not self._found_page_elements:
-            self.find_page_elements()
+    def submit_stations(self, departure_station:str, arrival_station:str):
+        if not self._input_elements:
+            self._search_input_elements()
 
-        if departure_station.lower() == arrival_station.lower():
-            raise StationsSubmitError(
-                'departure station must be different than arrival station, or vice versa.'
+        if str(departure_station).lower() == str(arrival_station).lower():
+            raise WaypointStationSubmitError(
+                'departure station must be different than arrival station and vice versa.'
             )
 
-        station_page_elements = [
-            self._found_page_elements['departure_page_element'],
-            self._found_page_elements['arrival_page_element'],
+        elements = [
+            self._input_elements['departure_page_element'],
+            self._input_elements['arrival_page_element'],
         ]
 
-        for station_page_element, submit_value in zip(station_page_elements, [departure_station, arrival_station]):
-            station_page_element.send_keys(submit_value)
+        for element, value in zip(elements, [departure_station, arrival_station]):
+            element.send_keys(value)
 
-    def submit_dates(self, time_start, date_start):
-        if not self._found_page_elements:
-            self.find_page_elements()
+    def submit_date(self, hour:str, date:str):
+        if not self._input_elements:
+            self._search_input_elements()
 
-        if not website_date_regex.match(date_start):
+        if not search_engine_date_regex.match(str(date)):
             raise ValueError("invalid date provided; must be in pattern e.g. '12.11.2021' or 12-11-2021 ")
 
-        if not common_hour_regex.match(time_start):
-            raise ValueError("invalid time provided; must be in pattern e.g. '21:37'")
+        if not hour_regex.match(str(hour)):
+            raise ValueError("invalid hour provided; must be in pattern e.g. '21:37'")
 
-        date_page_elements = [
-            self._found_page_elements['time_start_page_element'],
-            self._found_page_elements['date_start_page_element'],
+        elements = [
+            self._input_elements['hour_page_element'],
+            self._input_elements['date_page_element'],
         ]
 
-        for date_page_element, submit_value in zip(date_page_elements, [time_start, date_start]):
-            date_page_element.send_keys(submit_value)
+        for element, value in zip(elements, [hour, date]):
+            element.clear()
+            element.send_keys(value)
 
-    def click_direct_btn(self):
-        if not self._found_page_elements:
-            self.find_page_elements()
+    def click_direct(self):
+        if not self._input_elements:
+            self._search_input_elements()
 
-        direct_btn_page_element = self._found_page_elements['direct_btn_page_element']
+        direct_btn_page_element = self._input_elements['direct_btn_page_element']
         ActionChains(self._driver).move_to_element(direct_btn_page_element).perform()
         self._driver.execute_script("arguments[0].click();", direct_btn_page_element)
 
-    def click_enter_btn(self):
-        if not self._found_page_elements:
+    def click_enter(self):
+        if not self._input_elements:
             raise ValueError("cant click enter button; page elements must be found first.")
 
-        enter_btn_page_element = self._found_page_elements['enter_btn_page_element']
-        enter_btn_page_element.send_keys(Keys.ENTER)
+        element = self._input_elements['enter_btn_page_element']
+        element.send_keys(Keys.ENTER)
 
     def await_schedule(self):
-        timeout = 3
+        timeout = 4
         wait = WebDriverWait(self._driver, timeout)
         xpath = '/html/body/div[6]/div[1]/div[1]/div[2]/h2'
-        schedule_presence = ec.presence_of_element_located((By.XPATH, xpath))
-        return wait.until(schedule_presence)
+        schedule_appearance = ec.presence_of_element_located((By.XPATH, xpath))
+        return wait.until(schedule_appearance)
 
-    def request_schedule_markup(self, departure_station, arrival_station, time_start, date_start):
-        if not self._found_page_elements:
-            self.find_page_elements()
+    def request_schedule_markup(self, departure_station, arrival_station, hour, date):
+        if not self._input_elements:
+            self._search_input_elements()
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            submit_stations_process = executor.submit(self.submit_stations, departure_station, arrival_station)
-            submit_date_process = executor.submit(self.submit_dates, time_start, date_start)
-            for process in [
-                submit_stations_process, submit_date_process
-            ]:
+            submit_stations = executor.submit(self.submit_stations, departure_station, arrival_station)
+            submit_date = executor.submit(self.submit_date, hour, date)
+
+            for process in [submit_stations, submit_date]:
                 process.result()
 
-            click_enter_btn_process = executor.submit(self.click_enter_btn)
-            click_direct_btn_process = executor.submit(self.click_direct_btn)
+            click_enter = executor.submit(self.click_enter)
+            click_direct = executor.submit(self.click_direct)
 
-            for process in [
-                click_enter_btn_process, click_direct_btn_process
-            ]:
+            for process in [click_enter, click_direct]:
                 process.result()
 
         try:
             self.await_schedule()
-        except TimeoutException:
+        except TimeoutException as e:
             self._driver.quit()
-            raise ValueError("schedule has not appeared.")
-        else:
-            markup = self._driver.page_source
-            self._driver.quit()
-            return markup
+            raise ValueError(f'{e.msg}: schedule has not appeared -  no markup returned.')
+
+        markup = self._driver.page_source
+        self._driver.quit()
+        return markup
 
     def check_stations_existence(self, departure_station, arrival_station):
         """Verifies stations existence by submitting them to webpage fields and
         awaiting schedule appearance. When the schedule appears, the stations are correct, otherwise not.
         """
-        self.open_webpage()
-        self.find_page_elements()
+        self.start_engine()
+        self._search_input_elements()
         self.submit_stations(departure_station, arrival_station)
-        self.click_enter_btn()
+        self.click_enter()
 
         try:
             self.await_schedule()
@@ -167,33 +163,35 @@ class RailroadSearchEngine:
         else:
             return True
 
-    def use_engine(self, departure_station, arrival_station, time_start, date_start) -> dict:
+    def run_searching(self, departure_station, arrival_station, hour, date) -> dict:
         """Final function for searching trains using this engine,
         departure_station and arrival_station cannot be the same,
         time_start arg must be in given pattern, like '21:37',
         date_start arg also needs to be in pattern, e.g. '12.11.2021' or 12-11-2021,
         Returns list of dictionaries like:
 
-            {'start_location': {'station': 'Gliwice', 'platform': 'Peron II Tor 6'}, 'end_location': {'station':
-            'Katowice', 'platform': 'Peron III Tor 4'}, 'start_datetime': {'date': '23.11.2021', 'time': '18:51'},
-            'end_datetime': {'date': '23.11.2021', 'time': '19:19'}, 'carrier': 'Koleje Śląskie sp. z o.o.',
-            'train_number': '40844'},
+            {'start_waypoint': {'station': 'Gliwice', 'platform': 'Peron II Tor 6'}, 'end_waypoint': {'station':
+            'Katowice', 'platform': 'Peron III Tor 4'}, 'start_date': {'date': '23.11.2021', 'hour': '18:51'},
+            'end_date': {'date': '23.11.2021', 'hour': '19:19'}, 'carrier': 'Koleje Śląskie sp. z o.o.',
+            'number': '40844'},
 
-            {'start_location': {'station': 'Gliwice', 'platform': 'Peron II Tor 6'}, 'end_location': {'station':
-            'Katowice', 'platform': 'Peron III Tor 2'}, 'start_datetime': {'date': '23.11.2021', 'time': '19:16'},
-            'end_datetime': {'date': '23.11.2021', 'time': '19:45'}, 'carrier': 'Koleje Śląskie sp. z o.o.',
-            'train_number': '40634'},
+            {'start_waypoint': {'station': 'Gliwice', 'platform': 'Peron II Tor 6'}, 'end_waypoint': {'station':
+            'Katowice', 'platform': 'Peron III Tor 2'}, 'start_date': {'date': '23.11.2021', 'hour': '19:16'},
+            'end_date': {'date': '23.11.2021', 'hour': '19:45'}, 'carrier': 'Koleje Śląskie sp. z o.o.',
+            'number': '40634'},
 
-            {'start_location': {'station': 'Gliwice', 'platform': 'Peron II Tor 5'}, 'end_location': {'station':
-            'Katowice', 'platform': 'Peron IV Tor 10'}, 'start_datetime': {'date': '23.11.2021', 'time': '19:32'},
-            'end_datetime': {'date': '23.11.2021', 'time': '19:56'}, 'carrier': '„PKP Intercity” Spółka Akcyjna',
-            'train_number': '63102'}
+            {'start_waypoint': {'station': 'Gliwice', 'platform': 'Peron II Tor 5'}, 'end_waypoint': {'station':
+            'Katowice', 'platform': 'Peron IV Tor 10'}, 'start_date': {'date': '23.11.2021', 'hour': '19:32'},
+            'end_date': {'date': '23.11.2021', 'hour': '19:56'}, 'carrier': '„PKP Intercity” Spółka Akcyjna',
+            'number': '63102'}
         """
-        self.open_webpage()
-        self.find_page_elements()
+        self.start_engine()
+        self._search_input_elements()
+
         schedule_markup = self.request_schedule_markup(
-            departure_station, arrival_station, time_start, date_start
+            departure_station, arrival_station, hour, date
         )
         parser = RailroadScheduleParser(schedule_markup)
         trains = parser.parse_schedule()
+
         return trains
