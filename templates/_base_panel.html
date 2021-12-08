@@ -2,18 +2,18 @@
 {% load static %}
 
 {% block main %}
-    <div class="flex flex-col items-center m-5 bg-white bg-opacity-10 rounded-xl">
-        <div class="object-contain object-top mt-4 mb-2 p-1">
+    <div class="m-8 flex flex-col items-center bg-white bg-opacity-10 rounded-xl">
+        <div class="object-top object-contain">
             {% block navbar %}
                 <a href="{% url 'home' %}">
-                    <img alt="Strona Główna" src="{% static 'img/logo.png' %}">
+                    <img alt="Strona Główna" src="{% static 'img/logo_panel.png' %}">
                 </a>
-            {% endblock navbar %}
+            {% endblock %}
         </div>
-        <div class="flex flex-col items-center w-11/12 p-4 mx-2 mb-10 space-y-3 bg-white bg-opacity-20 rounded-lg">
-            {% block content %}
+        <div class="m-4 mb-5 object-bottom flex flex-col items-center text-white">
+            {% block content %} <!--- OVERRIDE THIS IN OTHER TEMPLATES! --->
                 (no content)
-            {% endblock content %}
+            {% endblock%}
         </div>
     </div>
 {% endblock %}
