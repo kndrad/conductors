@@ -2,6 +2,7 @@ import caldav
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views import View
 from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin
@@ -28,6 +29,25 @@ class AllocationTimetableAllocationsView(AllocationTimetableViewMixin, ListView)
             '-year', '-month'
         )
         return timetables
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user = self.request.user
+
+        if not user.caldav_account:
+            context['caldav_account_href'] = reverse('create_caldav_account')
+        else:
+            pk = user.caldav_account.pk
+            context['caldav_account_href'] = reverse('update_caldav_account', kwargs={'pk': pk})
+
+        if not user.railroad_account:
+            context['railroad_account_href'] = reverse('create_railroad_account')
+        else:
+            pk = user.railroad_account.pk
+            context['railroad_account_href'] = reverse('update_railroad_account', kwargs={'pk': pk})
+
+        return context
 
 
 class ImportAllocationTimetableFormView(

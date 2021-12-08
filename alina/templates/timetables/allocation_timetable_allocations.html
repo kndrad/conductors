@@ -1,58 +1,51 @@
 {% extends '_base.html' %}
 
+{% load static %}
 {% load date_representations %}
 
 {% block extra_title %}Plany | {% endblock %}
 
 {% block main %}
 
-{% block navbar %}navbar{% endblock navbar %}
+{% block navbar %}
+    <nav class="flex container text-white bg-blue-600 p-4">
+        <div class="w-4/6 my-auto">
+            <a href="{% url 'home' %}">
+                <img alt="Strona Główna"
+                     src="{% static 'img/logo_text.png' %}"/>
+            </a>
+        </div>
+        <div class="justify-end text-sm my-auto">
+            <a href={{ caldav_account_href }}>
+                Konto CalDAV
+            </a>
+            <a href={{ railroad_account_href }}>
+                Konto kolejowe
+            </a>
+        </div>
+    </nav>
+{% endblock navbar %}
 
 {% block content %}
     <div class="text-white">
-        <div>
         {% if messages %}
              {% for message in messages %}
                  <div>
                      {{ message|safe }}
                  </div>
              {% endfor %}
-        {% endif %}
-        {% if not user.caldav_account %}
-        <a href="{% url 'create_caldav_account' %}">
-            Utwórz konto CalDAV
-        </a>
-        {% else %}
-        <a href="{% url 'update_caldav_account' user.caldav_account.pk %}">
-            Aktualizuj konto CalDAV
-        </a>
-        {% endif %}
+        </div>
         <a href="{% url 'import_allocation_timetable' %}">Importuj plan</a>
-        </div>
-        <div>
-        {% if not user.railroad_account %}
-        <a href="{% url 'create_railroad_account' %}">
-            Utwórz konto kolejowe
-        </a>
-        {% else %}
-        <a href="{% url 'update_railroad_account' user.railroad_account.pk %}">
-            Aktualizuj konto kolejowe
-        </a>
         {% endif %}
-        </div>
         <a href="{% url 'import_allocation_timetable' %}">Importuj plan</a>
         <div>
             <ul>
                 {% for timetable in timetables %}
                     <div>
-                        <div>
-                            Miesiąc: {{ timetable.month }} Rok: {{ timetable.year }}
-                        </div>
-                        <div>
-                            <span>
-                                Ostatnia aktualizacja: {{ timetable.last_updated|represent_date }}
-                            </span>
-                        </div>
+                    Miesiąc: {{ timetable.month }} Rok: {{ timetable.year }}
+                    <span>
+                        Ostatnia aktualizacja: {{ timetable.last_updated|represent_date }}
+                    </span>
                         <form method='POST' action='{% url 'update_allocations' timetable.pk %}'>
                             {% csrf_token %}
                             <button>Zaktualizuj służby</button>
@@ -103,7 +96,6 @@
                     </div>
                 {% endfor %}
             </ul>
-        </div>
         </div>
 {% endblock content %}
 

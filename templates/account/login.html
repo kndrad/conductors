@@ -5,7 +5,7 @@
 {% block content %}
     <div class="text-center text-white">
         <p class="text-sm italic">Proszę użyć danych logowania z portalu pracowniczego Irena.</p>
-        <p class="mb-4 mt-2 font-semibold underline">Twoje hasło nie będzie przechowywane.</p>
+        <p class="mb-4 font-semibold underline">Twoje hasło nie będzie przechowywane.</p>
     </div>
 
     {% if form.non_field_errors %}
@@ -21,7 +21,7 @@
             {{ field }}
         {% endfor %}
     <button type="submit"
-            class="mt-4 py-2 px-4 w-full bg-blue-500 text-white text-center text-lg font-normal rounded">
+            class="w-full bg-blue-500 text-white text-center text-lg font-normal rounded mt-4 py-2 px-4">
         Zaloguj się
     </button>
     </form>
