@@ -67,7 +67,7 @@ class UpdateAllocationTimetableAllocationsView(AllocationTimetableViewMixin, Sin
     def post(self, request, **kwargs):
         self.object = self.get_object()
         self.object.update_allocations_on_request(self.request)
-        message = f"Przeprowadzono aktualizację harmonogramu {self.object.month}-{self.object.year}. "
+        message = f"Przeprowadzono aktualizację harmonogramu {self.object.get_month_display()} {self.object.year}. "
         if not self.object.allocation_set.exists():
             messages.warning(
                 self.request,
@@ -95,7 +95,7 @@ class SendAllocationTimetableToDAVClientView(AllocationTimetableViewMixin, Singl
             try:
                 principal = client.principal()
             except caldav.error.DAVError:
-                messages.error(request, "Wystąpił błąd poczas wysyłania kalendarza.com")
+                messages.error(request, "Wystąpił błąd podczas wysyłania kalendarza. Spróbuj jescze raz.")
             else:
                 try:
                     calendar = principal.calendar(name=self.object.name)
