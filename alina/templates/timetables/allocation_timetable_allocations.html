@@ -23,20 +23,24 @@
              </div>
          {% endfor %}
     {% endif %}
-    <a class="my-2 w-full py-2 px-4 block text-center bg-gray-800 text-sm rounded-xl" href="{% url 'import_allocation_timetable' %}">
+    <a class="m-2 w-full py-2 px-4 block text-center bg-gray-800 text-sm rounded-xl" href="{% url 'import_allocation_timetable' %}">
         Importuj harmonogramy
     </a>
 
     <ul>
     {% for timetable in timetables %}
-        <div class="mt-2 p-2 bg-white bg-opacity-5 rounded">
-            <span>Miesiąc: {{ timetable.month }} Rok: {{ timetable.year }}</span>
-            <span>
-            Ostatnia aktualizacja: {{ timetable.last_updated|represent_date }}
-            </span>
+        <div class="mb-3 p-2 bg-white bg-opacity-5 rounded">
+            <div class="m-1 py-1 px-2 border rounded">
+                <span>{{ timetable.get_month_display }} {{ timetable.year }}</span>
+            </div>
+            <div class="m-1 text-sm py-1 px-4">
+                <span>
+                Ostatnia aktualizacja: {{ timetable.last_updated|represent_date }}
+                </span>
+            </div>
             <form method='POST' action='{% url 'update_allocations' timetable.pk %}'>
                 {% csrf_token %}
-                <button class="my-1 py-1 px-4 text-sm w-full bg-green-600 rounded">
+                <button class="m-1 py-1 px-4 text-sm w-full bg-green-600 rounded">
                     Aktualizuj
                 </button>
             </form>
@@ -77,9 +81,7 @@
                     </div>
                 {% endfor %}
             {% else %}
-                <div>
-                    <span>Brak służb</span>
-                </div>
+            <span class="text-red-500 font-semibold">Brak służb</span>
             {% endif %}
         </div>
     {% endfor %}
