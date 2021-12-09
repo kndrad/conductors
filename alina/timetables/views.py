@@ -91,35 +91,33 @@ class SendAllocationTimetableToDAVClientView(AllocationTimetableViewMixin, Singl
 
         if request.user.caldav_account:
             client = request.user.caldav_account.get_client()
-            principal = client.principal()
 
             try:
-                calendar = principal.calendar(name=self.object.name)
-            except caldav.error.NotFoundError:
-                calendar = principal.make_calendar(name=self.object.name)
+                principal = client.principal()
+            except caldav.error.DAVError:
+                messages.error(request, "Wystąpił błąd poczas wysyłania kalendarza.com")
+            else:
+                try:
+                    calendar = principal.calendar(name=self.object.name)
+                except caldav.error.NotFoundError:
+                    calendar = principal.make_calendar(name=self.object.name)
 
-            for event in calendar.events():
-                event.delete()
+                for event in calendar.events():
+                    event.delete()
 
-            for allocation in self.object.allocation_set.all():
-                allocation.add_details_on_request(self.request)
+                for allocation in self.object.allocation_set.all():
+                    allocation.add_details_on_request(self.request)
 
-                component = allocation.get_as_ical_component()
-                ical = component.to_ical()
-                calendar.save_event(ical)
+                    component = allocation.get_as_ical_component()
+                    ical = component.to_ical()
+                    calendar.save_event(ical)
 
-                if hasattr(allocation, 'train'):
-                    if allocation.train.before:
-                        train = allocation.train.before
-                        component = train.get_as_ical_component()
-                        ical = component.to_ical()
-                        calendar.save_event(ical)
-
-                    if allocation.train.after:
-                        train = allocation.train.after
-                        component = train.get_as_ical_component()
-                        ical = component.to_ical()
-                        calendar.save_event(ical)
+                    if hasattr(allocation, 'train'):
+                        for train in [allocation.train.before, allocation.train.after]:
+                            if train:
+                                component = train.get_as_ical_component()
+                                ical = component.to_ical()
+                                calendar.save_event(ical)
         else:
             messages.warning(
                 self.request, "Aby wysłać służby do serwera CalDAV, potrzebna jest konfiguracja konta."
