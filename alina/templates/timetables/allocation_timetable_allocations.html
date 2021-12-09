@@ -1,44 +1,29 @@
-{% extends '_base.html' %}
+{% extends '_page.html' %}
 
 {% load static %}
 {% load date_representations %}
 
 {% block extra_title %}Plany | {% endblock %}
 
-{% block main %}
-
-{% block navbar %}
-    <nav class="flex container text-white bg-blue-600 p-4">
-        <div class="w-4/6 my-auto">
-            <a href="{% url 'home' %}">
-                <img alt="Strona Główna"
-                     src="{% static 'img/logo_text.png' %}"/>
-            </a>
-        </div>
-        <div class="justify-end text-sm my-auto">
-            <a href={{ caldav_account_href }}>
-                Konto CalDAV
-            </a>
-            <a href={{ railroad_account_href }}>
-                Konto kolejowe
-            </a>
-        </div>
-    </nav>
-{% endblock navbar %}
+{% block navbar_buttons %}
+    <a class="text-xs" href={{ caldav_account_href }}>
+        CalDAV
+    </a>
+    <a class="text-xs" href={{ railroad_account_href }}>
+        Ustal stacje
+    </a>
+{% endblock %}
 
 {% block content %}
-    <div class="text-white">
-        {% if messages %}
-             {% for message in messages %}
-                 <div>
-                     {{ message|safe }}
-                 </div>
-             {% endfor %}
-        </div>
+    <div class="flex flex-wrap items-center">
+    {% if messages %}
+         {% for message in messages %}
+             <div>
+                 {{ message|safe }}
+             </div>
+         {% endfor %}
+    {% endif %}
         <a href="{% url 'import_allocation_timetable' %}">Importuj plan</a>
-        {% endif %}
-        <a href="{% url 'import_allocation_timetable' %}">Importuj plan</a>
-        <div>
             <ul>
                 {% for timetable in timetables %}
                     <div>
@@ -56,12 +41,11 @@
                                 <button>Wyślij kalendarz</button>
                             </form>
                             {% for allocation in timetable.allocation_set.all %}
-                                <span>----------------------------------------------------------</span>
                                 <div>
                                     {% if not allocation.train.before %}
                                     <form method='POST' action="{% url 'search_train_before_allocation' allocation.pk %}">
                                         {% csrf_token %}
-                                        <button>Wyszukaj pociąg przed</button>
+                                    <button>Wyszukaj pociąg przed</button>
                                     </form>
                                     {% else %}
                                         <a href="{% url 'train_detail' allocation.train.before.pk %}">
@@ -92,11 +76,8 @@
                                 <span>Brak służb</span>
                             </div>
                         {% endif %}
-                        <span>****************************************************************************</span>
                     </div>
                 {% endfor %}
             </ul>
         </div>
 {% endblock content %}
-
-{% endblock main %}

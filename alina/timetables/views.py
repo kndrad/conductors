@@ -32,20 +32,14 @@ class AllocationTimetableAllocationsView(AllocationTimetableViewMixin, ListView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
         user = self.request.user
 
-        if not user.caldav_account:
-            context['caldav_account_href'] = reverse('create_caldav_account')
-        else:
-            pk = user.caldav_account.pk
-            context['caldav_account_href'] = reverse('update_caldav_account', kwargs={'pk': pk})
-
-        if not user.railroad_account:
-            context['railroad_account_href'] = reverse('create_railroad_account')
-        else:
-            pk = user.railroad_account.pk
-            context['railroad_account_href'] = reverse('update_railroad_account', kwargs={'pk': pk})
+        for account in ['caldav_account', 'railroad_account']:
+            if not getattr(user, account):
+                context[f'{account}_href'] = reverse(f'create_{account}')
+            else:
+                pk = getattr(user, account).pk
+                context[f'{account}_href'] = reverse(f'update_{account}', kwargs={'pk': pk})
 
         return context
 

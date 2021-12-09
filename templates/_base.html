@@ -2,27 +2,19 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="bg-black bg-opacity-90">
     <head>
-        <title>{% block extra_title %}{% endblock %}Conductors</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        {% tailwind_css %}
-        {% block head_extra %}
-        {% endblock %}
+    <title>{% block extra_title %}{% endblock %}Conductors</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    {% tailwind_css %}
+    {% block head_extra %}
+    {% endblock %}
     </head>
 
-    <body class="bg-black bg-opacity-90">
-        <div class="container mx-auto">
-            {% block main %}
-                {% block navbar %}(no navbar){% endblock %}
-                <!--- MAIN--->
-                    <!--- OVERRIDE BLOCK CONTENT IN TEMPLATES --->
-                    {% block content %}no content{% endblock content %}
-                    <!---->
-            {% endblock %}
-        </div>
-        <!--- END OF MAIN BLOCK --->
+    <body>
+    {% block body %}
+    {% endblock body %}
     </body>
 </html>
