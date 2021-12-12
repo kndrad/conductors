@@ -96,6 +96,10 @@ class PublicRailroadTrain(models.Model, ICalComponentable):
         return reverse('train_detail', kwargs={'pk': self.pk})
 
     @property
+    def departure_day(self):
+        return self.departure_date.day
+
+    @property
     def carrier_initials(self):
         if not self.carrier:
             return

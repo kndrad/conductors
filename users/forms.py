@@ -1,10 +1,12 @@
 from allauth.account.forms import LoginForm
 
 
-class TailwindLoginForm(LoginForm):
+class RoundedFieldsLoginForm(LoginForm):
+    """Login form which shows rounded fields in html.
+    """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        widget_attrs_class = 'w-full text-center rounded'
-        self.fields['login'].widget.attrs['class'] = widget_attrs_class
-        self.fields['password'].widget.attrs['class'] = widget_attrs_class
+
+        for key, field in self.fields.items():
+            field.widget.attrs['class'] = 'w-full rounded'

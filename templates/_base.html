@@ -14,7 +14,25 @@
     </head>
 
     <body>
-    {% block body %}
-    {% endblock body %}
+    <div class="relative">
+        <nav class="static sticky top-0 bg-blue-800 px-4 py-3">
+            <div class="flex flex-row items-center justify-between flex-wrap text-white">
+                <a class="fill-current mr-5" href="{% url 'home' %}">
+                    {% include 'svgs/high-speed-train-svgrepo-com.svg' %}
+                </a>
+                <div class="inline-flex flex-grow space-x-3">
+                    {% block navbar_buttons %}{% endblock %}
+                </div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'account_logout' %}"
+                    class="bg-blue-600 focus:shadow-lg shadow-blue-600/50
+                    font-semibold text-sm py-1.5 px-4 rounded">
+                        Wyloguj
+                    </a>
+                {% endif %}
+            </div>
+        </nav>
+    {% block content %}(no content){% endblock %}
     </body>
+    </div>
 </html>

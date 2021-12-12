@@ -1,6 +1,6 @@
 import datetime
 
-import caldav
+from calendar import monthrange
 import icalendar
 from dateutil.parser import parse as dateutil_parse
 from django.conf import settings
@@ -89,6 +89,13 @@ class AllocationTimetable(UUIDCommonModel):
     def name(self):
         return f'Służby {self.month}-{self.year}'
 
+    @property
+    def month_days(self):
+        return monthrange(self.year, self.month)[1]
+
+    def get_month_days(self):
+        return range(1, self.month_days + 1)
+
 
 class Allocation(UUIDCommonModel, ICalComponentable):
     title = models.CharField('Tytuł', max_length=32)
@@ -119,6 +126,10 @@ class Allocation(UUIDCommonModel, ICalComponentable):
 
     def get_absolute_url(self):
         return reverse('allocation_details', kwargs={'pk': self.pk})
+
+    @property
+    def start_day(self):
+        return int(self.start_date.day)
 
     def add_details_on_request(self, request):
         if self.allocationdetail_set.exists():
@@ -169,6 +180,11 @@ class Allocation(UUIDCommonModel, ICalComponentable):
         event.add('description', description)
         cal.add_component(event)
         return cal
+
+    def is_searching_trains_available(self):
+        days = 30
+        past_date = timezone.now() - datetime.timedelta(days=days)
+        return self.start_date > past_date
 
 
 class AllocationTrain(models.Model):

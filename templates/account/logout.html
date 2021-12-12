@@ -2,7 +2,7 @@
 
 {% block extra_title %}Wyloguj | {% endblock %}
 
-{% block content %}
+{% block inner_content %}
     <div class="text-center">
         <span>Czy na pewno chcesz się wylogować?</span>
     </div>
@@ -11,7 +11,8 @@
     {% if redirect_field_value %}
     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
     {% endif %}
-    <button class="w-full text-center text-lg bg-red-500 font-normal rounded mt-4 py-2 px-4"
+    <button class="w-full text-center text-lg bg-red-600 focus:ring-1 focus:ring-red-600/50
+    font-semibold rounded mt-4 py-2 px-4"
             type="submit">
         Wyloguj się
     </button>

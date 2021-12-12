@@ -1,0 +1,19 @@
+
+{% if form.non_field_errors %}
+    <ul>
+        {% for error in form.non_field_errors %}
+            <li>{{ error }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<form class="text-black" method="POST">{% csrf_token %}
+    {% for field in form.visible_fields %}
+        {{ field }}
+    {% endfor %}
+    <button type="submit"
+        class="w-full bg-{{ button_color }} focus:ring-1 focus:ring-{{ button_color }}/50 text-white text-center
+        text-lg font-semibold rounded mt-4 py-2 px-4">
+    {{ button_label }}
+    </button>
+</form>
