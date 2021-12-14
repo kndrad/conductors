@@ -5,17 +5,25 @@
 
 {% block extra_title %}Plany | {% endblock %}
 
+{% block scripts %}
+<script src="{% static 'js/timetables.js' %}"></script>
+{% endblock %}
+
 {% block navbar_buttons %}
-    <a class="text-sm" href={{ caldav_account_href }}>
+    <a class="py-1 px-2 rounded bg-blue-600"
+       href="{% url 'import_allocation_timetable' %}">
+        Importuj
+    </a>
+    <a href={{ caldav_account_href }}>
         CalDAV
     </a>
-    <a class="text-sm" href={{ railroad_account_href }}>
+    <a href={{ railroad_account_href }}>
         Stacje
     </a>
 {% endblock %}
 
 {% block content %}
-    <div class="static flex flex-col items-center text-white text-center px-2.5">
+    <div class="flex flex-col items-center text-white text-center px-2.5">
     {% if messages %}
          {% for message in messages %}
              <div>
@@ -23,14 +31,11 @@
              </div>
          {% endfor %}
     {% endif %}
-    <a class="my-2 w-full py-2 px-4 block text-center font-semibold bg-gray-800 text-sm rounded-xl"
-       href="{% url 'import_allocation_timetable' %}">
-        Importuj harmonogram
-    </a>
 
     <ul>
     {% for timetable in timetables %}
-        <div class="w-screen mb-3 p-2 bg-white bg-opacity-5">
+        <div id="timetable-{{ timetable.month }}-{{ timetable.year }}"
+             class="w-screen mb-3 p-2 bg-white bg-opacity-5">
             <div class="py-1 px-2 text-xl">
                 <span>{{ timetable.get_month_display }} {{ timetable.year }}</span>
             </div>
@@ -94,36 +99,3 @@
     </ul>
 </div>
 {% endblock %}
-{#                    {% for allocation in timetable.allocation_set.all %}#}
-{#                        {% if allocation.start_day == day %}#}
-{#                        <div>#}
-{#                            {% if not allocation.train.before %}#}
-{#                            <form method='POST' action="{% url 'search_train_before_allocation' allocation.pk %}">#}
-{#                                {% csrf_token %}#}
-{#                            <button>Wyszukaj pociąg przed</button>#}
-{#                            </form>#}
-{#                            {% else %}#}
-{#                                <a href="{% url 'train_detail' allocation.train.before.pk %}">#}
-{#                                {{ allocation.train.before }}#}
-{#                                </a>#}
-{#                            {% endif %}#}
-{##}
-{#                            <div>#}
-{#                                <a href="{% url 'allocation_details' allocation.pk %}">#}
-{#                                {{ allocation }}#}
-{#                                </a>#}
-{#                            </div>#}
-{##}
-{#                            {% if not allocation.train.after %}#}
-{#                            <form method='POST' action="{% url 'search_train_after_allocation' allocation.pk %}">#}
-{#                                {% csrf_token %}#}
-{#                                <button>Wyszukaj pociąg po</button>#}
-{#                            </form>#}
-{#                            {% else %}#}
-{#                                <a href="{% url 'train_detail' allocation.train.after.pk %}">#}
-{#                                {{ allocation.train.after }}#}
-{#                                </a>#}
-{#                            {% endif %}#}
-{#                        </div>#}
-{#                        {% endif %}#}
-{#                    {% endfor %}#}
