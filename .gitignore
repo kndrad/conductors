@@ -102,4 +102,5 @@ conductors/.env
 /conductors/config/production.py
 /setup.cfg
 /conductors/staticfiles/
-/node_modules/
+/static/node_modules/
+/static/package-lock.json

@@ -47,7 +47,7 @@ class AllocationTimetable(UUIDCommonModel):
         return f'AllocationTimetable({self.month}, {self.year}, {self.user})'
 
     def get_absolute_url(self):
-        return reverse('allocation_timetable_allocations', kwargs={'pk': self.user.pk})
+        return reverse('allocation_timetable_detail', kwargs={'pk':self.pk})
 
     def add_allocations_on_request(self, request):
         if self.allocation_set.exists():
@@ -117,8 +117,9 @@ class Allocation(UUIDCommonModel, ICalComponentable):
         ordering = ['start_date']
 
     def __str__(self):
-        start_date_local = timezone.localtime(self.start_date).strftime(REPRESENTATIVE_DATE_FORMAT)
-        end_date_local = timezone.localtime(self.end_date).strftime(REPRESENTATIVE_DATE_FORMAT)
+        fmt = '%H:%M'
+        start_date_local = timezone.localtime(self.start_date).strftime(fmt)
+        end_date_local = timezone.localtime(self.end_date).strftime(fmt)
         return f'{start_date_local} {self.title} {end_date_local}'
 
     def __repr__(self):

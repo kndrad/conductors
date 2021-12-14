@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import caldav
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -6,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView
-from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.contrib import messages
 from alina.models import AllocationTimetable
 from utils.views import HiddenUserFormMixin
@@ -18,10 +20,10 @@ class AllocationTimetableViewMixin(LoginRequiredMixin, View):
     context_object_name = 'timetable'
 
 
-class AllocationTimetableAllocationsView(AllocationTimetableViewMixin, ListView):
+class AllocationTimetableListView(AllocationTimetableViewMixin, ListView):
     """Displays list of allocation timetables.
     """
-    template_name = 'timetables/allocation_timetable_allocations.html'
+    template_name = 'timetables/allocation_timetable_list.html'
     context_object_name = 'timetables'
 
     def get_queryset(self):
@@ -29,35 +31,45 @@ class AllocationTimetableAllocationsView(AllocationTimetableViewMixin, ListView)
             user=self.request.user).all().order_by(
             '-year', '-month'
         )
+        self.create_or_update_timetables()
         return timetables
 
-    def get(self, request, *args, **kwargs):
-        """GET request checks if current month timetable exists.
-        If not, then creation procedure is executed.
-        """
-        now = timezone.now()
+    def create_or_update_timetables(self):
+        current_date = timezone.now()
+        future_date = timezone.now() + timedelta(days=30)
         user = self.request.user
 
-        timetable, created = self.model.objects.get_or_create(
-            user=user, month=now.month, year=now.year
-        )
-        if created:
-            timetable.add_allocations_on_request(self.request)
+        for date in [current_date, future_date]:
+            timetable, created = self.model.objects.get_or_create(
+                user=user, month=date.month, year=date.year
+            )
+            if created:
+                timetable.add_allocations_on_request(self.request)
+            else:
+                timetable.update_allocations_on_request(self.request)
 
-        return super().get(request, *args, **kwargs)
+        return timetable
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        accounts = ['caldav_account', 'railroad_account']
+        account = 'caldav_account'
 
-        for account in accounts:
-            if not getattr(user, account):
-                context[f'{account}_href'] = reverse(f'create_{account}')
-            else:
-                pk = getattr(user, account).pk
-                context[f'{account}_href'] = reverse(f'update_{account}', kwargs={'pk': pk})
+        if not getattr(user, account):
+            context[f'{account}_href'] = reverse(f'create_{account}')
+        else:
+            pk = getattr(user, account).pk
+            context[f'{account}_href'] = reverse(f'update_{account}', kwargs={'pk': pk})
 
+        return context
+
+
+class AllocationTimetableDetailView(AllocationTimetableViewMixin, DetailView):
+    template_name = 'timetables/allocation_timetable_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['allocations'] = self.object.allocation_set.all()
         return context
 
 
@@ -84,16 +96,6 @@ class UpdateAllocationTimetableAllocationsView(AllocationTimetableViewMixin, Sin
     def post(self, request, **kwargs):
         self.object = self.get_object()
         self.object.update_allocations_on_request(self.request)
-        message = f"Przeprowadzono aktualizację harmonogramu {self.object.get_month_display()} {self.object.year}. "
-        if not self.object.allocation_set.exists():
-            messages.warning(
-                self.request,
-                message + "Niestety ten harmonogram nie posiada służb."
-            )
-        else:
-            messages.success(
-                self.request, message
-            )
         return redirect(self.object.get_absolute_url())
 
 

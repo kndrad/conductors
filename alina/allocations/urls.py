@@ -9,7 +9,7 @@ from alina.allocations.views import (
 
 urlpatterns = [
     path(
-        'details/<uuid:pk>/', AllocationView.as_view(), name='allocation_details'
+        'details/<uuid:pk>/', AllocationView.as_view(), name='allocation_detail'
     ),
     path(
         'update/<uuid:pk>/', UpdateAllocationView.as_view(), name='update_allocation'

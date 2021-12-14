@@ -11,15 +11,16 @@
     {% tailwind_css %}
     {% block head_extra %}
     {% endblock %}
+    <script src="{% static 'node_modules/jquery/dist/jquery.js' %}"></script>
     {% block scripts %}{% endblock %}
     </head>
 
     <body>
-        <div id="navBar" class="sticky top-0 w-full p-2 pb-2 mb-2 bg-blue-800 shadow shadow-blue-800">
+        <div id="navBar" class="sticky top-0 w-full p-2 pb-2 mb-3 bg-blue-800 shadow shadow-blue-800">
             <nav class="flex flex-row items-center flex-wrap justify-between text-white">
                 <div class="flex flex-row items-center flex-wrap space-x-3 text-xs">
                     <a class="h-8 w-8 mr-1 fill-current" href="{% url 'home' %}">
-                        {% include 'svgs/train-svgrepo-com.svg' %}
+                        {% include 'train-svgrepo-com.svg' %}
                     </a>
                 {% block navbar_buttons %}{% endblock %}
                 </div>

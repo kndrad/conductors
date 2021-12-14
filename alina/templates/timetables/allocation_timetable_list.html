@@ -1,0 +1,59 @@
+{% extends '_base.html' %}
+
+{% load static %}
+{% load date_representations %}
+
+{% block extra_title %}Plany | {% endblock %}
+
+{% block scripts %}
+<script type="module" src="{% static 'timetables.js' %}"></script>
+{% endblock %}
+
+{% block navbar_buttons %}
+    <a href="{% url 'import_allocation_timetable' %}">
+        Importuj harmonogram
+    </a>
+    <a href={{ caldav_account_href }}>
+        CalDAV
+    </a>
+{% endblock %}
+
+{% block content %}
+    <div class="flex flex-col items-center text-white text-center px-2.5">
+    {% if messages %}
+         {% for message in messages %}
+             <div>
+                 {{ message|safe }}
+             </div>
+         {% endfor %}
+    {% endif %}
+    <ul>
+    {% for timetable in timetables %}
+        <div id="{{ timetable.month }}-{{ timetable.year }}-allocations-{{ timetable.allocation_set.exists }}"
+             class="w-screen mb-3 p-2 bg-white bg-opacity-5">
+            <div class="py-1 px-2 text-xl">
+                <span>{{ timetable.get_month_display }} {{ timetable.year }}</span>
+            </div>
+            {% if timetable.allocation_set.exists %}
+                <form class="w-full text-center bg-blue-800 mb-3 rounded" method='POST'
+                      action='{% url 'send_allocation_timetable_to_dav_client' timetable.pk %}'>
+                    {% csrf_token %}
+                    <button class="w-full text-sm py-1 font-semibold"
+                            type="submit">
+                        Wyślij kalendarz
+                    </button>
+                </form>
+                <a class="w-full bg-red-600 rounded"
+                   href="
+                    {% url 'allocation_timetable_detail' timetable.pk %}
+                    ">
+                    Zobacz służby
+                </a>
+            {% else %}
+                <span class="text-red-500 font-semibold">Brak służb</span>
+            {% endif %}
+        </div>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}

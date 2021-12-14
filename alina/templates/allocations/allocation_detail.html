@@ -1,5 +1,6 @@
 {% extends '_base.html' %}
 
+{% load static %}
 {% load alina_dates %}
 {% load date_representations %}
 
@@ -32,7 +33,7 @@
         <span>Brak danych</span>
     {% endif %}
     <div>
-        <a href="{% url 'allocation_timetable_allocations' user.pk %}">
+        <a href="{% url 'allocation_timetables' user.pk %}">
             <span>Wróć</span>
         </a>
     </div>
