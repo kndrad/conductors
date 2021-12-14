@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin
@@ -29,6 +30,21 @@ class AllocationTimetableAllocationsView(AllocationTimetableViewMixin, ListView)
             '-year', '-month'
         )
         return timetables
+
+    def get(self, request, *args, **kwargs):
+        """GET request checks if current month timetable exists.
+        If not, then creation procedure is executed.
+        """
+        now = timezone.now()
+        user = self.request.user
+
+        timetable, created = self.model.objects.get_or_create(
+            user=user, month=now.month, year=now.year
+        )
+        if created:
+            timetable.add_allocations_on_request(self.request)
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
