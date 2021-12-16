@@ -126,7 +126,7 @@ class Allocation(UUIDCommonModel, ICalComponentable):
         return f'Allocation({self.title}, {self.start_date}, {self.end_date})'
 
     def get_absolute_url(self):
-        return reverse('allocation_details', kwargs={'pk': self.pk})
+        return reverse('allocation_detail', kwargs={'pk': self.pk})
 
     @property
     def start_day(self):

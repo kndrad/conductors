@@ -64,8 +64,7 @@ class SearchAllocationTrainBeforeAllocationView(SearchAllocationTrainView):
         allocation_train.search_before(
             departure_station, arrival_station, spare_time
         )
-        path = reverse('allocation_timetable_allocations', kwargs={'pk': user.pk})
-        return redirect(path)
+        return redirect(self.object.get_absolute_url())
 
 
 class SearchAllocationTrainAfterAllocationView(SearchAllocationTrainView):
@@ -85,5 +84,4 @@ class SearchAllocationTrainAfterAllocationView(SearchAllocationTrainView):
         allocation_train.search_after(
             departure_station, arrival_station, spare_time=0
         )
-        path = reverse('allocation_timetable_allocations', kwargs={'pk': user.pk})
-        return redirect(path)
+        return redirect(self.object.get_absolute_url())

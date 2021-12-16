@@ -29,33 +29,33 @@
         </span>
     </div>
     <div class="w-full mb-3 border border-opacity-50 rounded">
-        <table class="table-auto border-collapse w-full px-3 text-center">
-            <thead class="bg-white bg-opacity-5">
-                <tr>
-                    <th class="py-2 px-2 w-8">Dzień</th>
-                    <th class="py-2 w-full">Służba</th>
-                </tr>
-            </thead>
-            <tbody>
+        <div class="table table-auto border-collapse w-full px-3 text-center">
+            <div class="table-header-group bg-white bg-opacity-5">
+                <div class="table-row">
+                    <div class="table-cell py-2 px-2 w-8">Dzień</div>
+                    <div class="table-cell py-2 w-full">Służba</div>
+                </div>
+            </div>
+            <div class="table-row-group">
             {% for day in timetable.get_month_days %}
-                <tr id="day{{ day }}" class="w-full border border-white border-opacity-25">
-                    <td class="py-1.5 border border-white border-opacity-25 font-semibold text-3xl">
+                <div id="day{{ day }}Month{{ timetable.month }}"
+                     class="table-row w-full border border-white border-opacity-25">
+                    <div class="table-cell py-1.5 border border-white border-opacity-25 font-semibold text-3xl">
                         {{ day }}
-                    </td>
+                    </div>
                     {% for allocation in allocations %}
                         {% if allocation.start_day == day %}
-                            <td class="py-1.5 px-2 text-xl">
+                            <div class="table-cell py-1.5 px-2 text-xl">
                                 <button id="{{ allocation.title }}" class="w-full py-1 bg-blue-900 rounded-2xl">
                                     <a href="{% url 'allocation_detail' allocation.pk %}">
                                     {{ allocation }}
                                     </a>
                                 </button>
+                            </div>
                         {% endif %}
                     {% endfor %}
-                </tr>
+                </div>
             {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            </div>
 </div>
 {% endblock %}
