@@ -4,9 +4,7 @@
 {% block extra_title %}Załoga {{ train_crew.train_number }} | {% endblock %}
 
 {% block content %}
-    <div>
         <span>Ostatnia aktualizacja: {{ train_crew.last_updated|represent_date}}</span>
-    </div>
     <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
         {% csrf_token %}
         <button>Zaktualizuj</button>
@@ -19,7 +17,7 @@
         <span>Brak danych</span>
     {% endif %}
     <div>
-        <a href="{% url 'allocation_timetable_allocations' user.pk %}">
+        <a href="{% url 'allocation_timetables' user.pk %}">
             <span>Wróć</span>
         </a>
     </div>

@@ -6,35 +6,84 @@
 
 {% block extra_title %}{{ allocation.title }} | {% endblock %}
 
+{% block navbar_buttons %}
+    <form class="bg-green-600 rounded" method='POST' action='{% url 'update_allocation' allocation.pk %}'>
+    {% csrf_token %}
+        <button class="px-2 py-1">Zaktualizuj</button>
+    </form>
+{% endblock %}
+
 {% block content %}
     {% if allocation.allocationdetail_set.exists %}
-        <div>
-            <span>Ostatnia aktualizacja: {{ allocation.last_updated|represent_date }}</span>
+        <div class="flex items-center flex-col w-full px-2.5 mb-2 text-white">
+            <p class="mb-1">Ostatnia aktualizacja: {{ allocation.last_updated|represent_date }}</p>
+            <p class="text-sm italic">Aby zobaczyć załogę, kliknij w numer pociągu.</p>
         </div>
-        <form method='POST' action='{% url 'update_allocation' allocation.pk %}'>
-            {% csrf_token %}
-            <button>Zaktualizuj</button>
-        </form>
+
+    <div class="w-full bg-white flex-col bg-opacity-5 p-1 px-2.5 rounded">
+        <div class="w-full text-center text-white text-3xl">{{ allocation.title }}</div>
+        <div class="flex justify-between space-x-1 px-1 border border-white mt-2 border-opacity-25 rounded">
+            <div class="w-full text-white mb-2 p-1 space-y-0.5">
+                <div class="mb-2 text-center">
+                    <p class="text-center text-sm italic">Początek</p>
+                    <p>{{ allocation.start_date }}</p>
+                </div>
+                <div class="mb-2">
+                    {% if allocation.train.before %}
+                        <p class="text-center text-sm">Pociąg przed</p>
+                        <p> {{ allocation.train.before }}</p>
+                    {% else %}
+                        <div class="bg-cyan-500 rounded py-1 text-center font-semibold">Załaduj pociąg</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="w-full text-white mb-2 p-1 space-y-0.5">
+                <div class="mb-2 text-center">
+                    <p class="text-center text-sm italic">Koniec</p>
+                    <p>{{ allocation.end_date }}</p>
+                </div>
+                <div class="mb-2">
+                    {% if allocation.train.after %}
+                        <p class="text-center text-sm italic">Pociąg po</p>
+                        <p> {{ allocation.train.after }}</p>
+                    {% else %}
+                        <div class="bg-cyan-500 rounded py-1 text-center font-semibold">Załaduj pociąg</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
         {% for detail in allocation.allocationdetail_set.all %}
-            <span>----------------------------------------------------</span>
+            <div class="border border-white border-opacity-10 rounded my-3 text-white text-center w-full">
             {% if detail.train_number %}
-                <div>{{ detail }}</div>
-                <div>
-                    <a href="{% url 'train_crew' detail.train_number detail.action_date|date_for_alina %}">
-                        <button>Zobacz załogę</button>
+                <div class="bg-blue-900 py-1 rounded w-11/12 mx-auto mt-1">
+                    <a class="text-xl font-bold"
+                    href="{% url 'train_crew' detail.train_number detail.action_date|date_for_alina %}">
+                        {{ detail.train_number }}
                     </a>
                 </div>
-            {% else %}
-                <div>{{ detail }}</div>
             {% endif %}
+            <div class="text-center text-xl m-1">
+                <div>{{ detail.action }}</div>
+            </div>
+
+            <div class="p-1 bg-white bg-opacity-10">
+                <div class="flex items-center justify-between">
+                    <div class="text-xs italic">Rozpoczęcie</div>
+                    <div class="text-sm">{{ detail.start_location }} {{ detail.start_hour }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-xs italic">Koniec</div>
+                    <div class="text-sm">{{ detail.end_location }} {{ detail.end_hour }}</div>
+                </div>
+            </div>
+
+            </div>
         {% endfor %}
-        <span>----------------------------------------------------</span>
-    {% else %}
-        <span>Brak danych</span>
-    {% endif %}
-    <div>
-        <a href="{% url 'allocation_timetables' user.pk %}">
-            <span>Wróć</span>
-        </a>
+        {% else %}
+            <div class="text-red-500 font-semibold">Brak załogi</div>
+        {% endif %}
+    </div>
+    <div class="text-center bg-blue-600 py-1 px-2 my-4 mx-auto w-11/12 rounded">
+        <a class="text-white font-semibold" href="{% url 'allocation_timetables' user.pk %}">Wróć</a>
     </div>
 {% endblock %}
