@@ -1,11 +1,8 @@
-$(function () {
-    let date = new Date();
-    let row = $(`#day${date.getDate()}Month${date.getMonth() + 1}`);
-    let navBar = $('#navBar');
+import {scrollBelowNavBar} from "./scrolls.js";
 
-    window.scrollTo({
-        top: row.offset().top - navBar.outerHeight(true),
-        behavior: 'smooth'
-    });
-    row.addClass('shadow-inner shadow-white')
+$(function () {
+    let now = new Date();
+    let element = `#day${now.getDate()}Month${now.getMonth() + 1}`;
+
+    return scrollBelowNavBar(element);
 });

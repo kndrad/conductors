@@ -141,4 +141,5 @@ class SendAllocationTimetableToDAVClientView(AllocationTimetableViewMixin, Singl
             messages.warning(
                 self.request, "Aby wysłać służby do serwera CalDAV, potrzebna jest konfiguracja konta."
             )
-        return redirect(self.object.get_absolute_url())
+        path = reverse('allocation_timetables', kwargs={'pk': request.user.pk})
+        return redirect(path)

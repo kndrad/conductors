@@ -1,7 +1,12 @@
 import datetime
+import enum
 from collections import UserDict
 
-REPRESENTATIVE_DATE_FORMAT = "%H:%M %d.%m.%Yr."
+
+class StringDateFormat(enum.Enum):
+    FULL = "%H:%M %d.%m.%Yr."
+    TIME = "%H:%M"
+    TRACKED = "%H:%M %m/%d/%Y"
 
 
 class YEARS:

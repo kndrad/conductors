@@ -1,21 +1,20 @@
 import datetime
 
-ALINA_DATE_FORMAT = '%Y-%m-%d'
 STORED_PASSWORD_KEY = 'stored_password'
 
 
-def credentials_from_request(request):
+def get_session_credentials(request):
     email = request.user.email
     password = request.session.get(STORED_PASSWORD_KEY)
     return email, password
 
 
-def parse_date_for_alina(date):
-    date = date.strftime(ALINA_DATE_FORMAT)
+def alina_strftime(date):
+    date = date.strftime('%Y-%m-%d')
     return date
 
 
-def parse_timetable_date_for_alina(timetable):
+def timetable_alina_strftime(timetable):
     date = datetime.date(year=timetable.year, month=timetable.month, day=1)
-    formatted_date = parse_date_for_alina(date)
-    return formatted_date
+    date_str = alina_strftime(date)
+    return date_str

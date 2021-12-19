@@ -2,20 +2,20 @@
 
 {% load static %}
 {% load alina_dates %}
-{% load date_representations %}
+{% load represent_dates %}
 
 {% block extra_title %}{{ allocation.title }} | {% endblock %}
 
 {% block navbar_buttons %}
-    <form class="bg-green-600 rounded" method='POST' action='{% url 'update_allocation' allocation.pk %}'>
+    <form class="bg-emerald-600 rounded" method='POST' action='{% url 'update_allocation' allocation.pk %}'>
     {% csrf_token %}
-        <button class="px-2 py-1 tracking-wider">Aktualizuj</button>
+        <button class="px-2 py-1 font-semibold">Aktualizuj służbę</button>
     </form>
 {% endblock %}
 
 {% block content %}
     <div class="flex items-center flex-col w-full px-2.5 mb-2 text-white">
-        <p class="mb-1">Ostatnia aktualizacja: {{ allocation.last_updated|represent_date }}</p>
+        <p class="mb-1 italic tracking-tight">Ostatnia aktualizacja: {{ allocation.last_updated|full_date }}</p>
     {% if allocation.allocationdetailset.exists %}
         <p class="text-sm italic">Aby zobaczyć załogę, kliknij w numer pociągu.</p>
     {% endif %}
@@ -27,76 +27,46 @@
         </div>
         <div class="flex justify-between space-x-1 px-1 border border-white mt-2 border-opacity-25 rounded">
             <div class="w-full text-white mb-2 p-1 space-y-0.5">
-                <div class="mb-2 text-center">
+                <div class="mb-3 text-center">
                     <p class="text-center text-sm italic">Początek</p>
-                    <p>{{ allocation.start_date }}</p>
+                    <p class="tracking-tight text-lg">{{ allocation.start_date }}</p>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2 space-y-1">
+                    <p class="text-center text-sm italic">Pociąg przed służbą</p>
                     {% if allocation.train.before %}
-                        <p class="text-center text-sm italic mb-1">Pociąg przed</p>
-                        <div class="bg-blue-700 rounded py-1 px-2 text-center">
-                            <div class="flex items-center justify-between">
-                                <div class="text-sm italic">Start</div>
-                                <div class="font-semibold italic">
-                                    {{ allocation.train.before.departure_date|represent_hour }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div class="text-sm italic">Pociąg</div>
-                                <div class="font-semibold italic">
-                                    {{ allocation.train.before.carrier_initials }} {{ allocation.train.before.number }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div class="text-sm italic">Koniec</div>
-                                <div class="font-semibold italic">
-                                    {{ allocation.train.before.arrival_date|represent_hour }}
-                                </div>
-                            </div>
+                        <div class="flex items-center font-medium tracking-tighter justify-between bg-sky-700 rounded p-1.5">
+                            <div>{{ allocation.train.before.departure_date|hour_only }}</div>
+                            <div>{{ allocation.train.before.carrier_initials }} {{ allocation.train.before.number }}</div>
+                            <div>{{ allocation.train.before.arrival_date|hour_only }}</div>
                         </div>
                     {% else %}
-                        <div class="text-center bg-blue-600 rounded w-full">
-                            <form method='post' action="{% url 'search_train_before_allocation' allocation.pk %}">
+                        <div class="flex items-center bg-sky-700 rounded">
+                            <form class="text-center w-full" method='post' action="{% url 'search_train_before_allocation' allocation.pk %}">
                             {% csrf_token %}
-                                <button class="py-1 font-semibold">Załaduj pociąg</button>
+                                <button class="w-full p-1.5 font-medium tracking-tighter">Załaduj pociąg</button>
                             </form>
                         </div>
                     {% endif %}
                 </div>
             </div>
             <div class="w-full text-white mb-2 p-1 space-y-0.5">
-                <div class="mb-2 text-center">
+                <div class="mb-3 text-center">
                     <p class="text-center text-sm italic">Koniec</p>
-                    <p>{{ allocation.end_date }}</p>
+                    <p class="tracking-tight text-lg">{{ allocation.end_date }}</p>
                 </div>
-                <div class="mb-2">
+                <div class="mb-2 space-y-1">
+                    <p class="text-center text-sm italic">Pociąg po służbie</p>
                     {% if allocation.train.after %}
-                        <p class="text-center text-sm italic mb-1">Pociąg po</p>
-                        <div class="bg-blue-700 rounded py-1 px-2 text-center">
-                            <div class="flex items-center justify-between">
-                                <div class="text-sm italic">Start</div>
-                                <div class="font-semibold italic">
-                                    {{ allocation.train.after.departure_date|represent_hour }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div class="text-sm italic">Pociąg</div>
-                                <div class="font-semibold italic">
-                                    {{ allocation.train.after.carrier_initials }} {{ allocation.train.after.number }}
-                                </div>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <div class="text-sm italic">Koniec</div>
-                                <div class="font-semibold italic">
-                                    {{ allocation.train.after.arrival_date|represent_hour }}
-                                </div>
-                            </div>
+                        <div class="flex items-center font-medium tracking-tighter justify-between bg-sky-700 rounded p-1.5">
+                            <div>{{ allocation.train.after.departure_date|hour_only }}</div>
+                            <div>{{ allocation.train.after.carrier_initials }} {{ allocation.train.after.number }}</div>
+                            <div>{{ allocation.train.after.arrival_date|hour_only }}</div>
                         </div>
                     {% else %}
-                        <div class="text-center bg-blue-600 rounded w-full">
-                            <form method='post' action="{% url 'search_train_after_allocation' allocation.pk %}">
+                        <div class="flex items-center bg-sky-700 rounded">
+                            <form class="text-center w-full" method='post' action="{% url 'search_train_after_allocation' allocation.pk %}">
                             {% csrf_token %}
-                                <button class="py-1 font-semibold">Załaduj pociąg</button>
+                                <button class="w-full p-1.5 font-medium tracking-tighter">Załaduj pociąg</button>
                             </form>
                         </div>
                     {% endif %}
@@ -109,10 +79,10 @@
                     <div>{{ detail.action }}</div>
                 </div>
                 {% if detail.train_number %}
-                    <a href="{% url 'train_crew' detail.train_number detail.action_date|date_for_alina %}">
+                <a href="{% url 'train_crew' detail.train_number detail.action_date|alina_date_str %}">
                     <div class="font-bold text-xl bg-blue-900 py-1 rounded w-11/12 mx-auto mb-3">
                         {{ detail.train_number }}
-                </div>
+                    </div>
                 </a>
             {% endif %}
                 <div class="bg-white bg-opacity-5 py-1 px-2">
@@ -126,11 +96,11 @@
                     </div>
                 </div>
             </div>
-            {% endfor %}
+        {% endfor %}
     </div>
-    <a href="{% url 'allocation_timetables' user.pk %}">
-    <div class="text-center text-white font-semibold bg-blue-600 py-1 px-2 my-4 mx-3 mx-auto w-full w-11/12 rounded">
-        Wróć
-    </div>
-    </a>
+        <a href="{% url 'allocation_timetables' user.pk %}">
+            <div class="text-center text-white font-semibold tracking-wider bg-neutral-800 py-1 px-2 my-4 mx-3 mx-auto w-full w-11/12 rounded">
+                Wróć
+            </div>
+        </a>
 {% endblock %}

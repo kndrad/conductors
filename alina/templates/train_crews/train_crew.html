@@ -1,14 +1,19 @@
 {% extends '_base.html' %}
-{% load date_representations %}
+{% load represent_dates %}
 
 {% block extra_title %}Załoga {{ train_crew.train_number }} | {% endblock %}
 
-{% block content %}
-        <span>Ostatnia aktualizacja: {{ train_crew.last_updated|represent_date}}</span>
-    <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
-        {% csrf_token %}
-        <button>Zaktualizuj</button>
+{% block navbar_buttons %}
+    <form class="bg-emerald-600 rounded" method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
+    {% csrf_token %}
+        <button class="px-2 py-1 font-semibold">Aktualizuj załogę</button>
     </form>
+{% endblock %}
+
+{% block content %}
+    <div class="flex items-center text-center">
+        <div class="text-white mb-1 italic tracking-tight">Ostatnia aktualizacja: {{ train_crew.last_updated|full_date }}</div>
+    </div>
     {% if train_crew.traincrewmember_set.exists %}
         {% for crew_member in train_crew.traincrewmember_set.all %}
             <div>{{ crew_member }}</div>

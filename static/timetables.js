@@ -1,19 +1,8 @@
-export function getNavBarYOffSet () {
-    const navBar = $('#navBar')
-    return navBar.outerHeight(true);
-}
+import {scrollBelowNavBar} from "./scrolls.js";
 
-function scrollToTimetableDateNow() {
-    let date = new Date();
-    let element = `#${date.getMonth() + 1}-${date.getFullYear()}-allocations-True`
-    let position = $(element).offset().top - getNavBarYOffSet();
+$(function () {
+    let now = new Date();
+    let element = `#${now.getMonth() + 1}-${now.getFullYear()}-allocations-True`;
 
-    window.scrollTo({
-        top: position,
-        behavior:'smooth'
-    })
-}
-
-$(document).ready(function() {
-    scrollToTimetableDateNow();
-})
+    return scrollBelowNavBar(element);
+});

@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% load static %}
-{% load date_representations %}
+{% load represent_dates %}
 
 {% block extra_title %}{{ timetable.month }}.{{ timetable.year }} | {% endblock %}
 
@@ -11,11 +11,10 @@
 
 {% block navbar_buttons %}
     <span>{{ timetable.get_month_display }} {{ timetable.year }}</span>
-    <form class="text-center bg-green-600 rounded" method='POST'
+    <form class="text-center bg-emerald-600 rounded" method='POST'
           action='{% url 'update_allocations' timetable.pk %}'>
         {% csrf_token %}
-        <button class="text-sm py-1 px-2"
-                type="submit">
+        <button class="px-2 py-1 font-semibold" type="submit">
             Aktualizuj
         </button>
     </form>
@@ -23,39 +22,33 @@
 
 {% block content %}
 <div class="flex flex-col items-center text-white text-center px-2.5">
-    <div class="mb-2 text-sm">
-        <span>
-        Ostatnia aktualizacja: {{ timetable.last_updated|represent_date }}
-        </span>
-    </div>
-    <div class="w-full mb-3 border border-opacity-50 rounded">
-        <div class="table table-auto border-collapse w-full px-3 text-center">
+    <div class="mb-2 text-sm italic tracking-tight">Ostatnia aktualizacja: {{ timetable.last_updated|full_date }}</div>
+    <div class="w-full border border-opacity-50 rounded mb-4 ">
+        <div class="table table-auto border-collapse w-full">
             <div class="table-header-group bg-white bg-opacity-5">
-                <div class="table-row">
-                    <div class="table-cell py-2 px-2 w-8">Dzień</div>
-                    <div class="table-cell py-2 w-full">Służba</div>
+                <div class="table-row font-medium">
+                    <div class="table-cell text-center px-1 py-2 w-8 tracking-tighter">Dzień</div>
+                    <div class="table-cell text-center w-full">Służba</div>
                 </div>
             </div>
             <div class="table-row-group">
-            {% for day in timetable.get_month_days %}
+            {% for day in timetable.days_in_month %}
                 <div id="day{{ day }}Month{{ timetable.month }}"
-                     class="table-row w-full border border-white border-opacity-25">
-                    <div class="table-cell py-1.5 border border-white border-opacity-25 font-semibold text-3xl">
+                     class="table-row border border-white border-opacity-25">
+                    <div class="table-cell text-center py-2 border border-white text-2xl border-opacity-25 font-semibold tracking-wider">
                         {{ day }}
                     </div>
                     {% for allocation in allocations %}
                         {% if allocation.start_day == day %}
-                            <div class="table-cell py-1.5 px-2 text-xl">
-                                <button id="{{ allocation.title }}" class="w-full py-1 bg-blue-900 rounded-2xl">
-                                    <a href="{% url 'allocation_detail' allocation.pk %}">
-                                    {{ allocation }}
-                                    </a>
-                                </button>
-                            </div>
+                        <a class="table-cell text-center px-2 text-2xl" href="{% url 'allocation_detail' allocation.pk %}">
+                            <div class="py-0.5 bg-blue-600 rounded-xl italic">{{ allocation }}</div>
+                        </a>
                         {% endif %}
                     {% endfor %}
                 </div>
             {% endfor %}
             </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

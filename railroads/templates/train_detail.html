@@ -1,6 +1,6 @@
 {% extends '_base.html' %}
 
-{% load date_representations %}
+{% load represent_dates %}
 
 {% block extra_title %}Pociąg {{ train.number }} | {% endblock %}
 
@@ -10,11 +10,11 @@
     <p>Przewoźnik: {{ train.carrier }}</p>
 {% endif %}
 <h2>Odjazd</h2>
-<p>Data: {{ train.departure_date|represent_date }}</p>
+<p>Data: {{ train.departure_date|full_date }}</p>
 <p>Stacja: {{ train.departure_station }}</p>
 <p>Peron: {{ train.departure_platform }}</p>
 <h2>Przyjazd</h2>
-<p>Data: {{ train.arrival_date|represent_date }}</p>
+<p>Data: {{ train.arrival_date|full_date }}</p>
 <p>Stacja: {{ train.arrival_station }}</p>
 <p>Peron: {{ train.arrival_platform }}</p>
 {% endblock %}
