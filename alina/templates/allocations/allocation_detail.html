@@ -9,8 +9,11 @@
 {% block navbar_buttons %}
     <form class="bg-emerald-600 rounded" method='POST' action='{% url 'update_allocation' allocation.pk %}'>
     {% csrf_token %}
-        <button class="px-2 py-1 font-semibold">Aktualizuj służbę</button>
+        <button class="px-2 py-1 font-semibold">Aktualizuj</button>
     </form>
+    <a href={{ railroad_account_href }}>
+        Konto kolejowe
+    </a>
 {% endblock %}
 
 {% block content %}
@@ -31,6 +34,7 @@
                     <p class="text-center text-sm italic">Początek</p>
                     <p class="tracking-tight text-lg">{{ allocation.start_date }}</p>
                 </div>
+                {% if user.railroad_account %}
                 <div class="mb-2 space-y-1">
                     <p class="text-center text-sm italic mb-1">Pociąg przed służbą</p>
                     {% if allocation.train.before %}
@@ -58,13 +62,17 @@
                         {% endif %}
                     {% endif %}
                 </div>
+                {% else %}
+                    <div class="mb-2 py-1 w-full text-center bg-red-700 rounded tracking-tighter">Najpierw utwórz konto kolejowe!</div>
+                {% endif %}
             </div>
             <div class="w-full text-white mb-2 p-1 space-y-0.5">
                 <div class="mb-3 text-center">
                     <p class="text-center text-sm italic">Koniec</p>
                     <p class="tracking-tight text-lg">{{ allocation.end_date }}</p>
                 </div>
-                <a class="mb-2 space-y-1">
+                {% if user.railroad_account %}
+                <div class="mb-2 space-y-1">
                     <p class="text-center text-sm italic mb-1">Pociąg po służbie</p>
                     {% if allocation.train.after %}
                         <a href="{% url 'train_detail' allocation.train.after.pk %}">
@@ -91,6 +99,9 @@
                         {% endif %}
                     {% endif %}
                 </div>
+                {% else %}
+                    <div class="mb-2 py-1 w-full text-center bg-red-700 rounded tracking-tighter">Najpierw utwórz konto kolejowe!</div>
+                {% endif %}
             </div>
         </div>
         {% for detail in allocation.allocationdetail_set.all %}

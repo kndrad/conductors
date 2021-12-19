@@ -24,6 +24,19 @@ class AllocationView(AllocationViewMixin, DetailView):
         self.object.add_details_on_request(self.request)
         return self.object
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        user = self.request.user
+        account = 'railroad_account'
+        if not hasattr(user, account):
+            context[f'{account}_href'] = reverse(f'create_{account}')
+        else:
+            pk = getattr(user, account).pk
+            context[f'{account}_href'] = reverse(f'update_{account}', kwargs={'pk': pk})
+
+        return context
+
 
 class UpdateAllocationView(AllocationViewMixin, SingleObjectMixin):
     http_method_names = ['post']
@@ -57,8 +70,8 @@ class SearchAllocationTrainBeforeAllocationView(SearchAllocationTrainView):
             allocation=self.object,
         )
 
-        departure_station = super().get_station('homeplace')
-        arrival_station = super().get_station('workplace')
+        departure_station = self.get_station('homeplace')
+        arrival_station = self.get_station('workplace')
         spare_time = user.railroad_account.spare_time
 
         allocation_train.search_before(
@@ -71,15 +84,13 @@ class SearchAllocationTrainAfterAllocationView(SearchAllocationTrainView):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
-        user = request.user
-
         self.object = self.get_object()
         allocation_train, _ = AllocationTrain.objects.get_or_create(
             allocation=self.object,
         )
 
-        departure_station = super().get_station('workplace')
-        arrival_station = super().get_station('homeplace')
+        departure_station = self.get_station('workplace')
+        arrival_station = self.get_station('homeplace')
 
         allocation_train.search_after(
             departure_station, arrival_station, spare_time=0

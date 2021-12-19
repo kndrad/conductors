@@ -26,7 +26,7 @@ class RailroadAccount(UUIDCommonModel):
         LONGEST = 60, '60 minut'
 
     spare_time = models.PositiveIntegerField(
-        'Czas dojścia ze stacji kolejowej', choices=SpareTime.choices, default=SpareTime.VERY_SHORT
+        'Czas dojścia pieszo', choices=SpareTime.choices, default=SpareTime.VERY_SHORT
     )
 
     class Meta:

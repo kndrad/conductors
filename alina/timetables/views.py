@@ -68,7 +68,7 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMi
 
         user = self.request.user
         account = 'caldav_account'
-        if not getattr(user, account):
+        if not hasattr(user, account):
             context[f'{account}_href'] = reverse(f'create_{account}')
         else:
             pk = getattr(user, account).pk
