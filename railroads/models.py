@@ -115,7 +115,7 @@ class PublicRailroadTrain(models.Model, ICalComponentable):
         cal = icalendar.Calendar()
         event = icalendar.Event()
         summary = (
-            f'{self.carrier_initials} | {self.departure_station.title()} -> {self.arrival_station.title()}'
+            f'{self.carrier_initials} {self.number} | {self.departure_station.title()} -> {self.arrival_station.title()}'
         )
         event.add('summary', summary)
         event.add('dtstart', self.departure_date)
