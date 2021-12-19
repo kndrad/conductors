@@ -4,9 +4,9 @@ from collections import UserDict
 
 
 class StringDateFormat(enum.Enum):
-    FULL = "%H:%M %d.%m.%Yr."
+    FULL_DATE = "%H:%M %d.%m.%Yr."
+    DATE_ONLY = "%d.%m.%Yr."
     TIME = "%H:%M"
-    TRACKED = "%H:%M %m/%d/%Y"
 
 
 class YEARS:

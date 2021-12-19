@@ -11,7 +11,7 @@ register = template.Library()
 
 @register.filter(expects_localtime=True)
 def full_date(value):
-    fmt = StringDateFormat.FULL.value
+    fmt = StringDateFormat.FULL_DATE.value
     local = value.strftime(fmt)
     return local
 
@@ -24,7 +24,7 @@ def hour_only(value):
 
 
 @register.filter()
-def date_tracked(value):
-    fmt = StringDateFormat.TRACKED.value
+def date_only(value):
+    fmt = StringDateFormat.DATE_ONLY.value
     local = timezone.localtime(value).strftime(fmt)
     return local

@@ -11,19 +11,40 @@
 {% endblock %}
 
 {% block content %}
-    <div class="flex items-center text-center">
-        <div class="text-white mb-1 italic tracking-tight">Ostatnia aktualizacja: {{ train_crew.last_updated|full_date }}</div>
+    <div class="flex flex-col w-full px-2.5 mb-2 text-white items-center">
+        <div class="mb-2 italic text-sm tracking-tight">Ostatnia aktualizacja: {{ train_crew.last_updated|full_date }}</div>
+        <div class="tracking-wider text-5xl font-medium">{{ train_crew.train_number }}</div>
+        <div class="tracking-wider font-medium mb-2">{{ train_crew.date_as_datetime|date_only }}</div>
     </div>
+
+    <div class="text-white">
     {% if train_crew.traincrewmember_set.exists %}
-        {% for crew_member in train_crew.traincrewmember_set.all %}
-            <div>{{ crew_member }}</div>
+        {% for member in train_crew.traincrewmember_set.all %}
+            <div class="bg-white bg-opacity-5 mb-3 px-3 py-2 space-y-1">
+                <div class="flex items-center justify-between">
+                    <div class="italic text-sm tracking-tighter">Imię i nazwisko</div>
+                    <div class="italic">{{ member.person }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="italic text-sm tracking-tighter">Numer telefonu</div>
+                    <div class="italic">{{ member.phone_number }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="italic text-sm tracking-tighter">Stanowisko</div>
+                    <div class="italic">{{ member.profession }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="italic text-sm tracking-tighter">Rozpoczęcie</div>
+                    <div class="italic">{{ member.start_location }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="italic text-sm tracking-tighter">Zakończenie</div>
+                    <div class="italic">{{ member.end_location }}</div>
+                </div>
+            </div>
         {% endfor %}
     {% else %}
-        <span>Brak danych</span>
+        <div>Brak danych</div>
     {% endif %}
-    <div>
-        <a href="{% url 'allocation_timetables' user.pk %}">
-            <span>Wróć</span>
-        </a>
     </div>
 {% endblock %}

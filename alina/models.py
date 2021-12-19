@@ -274,6 +274,12 @@ class TrainCrew(UUIDCommonModel):
     def __repr__(self):
         return f'TrainCrew({self.train_number}, {self.date})'
 
+    @property
+    def date_as_datetime(self):
+        fmt = '%Y-%m-%d'
+        date = make_aware(datetime.datetime.strptime(self.date, fmt))
+        return date
+
     def add_members_on_request(self, request):
         if self.traincrewmember_set.exists():
             return self.traincrewmember_set

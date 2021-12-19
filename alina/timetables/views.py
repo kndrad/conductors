@@ -1,9 +1,9 @@
 from datetime import timedelta
 
 import caldav
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import View
@@ -20,18 +20,30 @@ class AllocationTimetableViewMixin(LoginRequiredMixin, View):
     context_object_name = 'timetable'
 
 
-class AllocationTimetableListView(AllocationTimetableViewMixin, ListView):
+class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMixin, ListView):
     """Displays list of allocation timetables.
     """
     template_name = 'timetables/allocation_timetable_list.html'
     context_object_name = 'timetables'
+
+    def test_func(self):
+        has_permissions = True
+
+        for timetable in self.get_queryset():
+            has_permissions = timetable.user == self.request.user
+
+        if not has_permissions:
+            return render(
+                self.request, 'timetables/allocation_timetable_not_allowed_to_view.html'
+            )
+        else:
+            return has_permissions
 
     def get_queryset(self):
         timetables = self.model.objects.filter(
             user=self.request.user).all().order_by(
             '-year', '-month'
         )
-        self.create_or_update_timetables()
         return timetables
 
     def create_or_update_timetables(self):
@@ -52,9 +64,10 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        self.create_or_update_timetables()
+
         user = self.request.user
         account = 'caldav_account'
-
         if not getattr(user, account):
             context[f'{account}_href'] = reverse(f'create_{account}')
         else:
