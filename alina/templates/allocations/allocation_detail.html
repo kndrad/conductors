@@ -40,12 +40,20 @@
                             <div>{{ allocation.train.before.arrival_date|hour_only }}</div>
                         </div>
                     {% else %}
-                        <div class="flex items-center bg-sky-700 rounded">
-                            <form class="text-center w-full" method='post' action="{% url 'search_train_before_allocation' allocation.pk %}">
-                            {% csrf_token %}
-                                <button class="w-full p-1.5 font-medium tracking-tighter">Załaduj pociąg</button>
-                            </form>
-                        </div>
+                        {% if not allocation.is_month_old %}
+                            <div class="flex items-center bg-sky-700 rounded">
+                                <form class="text-center w-full" method='post' action="{% url 'search_train_before_allocation' allocation.pk %}">
+                                {% csrf_token %}
+                                    <button class="w-full p-1.5 font-medium tracking-tighter">Załaduj pociąg</button>
+                                </form>
+                            </div>
+                        {% else %}
+                            <div class="flex items-center p-1.5 bg-red-700 rounded">
+                                <div class="text-center w-full tracking-tighter text-sm">
+                                    Czas na szukanie pociągu minął
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
@@ -63,12 +71,20 @@
                             <div>{{ allocation.train.after.arrival_date|hour_only }}</div>
                         </div>
                     {% else %}
+                        {% if not allocation.is_month_old %}
                         <div class="flex items-center bg-sky-700 rounded">
                             <form class="text-center w-full" method='post' action="{% url 'search_train_after_allocation' allocation.pk %}">
                             {% csrf_token %}
                                 <button class="w-full p-1.5 font-medium tracking-tighter">Załaduj pociąg</button>
                             </form>
                         </div>
+                        {% else %}
+                            <div class="flex items-center p-1.5 bg-red-700 rounded">
+                                <div class="text-center w-full tracking-tighter text-sm">
+                                    Czas na szukanie pociągu minął
+                                </div>
+                            </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>

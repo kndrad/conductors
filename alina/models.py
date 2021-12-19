@@ -177,10 +177,10 @@ class Allocation(UUIDCommonModel, ICalComponentable):
         cal.add_component(event)
         return cal
 
-    def is_searching_trains_available(self):
+    def is_month_old(self):
         days = 30
-        past_date = timezone.now() - datetime.timedelta(days=days)
-        return self.start_date > past_date
+        month_ago = timezone.now() - datetime.timedelta(days=days)
+        return month_ago > self.start_date
 
 
 class AllocationTrain(models.Model):
