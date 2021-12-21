@@ -53,11 +53,16 @@ class TicketProlongation(models.Model):
     def days_until_expiration(self):
         now = timezone.now().date()
         date = self.expiration_date - now
-        return abs(date.days)
+        return date.days
 
     def get_expiration_message(self):
         days = self.days_until_expiration
-        if days == 1:
+
+        if days < 0:
+            return 'Prolongata wygasła'
+        elif days == 0:
+            return 'Wygasa dzisiaj'
+        elif days == 1:
             return 'Wygasa za 1 dzień'
         else:
             return f'Wygasa za {days} dni'
