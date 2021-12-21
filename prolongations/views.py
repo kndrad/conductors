@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.views.generic import ListView, CreateView, UpdateView
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from .forms import TicketProlongationModelForm
 from .models import TicketProlongation
@@ -22,8 +23,17 @@ class TicketProlongationListView(TicketProlongationViewMixin, ListView):
 
 
 class TicketProlongationCreateView(TicketProlongationViewMixin, CreateView, HiddenUserFormMixin):
+    template_name = 'ticket_prolongation_form.html'
     form_class = TicketProlongationModelForm
 
 
 class TicketProlongationUpdateView(TicketProlongationViewMixin, UpdateView, HiddenUserFormMixin):
+    template_name = 'ticket_prolongation_form.html'
     form_class = TicketProlongationModelForm
+
+
+class TicketProlongationDeleteView(TicketProlongationViewMixin, DeleteView):
+    template_name = 'ticket_prolongation_confirm_delete.html'
+
+    def get_success_url(self):
+        return reverse('ticket_prolongations', kwargs={'pk': self.request.user.pk})

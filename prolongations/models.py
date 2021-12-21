@@ -2,6 +2,7 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 
 
@@ -37,6 +38,9 @@ class TicketProlongation(models.Model):
     def __str__(self):
         return f'{self.ticket}'
 
+    def get_absolute_url(self):
+        return reverse('ticket_prolongations', kwargs={'pk':  self.user.pk})
+
     def save(self, *args, **kwargs):
         self.clean_fields()
 
@@ -44,4 +48,20 @@ class TicketProlongation(models.Model):
         self.expiration_date = last_renewal + datetime.timedelta(days=30)
 
         return super().save(*args, **kwargs)
+
+    @property
+    def days_until_expiration(self):
+        now = timezone.now().date()
+        date = self.expiration_date - now
+        return str(date.days)
+
+    def get_expiration_message(self):
+        days = self.days_until_expiration
+        if days == 1:
+            return 'Wygasa za 1 dzień'
+        else:
+            return f'Wygasa za {days} dni'
+
+
+
 

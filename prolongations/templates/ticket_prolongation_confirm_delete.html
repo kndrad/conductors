@@ -1,0 +1,13 @@
+{% extends '_panel.html' %}
+
+{% block inner_content %}
+    <div class="text-center mb-2">
+        <p class="italic">Na pewno chcesz usunąć prolongatę biletu "{{ ticket_prolongation.get_ticket_display }}",</p>
+        <p class="italic">który wygasa {{ ticket_prolongation.expiration_date }}?</p>
+    </div>
+    <form class="w-full" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button class="w-full rounded bg-red-600 py-1" type="submit">Potwierdź</button>
+    </form>
+{% endblock %}

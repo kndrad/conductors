@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
+from django.utils import timezone
 
 from .models import TicketProlongation
 
@@ -11,6 +12,9 @@ class TicketProlongationModelForm(forms.ModelForm):
         exclude = ('expiration_date',)
         widgets = {
             'user': forms.HiddenInput(),
+            'last_renewal_date': forms.DateInput(
+                attrs={'type': 'date'}
+            )
         }
         error_messages = {
             NON_FIELD_ERRORS: {
