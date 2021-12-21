@@ -11,10 +11,10 @@
 
 {% block navbar_buttons %}
     <a href="{% url 'import_allocation_timetable' %}">
-        Importuj harmonogram
+        Importuj plan
     </a>
     <a href={{ caldav_account_href }}>
-        CalDAV
+        Konto CalDAV
     </a>
 {% endblock %}
 
@@ -34,7 +34,7 @@
                         <form method='POST' action='{% url 'send_allocation_timetable_to_dav_client' timetable.pk %}'>
                             {% csrf_token %}
                             <button class="w-full py-1.5 font-medium tracking-tight" type="submit">
-                                Wyślij kalendarz
+                                Wyślij do kalendarza DAV
                             </button>
                         </form>
                     </div>

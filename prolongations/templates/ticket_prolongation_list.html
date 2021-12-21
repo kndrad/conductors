@@ -1,14 +1,30 @@
 {% extends '_ticket_prolongation_base.html' %}
 
+{% block extra_title %}Prolongaty | {% endblock %}
+
+{% block extra_navbar_buttons %}
+    <a class="text-xs tracking-tight" href={{ caldav_account_href }}>
+        Konto CalDAV
+    </a>
+{% endblock %}
+
 {% block content %}
     <div class="flex items-center flex-col w-full space-y-1.5">
     {% if ticket_prolongations %}
-    <form class="w-full px-2 text-center" method="post" action="{% url 'ticket_prolongation_update_each_today' %}">
-        {% csrf_token %}
-        <button class="w-full py-0.5 rounded-2xl bg-slate-800 text-white tracking-tighter text-sm" type="submit">
-            Przedłuż wszystkie dzisiaj
-        </button>
-    </form>
+    <div class="flex items-center justify-between w-full px-2">
+        <form class="w-full px-1 text-center" method="post" action="{% url 'ticket_prolongation_update_each_today' %}">
+            {% csrf_token %}
+            <button class="w-full p-0.5 rounded-2xl bg-slate-800 text-white tracking-tighter text-sm" type="submit">
+                Przedłuż od dzisiaj
+            </button>
+        </form>
+        <form class="w-full px-1 text-center" method="post" action="{% url 'send_ticket_prolongations_to_dav_client' %}">
+            {% csrf_token %}
+            <button class="w-full p-0.5 rounded-2xl bg-slate-800 text-white tracking-tighter text-sm" type="submit">
+                Wyślij do kalendarza DAV
+            </button>
+        </form>
+    </div>
     {% endif %}
 
     {% for ticket_prolongation in ticket_prolongations %}

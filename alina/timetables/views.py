@@ -11,6 +11,7 @@ from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.contrib import messages
 from alina.models import AllocationTimetable
+from users.caldavs.urls import get_caldav_url
 from utils.views import HiddenUserFormMixin
 from .forms import AllocationTimetableImportForm
 
@@ -65,15 +66,7 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMi
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.create_or_update_timetables()
-
-        user = self.request.user
-        account = 'caldav_account'
-        if not hasattr(user, account):
-            context[f'{account}_href'] = reverse(f'create_{account}')
-        else:
-            pk = getattr(user, account).pk
-            context[f'{account}_href'] = reverse(f'update_{account}', kwargs={'pk': pk})
-
+        context['caldav_account_href'] = get_caldav_url(self.request.user)
         return context
 
 

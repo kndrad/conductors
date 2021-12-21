@@ -1,18 +1,21 @@
 import datetime
 
+import icalendar
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
+from utils.icals import ICalComponentable, TriggeredAlarm
 
-class TicketProlongation(models.Model):
+
+class TicketProlongation(models.Model, ICalComponentable):
     class Ticket(models.TextChoices):
-        FINE = ('FINE', 'Wezwanie do zapłaty')
-        BLANKET = ('BLANKET', 'Blankietowy')
-        REPLACEMENT = ('REPLACEMENT', 'Zastępczy')
+        FINE = ('FINE', 'Wezwania do zapłaty')
+        BLANKET = ('BLANKET', 'Bilety blankietowe')
+        REPLACEMENT = ('REPLACEMENT', 'Bilety zastępcze')
 
-    ticket = models.CharField('Bilet', choices=Ticket.choices, max_length=128, default=Ticket.FINE)
+    ticket = models.CharField('Bilety', choices=Ticket.choices, max_length=128, default=Ticket.FINE)
     last_renewal_date = models.DateField(verbose_name='Data ostatniego przedłużenia', default=timezone.now)
     expiration_date = models.DateField(verbose_name='Data wygaśnięcia', editable=False, null=True, blank=True)
 
@@ -43,10 +46,7 @@ class TicketProlongation(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean_fields()
-
-        last_renewal = self.last_renewal_date
-        self.expiration_date = last_renewal + datetime.timedelta(days=30)
-
+        self.expiration_date = self.last_renewal_date + datetime.timedelta(days=30)
         return super().save(*args, **kwargs)
 
     @property
@@ -59,13 +59,28 @@ class TicketProlongation(models.Model):
         days = self.days_until_expiration
 
         if days < 0:
-            return 'Prolongata wygasła'
+            return 'Prolongata wygasła.'
         elif days == 0:
-            return 'Wygasa dzisiaj'
+            return 'Prolongata wygasa dzisiaj!'
         elif days == 1:
-            return 'Wygasa za 1 dzień'
+            return 'Wygaśnie jutro.'
         else:
-            return f'Wygasa za {days} dni'
+            return f'Wygaśnie za {days} dni.'
+
+    def get_as_ical_component(self):
+        cal = icalendar.Calendar()
+        event = icalendar.Event()
+        event.add('summary', self.get_ticket_display())
+        event.add('dtstart', self.expiration_date)
+        event.add('dtend', self.expiration_date)
+
+        alarms = [TriggeredAlarm(days=7), TriggeredAlarm(days=3), TriggeredAlarm(hours=8)]
+        for alarm in alarms:
+            event.add_component(alarm)
+
+        event.add('description', 'Prolongata biletów')
+        cal.add_component(event)
+        return cal
 
 
 

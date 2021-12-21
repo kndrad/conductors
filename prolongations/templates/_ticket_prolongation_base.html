@@ -2,4 +2,6 @@
 
 {% block navbar_buttons %}
     <div>{{ now|date:"j E Y" }}r.</div>
+    {% block extra_navbar_buttons %}
+    {% endblock %}
 {% endblock %}

@@ -3,13 +3,13 @@
 {% block extra_title %}Konto CalDAV | {% endblock %}
 
 {% block inner_content %}
-<div class="tracking-tighter text-sm mb-1">
+<div class="tracking-tighter text-center text-sm mb-1">
     Proszę podać dane logowania do serwera kalendarzowego (Google, iCalendar ...).
 </div>
-<form class="w-full flex items-center flex-col mt-2 italic text-sm" method="post">
+<form method="post">
     {% csrf_token %}
-    {{ form }}
-    <button type="submit" class="mt-2 w-full bg-blue-600 rounded p-2 text-white text-lg tracking-tight">
+    <div class="mb-3 italic text-sm">{{ form }}</div>
+    <button type="submit" class="mt-1 w-full bg-green-600 rounded py-2">
         Zapisz
     </button>
 </form>
