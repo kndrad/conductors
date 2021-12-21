@@ -2,12 +2,21 @@
 {% load static %}
 
 {% block inner_content %}
-    <p>Cześć, {{ user.first_name }}!</p>
-    <div class="mt-5 w-full flex flex-col flex-wrap items-center space-y-1.5">
-        <a class="text-center font-semibold mx-auto flex-grow w-full px-4 py-2 bg-blue-600
-        focus:shadow-lg focus:shadow-blue-600/50 rounded"
+    <div class="tracking-tighter w-full text-center">
+        Cześć, {{ user.first_name }}!
+    </div>
+    <div class="mt-3 w-full flex flex-col flex-wrap items-center space-y-2.5">
+        <a class="w-full focus:shadow focus:shadow-sky-600/50"
            href="{% url 'allocation_timetables' user.pk %}">
-            Harmonogramy
+            <div class="rounded px-4 py-2 bg-sky-700 text-center">
+                Harmonogramy
+            </div>
+        </a>
+        <a class="w-full focus:shadow focus:shadow-sky-600/50"
+           href="{% url 'ticket_prolongations' user.pk %}">
+            <div class="rounded px-4 py-2 bg-sky-700 text-center">
+                Prolongaty
+            </div>
         </a>
     </div>
 {% endblock %}

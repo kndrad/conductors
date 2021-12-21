@@ -4,7 +4,7 @@ from django import forms
 from .models import CalDAVAccount
 
 
-class CalDAVAccountForm(forms.ModelForm):
+class CalDAVAccountModelForm(forms.ModelForm):
     class Meta:
         model = CalDAVAccount
         fields = '__all__'

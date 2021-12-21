@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ProlongationConfig(AppConfig):
+class ProlongationsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'prolongation'
+    name = 'prolongations'

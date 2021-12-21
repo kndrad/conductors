@@ -6,7 +6,7 @@ from .models import RailroadAccount
 from .engines import RailroadSearchEngine, WaypointStationSubmitError
 
 
-class RailroadAccountForm(forms.ModelForm):
+class RailroadAccountModelForm(forms.ModelForm):
 
     class Meta:
         model = RailroadAccount

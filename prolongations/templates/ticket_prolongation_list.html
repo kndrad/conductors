@@ -1,0 +1,34 @@
+{% extends '_ticket_prolongation_base.html' %}
+
+{% block content %}
+    <div class="flex items-center flex-col w-full space-y-3">
+    {% for ticket_prolongation in ticket_prolongations %}
+        <div class="text-center text-white w-full bg-white bg-opacity-5 py-2">
+            <div class="text-2xl mb-2 bg-white bg-opacity-5 py-1.5">
+                {{ ticket_prolongation.get_ticket_display }}
+            </div>
+            <div class="flex items-center justify-between px-2">
+                <div class="italic tracking-tighter">Data ostatniego przedłużenia</div>
+                <div class="tracking-tighter">{{ ticket_prolongation.last_renewal_date }}</div>
+            </div>
+            <div class="flex items-center justify-between px-2">
+                <div class="italic tracking-tighter">Data wygaśnięcia</div>
+                <div class="tracking-tighter">{{ ticket_prolongation.expiration_date }}</div>
+            </div>
+            <div class="flex items-center justify-between mt-4 mb-1 space-x-3 px-2">
+                <div class="text-center w-full bg-red-600 block rounded py-1 px-2 font-semibold tracking-tight">
+                    Usuń
+                </div>
+                <div class="text-center w-full bg-green-600 block rounded py-1 px-2 font-semibold tracking-tight">
+                    Edytuj
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+        <a class="w-11/12 px-3" href="{% url 'home' %}">
+            <div class="bg-blue-800/30 py-1 mt-2 rounded text-center text-white tracking-tight font-medium">
+                Wróć
+            </div>
+        </a>
+    </div>
+{% endblock %}

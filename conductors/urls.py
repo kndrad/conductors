@@ -24,5 +24,6 @@ urlpatterns = [
     path('timetables/', include('alina.timetables.urls')),
     path('allocations/', include('alina.allocations.urls')),
     path('crews/', include('alina.crews.urls')),
+    path('prolongations/', include('prolongations.urls')),
     path('', include('pages.urls')),
 ]
