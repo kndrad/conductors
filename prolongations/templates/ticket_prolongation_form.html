@@ -1,0 +1,15 @@
+{% extends '_panel.html' %}
+
+{% block navbar_buttons %}
+    <div>{{ now|date:"j E Y" }}r.</div>
+{% endblock %}
+
+{% block inner_content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3 italic">{{ form }}</div>
+        <button class="w-full bg-green-600 rounded py-1" type="submit">
+            Zapisz
+        </button>
+    </form>
+{% endblock %}
