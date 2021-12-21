@@ -2,10 +2,15 @@
 
 {% block extra_title %}Konto CalDAV | {% endblock %}
 
-{% block content %}
-<form method="post">
+{% block inner_content %}
+<div class="tracking-tighter text-sm mb-1">
+    Proszę podać dane logowania do serwera kalendarzowego (Google, iCalendar ...).
+</div>
+<form class="w-full flex items-center flex-col mt-2 italic text-sm" method="post">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Zapisz">
+    <button type="submit" class="mt-2 w-full bg-blue-600 rounded p-2 text-white text-lg tracking-tight">
+        Zapisz
+    </button>
 </form>
 {% endblock %}

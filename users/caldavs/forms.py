@@ -19,6 +19,9 @@ class CalDAVAccountForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['user'].initial = self.user
 
+        for key, field in self.fields.items():
+            field.widget.attrs['class'] = 'w-full rounded text-black mb-2 text-base'
+
     def clean(self):
         cleaned_data = super().clean()
 

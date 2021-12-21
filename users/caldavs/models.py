@@ -10,9 +10,9 @@ class CalDAVAccount(UUIDCommonModel):
         settings.AUTH_USER_MODEL, related_name='caldav_account',
         verbose_name='Użytkownik', on_delete=models.CASCADE
     )
-    username = models.CharField('Login użytkownika', max_length=128)
-    password = models.CharField('Hasło użytkownika', max_length=128)
-    url = models.URLField('Adres URL Serwera CalDAV')
+    username = models.CharField('Login', max_length=128)
+    password = models.CharField('Hasło', max_length=128)
+    url = models.URLField('Adres URL')
 
     class Meta:
         verbose_name = 'Konto CalDAV'

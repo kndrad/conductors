@@ -3,11 +3,12 @@
 {% block extra_title %}Import | {% endblock %}
 
 
-{% block content %}
-    <div>
-        <form method="post">{% csrf_token %}
-            {{ form }}
-            <input type="submit" value="Importuj plan">
-        </form>
-    </div>
+{% block inner_content %}
+<form class="w-full flex items-center flex-col mt-2 italic text-sm" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="mt-2 w-full bg-blue-600 rounded p-2 text-white text-lg tracking-tight">
+        Importuj
+    </button>
+</form>
 {% endblock %}
