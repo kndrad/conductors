@@ -1,14 +1,29 @@
 {% extends '_ticket_prolongation_base.html' %}
 
 {% block content %}
-    <div class="flex items-center flex-col w-full space-y-3 pt-2">
+    <div class="flex items-center flex-col w-full space-y-1.5">
+    {% if ticket_prolongations %}
+    <form class="w-full px-2 text-center" method="post" action="{% url 'ticket_prolongation_update_each_today' %}">
+        {% csrf_token %}
+        <button class="w-full py-0.5 rounded-2xl bg-slate-800 text-white tracking-tighter text-sm" type="submit">
+            Przedłuż wszystkie dzisiaj
+        </button>
+    </form>
+    {% endif %}
+
     {% for ticket_prolongation in ticket_prolongations %}
         <div class="text-center text-white w-full bg-white bg-opacity-5 py-2">
             <div class="bg-white bg-opacity-5 py-1.5 mb-2">
                 <div class="text-2xl font-medium">{{ ticket_prolongation.get_ticket_display }}</div>
+                {% if ticket_prolongation.days_until_expiration <= 7 %}
+                <div class="text-sm italic tracking-tighter text-red-500 font-semibold">
+                    {{ ticket_prolongation.get_expiration_message }}
+                </div>
+                {% else %}
                 <div class="text-sm italic tracking-tighter">
                     {{ ticket_prolongation.get_expiration_message }}
                 </div>
+                {% endif %}
             </div>
             <div class="flex items-center justify-between px-2">
                 <div class="italic tracking-tighter text-sm">Data ostatniego przedłużenia</div>
@@ -20,7 +35,7 @@
             </div>
             <div class="flex items-center justify-between mt-3 mb-1 space-x-3 px-2">
                 <a class="w-full" href="{% url 'ticket_prolongation_update' ticket_prolongation.pk %}">
-                    <div class="text-center bg-sky-600 block rounded py-1 px-2 font-semibold tracking-tight">
+                    <div class="w-full text-center bg-sky-600 block rounded py-1 px-2 font-semibold tracking-tight">
                         Edytuj
                     </div>
                 </a>

@@ -53,7 +53,7 @@ class TicketProlongation(models.Model):
     def days_until_expiration(self):
         now = timezone.now().date()
         date = self.expiration_date - now
-        return str(date.days)
+        return abs(date.days)
 
     def get_expiration_message(self):
         days = self.days_until_expiration
