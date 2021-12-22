@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% load static %}
-{% load represent_dates %}
+{% load date_reprs %}
 
 {% block extra_title %}{{ timetable.month }}.{{ timetable.year }} | {% endblock %}
 
@@ -9,9 +9,9 @@
 <script type="module" src="{% static 'allocations.js' %}"></script>
 {% endblock %}
 
-{% block navbar_buttons %}
+{% block header_nav %}
     <span>{{ timetable.get_month_display }} {{ timetable.year }}</span>
-    <form class="text-center bg-emerald-600 rounded" method='POST'
+    <form class="text-center rounded" method='POST'
           action='{% url 'update_allocations' timetable.pk %}'>
         {% csrf_token %}
         <button class="px-2 py-1 font-semibold" type="submit">
@@ -21,8 +21,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="flex flex-col items-center text-white text-center px-2.5">
-    <div class="mb-2 text-sm italic tracking-tight">Ostatnia aktualizacja: {{ timetable.last_updated|full_date }}</div>
+<div class="flex flex-col items-center text-center px-2.5">
+    <div class="mb-2 text-sm italic tracking-tight">
+        Ostatnia aktualizacja: {{ timetable.last_updated|full_date }}
+    </div>
     <div class="w-full border border-opacity-50 rounded mb-4 ">
         <div class="table table-auto border-collapse w-full">
             <div class="table-header-group bg-white bg-opacity-5">
@@ -33,15 +35,14 @@
             </div>
             <div class="table-row-group">
             {% for day in timetable.days_in_month %}
-                <div id="day{{ day }}Month{{ timetable.month }}"
-                     class="table-row border border-white border-opacity-25">
+                <div id="day{{ day }}-month{{ timetable.month }}" class="table-row border border-white border-opacity-25">
                     <div class="table-cell text-center py-2 border border-white text-2xl border-opacity-25 font-semibold tracking-wider">
                         {{ day }}
                     </div>
                     {% for allocation in allocations %}
                         {% if allocation.start_day == day %}
                         <a class="table-cell text-center px-2 text-2xl" href="{% url 'allocation_detail' allocation.pk %}">
-                            <div class="py-0.5 bg-blue-600 rounded-xl italic">{{ allocation }}</div>
+                            <div class="py-0.5 rounded-xl italic">{{ allocation }}</div>
                         </a>
                         {% endif %}
                     {% endfor %}

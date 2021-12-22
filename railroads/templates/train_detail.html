@@ -1,21 +1,21 @@
 {% extends '_base.html' %}
 
-{% load represent_dates %}
+{% load date_reprs %}
 
 {% block extra_title %}Pociąg {{ train.number }} | {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col items-center text-white mb-3">
+    <div class="flex flex-col items-center mb-3">
         <div class="text-3xl font-medium tracking-wider">{{ train.number }}</div>
         {% if train.carrier %}
-        <div class="flex items-center justify-between px-2">
-            <div class="italic">{{ train.carrier }}</div>
-        </div>
+            <div class="flex items-center justify-between px-2">
+                <div class="italic">{{ train.carrier }}</div>
+            </div>
         {% endif %}
     </div>
 
-    <div class="text-white w-full p-3 bg-white bg-opacity-5 space-y-2">
-        <div class="bg-white bg-opacity-5 p-2 rounded">
+    <div class="w-full p-3 space-y-2">
+        <div class="p-2 rounded">
             <div class="text-center italic text-2xl tracking-tight mb-2">Odjazd</div>
             <div class="flex items-center justify-between">
                 <div class="italic tracking-tight">Data odjazdu</div>
@@ -31,7 +31,9 @@
             </div>
         </div>
         <div class="bg-white bg-opacity-5 p-2 rounded">
-            <div class="text-center italic text-2xl tracking-tight mb-2">Przyjazd</div>
+            <div class="text-center italic text-2xl tracking-tight mb-2">
+                Przyjazd
+            </div>
             <div class="flex items-center justify-between">
                 <div class="italic tracking-tight">Data przyjazdu</div>
                 <div>{{ train.arrival_date|full_date }}</div>

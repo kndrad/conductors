@@ -1,26 +1,29 @@
 {% extends '_base.html' %}
-{% load represent_dates %}
+
+{% load date_reprs %}
 
 {% block extra_title %}Załoga {{ train_crew.train_number }} | {% endblock %}
 
-{% block navbar_buttons %}
-    <form class="bg-emerald-600 rounded" method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
+{% block header_nav %}
+    <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
     {% csrf_token %}
-        <button class="px-2 py-1 font-semibold">Aktualizuj załogę</button>
+        <button class="px-2 py-1 font-semibold">
+            Aktualizuj załogę
+        </button>
     </form>
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col w-full px-2.5 mb-2 text-white items-center">
+    <div class="flex flex-col w-full px-2.5 mb-2 items-center">
         <div class="mb-2 italic text-sm tracking-tight">Ostatnia aktualizacja: {{ train_crew.last_updated|full_date }}</div>
         <div class="tracking-wider text-5xl font-medium">{{ train_crew.train_number }}</div>
         <div class="tracking-wider font-medium mb-2">{{ train_crew.date_as_datetime|date_only }}</div>
     </div>
 
-    <div class="text-white">
+    <div>
     {% if train_crew.traincrewmember_set.exists %}
         {% for member in train_crew.traincrewmember_set.all %}
-            <div class="bg-white bg-opacity-5 mb-3 px-3 py-2 space-y-1">
+            <div class="mb-3 px-3 py-2 space-y-1">
                 <div class="flex items-center justify-between">
                     <div class="italic text-sm tracking-tighter">Imię i nazwisko</div>
                     <div class="italic">{{ member.person }}</div>

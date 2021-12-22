@@ -1,13 +1,13 @@
-{% extends '_panel.html' %}
+{% extends '_base.html' %}
 
 {% block extra_title %}Import | {% endblock %}
 
 
-{% block inner_content %}
+{% block content %}
 <form class="w-full flex items-center flex-col mt-2 italic text-sm" method="post">
     {% csrf_token %}
     {{ form }}
-    <button type="submit" class="mt-2 w-full bg-blue-600 rounded p-2 text-white text-lg tracking-tight">
+    <button type="submit" class="mt-2 w-full p-2 text-lg tracking-tight">
         Importuj
     </button>
 </form>

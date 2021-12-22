@@ -1,6 +1,6 @@
-export function scrollBelowNavBar(element) {
+export function smoothScrollUnderHeader(element) {
     window.scrollTo({
-        top: $(element).offset().top - $('#navBar').outerHeight(true),
+        top: $(element).offset().top - $('#main-header').outerHeight(true),
         behavior: 'smooth'
     });
 }

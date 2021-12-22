@@ -2,38 +2,39 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en" class="bg-black bg-opacity-90">
+<html lang="pl-PL">
     <head>
-    <title>{% block extra_title %}{% endblock %}Conductors</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    {% tailwind_preload_css %}
-    {% tailwind_css v='3' %}
-    {% block head_extra %}
-    {% endblock %}
-    <script src="{% static 'node_modules/jquery/dist/jquery.js' %}"></script>
-    {% block scripts %}{% endblock %}
+        <title>
+            {% block extra_title %}{% endblock %}Conductors
+        </title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        {% tailwind_preload_css %}
+        {% tailwind_css v='3' %}
+        {% block extra_head %}{% endblock %}
     </head>
 
-    <body>
-        <div id="navBar" class="sticky top-0 w-full p-2 pb-2 mb-1 bg-blue-800">
-            <nav class="flex flex-row items-center flex-wrap justify-between text-white">
-                <div class="flex flex-row items-center flex-wrap space-x-3 text-sm tracking-tighter">
-                    <a class="h-9 w-9 mr-1 fill-current" href="{% url 'home' %}">
+    <body class="bg-black text-white/[.87]">
+        <div id="main-header" class="sticky top-0 bg-[#121212]">
+            <div class="p-2 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a class="h-9 w-9 mr-1 fill-blue-500" href="{% url 'home' %}" title="Strona Główna">
                         {% include 'train-svgrepo-com.svg' %}
                     </a>
-                {% block navbar_buttons %}{% endblock %}
+                    {% block header_nav %}{% endblock %}
                 </div>
                 {% if user.is_authenticated %}
-                <a href="{% url 'account_logout' %}" class="bg-blue-900 focus:shadow-lg shadow-blue-900/50 tracking-tight py-1.5 px-4 rounded">
-                    Wyloguj
-                </a>
+                    <a class="px-3.5 py-1.5 bg-white/[.05] rounded" href="{% url 'account_logout' %}">
+                        <div class="text-sm">Wyloguj</div>
+                    </a>
                 {% endif %}
-            </nav>
+            </div>
         </div>
-        <div class="w-full">
-        {% block content %}(no content){% endblock %}
+        <div id="page-content">
+            {% block content %}(no content){% endblock %}
         </div>
     </body>
+    <script src="{% static 'node_modules/jquery/dist/jquery.js' %}"></script>
+    {% block scripts %}{% endblock %}
 </html>

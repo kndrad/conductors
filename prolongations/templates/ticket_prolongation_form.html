@@ -1,14 +1,15 @@
-{% extends '_panel.html' %}
+{% extends '_base.html' %}
 
-{% block navbar_buttons %}
-    <div>{{ now|date:"j E Y" }}r.</div>
+{% block header_nav %}
+    {% include 'utils/date_now_display.html' %}
 {% endblock %}
 
-{% block inner_content %}
-    <form method="post">
-        {% csrf_token %}
-        <div class="mb-3 text-sm italic">{{ form }}</div>
-        <button class="w-full bg-green-600 rounded py-2" type="submit">
+{% block content %}
+    <form method="POST">{% csrf_token %}
+        <div class="mb-3 text-sm italic">
+            {{ form }}
+        </div>
+        <button class="w-full rounded py-2" type="submit">
             Zapisz
         </button>
     </form>

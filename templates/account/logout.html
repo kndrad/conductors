@@ -1,20 +1,18 @@
-{% extends '_panel.html' %}
+{% extends '_base.html' %}
 
 {% block extra_title %}Wyloguj | {% endblock %}
 
-{% block inner_content %}
+{% block content %}
     <div class="text-center">
-        <span>Czy na pewno chcesz się wylogować?</span>
+        Na pewno chcesz się wylogować?
     </div>
-    <form class="w-full" method="post" action="{% url 'account_logout' %}">
-    {% csrf_token %}
-    {% if redirect_field_value %}
-    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
-    {% endif %}
-    <button class="w-full text-center text-lg bg-red-600 focus:shadow-xl focus:shadow-red-600
-    font-semibold rounded mt-4 py-2 px-4"
-            type="submit">
-        Wyloguj się
-    </button>
+    <form class="w-full" method="POST" action="{% url 'account_logout' %}">
+        {% csrf_token %}
+        {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+        {% endif %}
+        <button class="w-full text-center font-semibold rounded mt-4 py-2 px-4">
+            Wyloguj się
+        </button>
     </form>
 {% endblock %}

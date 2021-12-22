@@ -1,8 +1,9 @@
-{% extends '_ticket_prolongation_base.html' %}
+{% extends '_base.html' %}
 
 {% block extra_title %}Prolongaty | {% endblock %}
 
-{% block extra_navbar_buttons %}
+{% block header_nav %}
+    {% include 'utils/date_now_display.html' %}
     <a class="text-xs tracking-tight" href={{ caldav_account_href }}>
         Konto CalDAV
     </a>
@@ -11,28 +12,26 @@
 {% block content %}
     <div class="flex items-center flex-col w-full space-y-1.5">
     {% if ticket_prolongations %}
-    <div class="flex items-center justify-between w-full px-2">
-        <form class="w-full px-1 text-center" method="post" action="{% url 'ticket_prolongation_update_each_today' %}">
-            {% csrf_token %}
-            <button class="w-full p-0.5 rounded-2xl bg-slate-800 text-white tracking-tighter text-sm" type="submit">
-                Przedłuż od dzisiaj
-            </button>
-        </form>
-        <form class="w-full px-1 text-center" method="post" action="{% url 'send_ticket_prolongations_to_dav_client' %}">
-            {% csrf_token %}
-            <button class="w-full p-0.5 rounded-2xl bg-slate-800 text-white tracking-tighter text-sm" type="submit">
-                Wyślij do kalendarza DAV
-            </button>
-        </form>
-    </div>
+        <div class="flex items-center justify-between w-full px-2">
+            <form method="POST" class="w-full px-1 text-center" action="{% url 'ticket_prolongation_update_each_today' %}">{% csrf_token %}
+                <button class="w-full p-0.5 rounded-2xl tracking-tighter text-sm" type="submit">
+                    Przedłuż od dzisiaj
+                </button>
+            </form>
+            <form method="POST" class="w-full px-1 text-center" action="{% url 'send_ticket_prolongations_to_dav_client' %}">{% csrf_token %}
+                <button class="w-full p-0.5 rounded-2xl tracking-tighter text-sm" type="submit">
+                    Wyślij do kalendarza DAV
+                </button>
+            </form>
+        </div>
     {% endif %}
 
     {% for ticket_prolongation in ticket_prolongations %}
-        <div class="text-center text-white w-full bg-white bg-opacity-5 py-2">
-            <div class="bg-white bg-opacity-5 py-1.5 mb-2">
+        <div class="text-center w-full">
+            <div class="py-1.5 mb-2">
                 <div class="text-2xl font-medium">{{ ticket_prolongation.get_ticket_display }}</div>
                 {% if ticket_prolongation.days_until_expiration <= 7 %}
-                <div class="text-sm italic tracking-tighter text-red-500 font-semibold">
+                <div class="text-sm italic tracking-tighter font-semibold">
                     {{ ticket_prolongation.get_expiration_message }}
                 </div>
                 {% else %}
@@ -51,12 +50,12 @@
             </div>
             <div class="flex items-center justify-between mt-3 mb-1 space-x-3 px-2">
                 <a class="w-full" href="{% url 'ticket_prolongation_update' ticket_prolongation.pk %}">
-                    <div class="w-full text-center bg-sky-600 block rounded py-1 px-2 font-semibold tracking-tight">
+                    <div class="w-full text-center block rounded py-1 px-2 font-semibold tracking-tight">
                         Edytuj
                     </div>
                 </a>
                 <form class="w-full" action="{% url 'ticket_prolongation_delete' ticket_prolongation.pk %}">
-                    <button class="w-full text-center bg-red-600 block rounded py-1 px-2 font-semibold tracking-tight">
+                    <button class="w-full text-center block rounded py-1 px-2 font-semibold tracking-tight">
                         Usuń
                     </button>
                 </form>
@@ -65,7 +64,7 @@
     {% endfor %}
         {% if ticket_prolongations|length < 3 %}
             <a class="w-full px-3" href="{% url 'ticket_prolongation_create' %}">
-                <div class="text-white text-center text-lg tracking-tight font-medium bg-green-600/90 rounded py-1 m-1">
+                <div class="text-center text-lg tracking-tight font-medium rounded py-1 m-1">
                     Dodaj prolongatę
                 </div>
             </a>
