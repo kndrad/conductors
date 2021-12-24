@@ -16,23 +16,25 @@
     </head>
 
     <body class="bg-black text-white/[.87]">
-        <div id="main-header" class="sticky top-0 bg-[#121212]">
+        <div id="main-header" class="sticky top-0 bg-[#121212]/[.50]">
             <div class="p-2 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <a class="h-9 w-9 mr-1 fill-blue-500" href="{% url 'home' %}" title="Strona Główna">
+                    <a class="h-8 w-8 mr-1 fill-blue-600" href="{% url 'home' %}" title="Strona Główna">
                         {% include 'train-svgrepo-com.svg' %}
                     </a>
                     {% block header_nav %}{% endblock %}
                 </div>
                 {% if user.is_authenticated %}
-                    <a class="px-3.5 py-1.5 bg-white/[.05] rounded" href="{% url 'account_logout' %}">
-                        <div class="text-sm">Wyloguj</div>
+                    <a href="{% url 'account_logout' %}">
+                        <div class="px-3.5 py-1 bg-[#121212]/[.85] rounded">
+                            Wyloguj
+                        </div>
                     </a>
                 {% endif %}
             </div>
         </div>
-        <div id="page-content">
-            {% block content %}(no content){% endblock %}
+        <div id="page-content" class="px-3 my-3">
+        {% block content %}(no content){% endblock %}
         </div>
     </body>
     <script src="{% static 'node_modules/jquery/dist/jquery.js' %}"></script>
