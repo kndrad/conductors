@@ -309,7 +309,7 @@ class TrainCrewMember(UUIDCommonModel):
         null=True, blank=True
     )
     person = models.CharField('Osoba', max_length=128)
-    phone_number = models.CharField('Numer telefonu', max_length=32)
+    phone_number = models.CharField('Numer telefonu', max_length=32, null=True, blank=True)
     profession = models.CharField('Stanowisko', max_length=32)
     start_location = models.CharField('Lokalizacja początkowa', max_length=32)
     end_location = models.CharField('Lokalizacja końcowa', max_length=32)

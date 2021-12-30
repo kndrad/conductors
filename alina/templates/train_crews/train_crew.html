@@ -7,47 +7,51 @@
 {% block header_items %}
     <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
     {% csrf_token %}
-        <button class="px-2 py-1 font-semibold">
+        <button class="text-white/[.60] px-2 py-1 font-medium">
             Aktualizuj załogę
         </button>
     </form>
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col w-full px-2.5 mb-2 items-center">
-        <div class="mb-2 italic text-sm tracking-tight">Ostatnia aktualizacja: {{ train_crew.last_updated|full_date }}</div>
-        <div class="tracking-wider text-5xl font-medium">{{ train_crew.train_number }}</div>
-        <div class="tracking-wider font-medium mb-2">{{ train_crew.date_as_datetime|date_only }}</div>
+    <div class="mt-5 mb-2 flex flex-col w-full px-2.5 items-center">
+        <div class="mb-2 text-white/[.60] text-sm">
+            Ostatnia aktualizacja: {{ train_crew.last_updated|full_date }}
+        </div>
+        <div class="text-blue-400 text-5xl font-medium mb-2">{{ train_crew.train_number }}</div>
+        <div class="text-white/[.60] italic mb-2">{{ train_crew.date_as_datetime|date_only }}</div>
     </div>
 
-    <div>
+    <div class="bg-[#181818] px-2.5 py-3 rounded space-y-4">
     {% if train_crew.traincrewmember_set.exists %}
         {% for member in train_crew.traincrewmember_set.all %}
-            <div class="mb-3 px-3 py-2 space-y-1">
+            <div class="bg-[#212121] rounded mb-3 px-3 py-2 space-y-1">
                 <div class="flex items-center justify-between">
-                    <div class="italic text-sm tracking-tighter">Imię i nazwisko</div>
-                    <div class="italic">{{ member.person }}</div>
+                    <div class="text-white/[.60] italic">Imię i nazwisko</div>
+                    <div>{{ member.person }}</div>
+                </div>
+                {% if member.phone_number %}
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Numer telefonu</div>
+                    <div>{{ member.phone_number }}</div>
+                </div>
+                {% endif %}
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Stanowisko</div>
+                    <div>{{ member.profession }}</div>
                 </div>
                 <div class="flex items-center justify-between">
-                    <div class="italic text-sm tracking-tighter">Numer telefonu</div>
-                    <div class="italic">{{ member.phone_number }}</div>
+                    <div class="text-white/[.60] italic">Rozpoczęcie</div>
+                    <div>{{ member.start_location }}</div>
                 </div>
                 <div class="flex items-center justify-between">
-                    <div class="italic text-sm tracking-tighter">Stanowisko</div>
-                    <div class="italic">{{ member.profession }}</div>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="italic text-sm tracking-tighter">Rozpoczęcie</div>
-                    <div class="italic">{{ member.start_location }}</div>
-                </div>
-                <div class="flex items-center justify-between">
-                    <div class="italic text-sm tracking-tighter">Zakończenie</div>
-                    <div class="italic">{{ member.end_location }}</div>
+                    <div class="text-white/[.60] italic">Zakończenie</div>
+                    <div>{{ member.end_location }}</div>
                 </div>
             </div>
         {% endfor %}
     {% else %}
-        <div>Brak danych</div>
+        <div class="text-red-500 text-center italic">Brak danych</div>
     {% endif %}
     </div>
 {% endblock %}

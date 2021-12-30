@@ -24,18 +24,18 @@
     </div>
 
     <div class="bg-[#181818] w-full flex-col p-1 px-2.5 pb-4 rounded">
-        <div class="w-full text-center text-4xl font-medium tracking-wider my-2 mb-4">
+        <div class="w-full text-center text-4xl font-medium my-2 mb-4">
             {{ allocation.title }}
         </div>
-        <div class="flex justify-between space-x-1 px-1 mt-2 bg-[#212121] rounded">
-            <div class="w-full mb-2 p-1 space-y-0.5">
+        <div class="flex justify-between space-x-1 px-1 mt-2 border border-blue-500/25 bg-[#212121] rounded">
+            <div class="w-full mb-2 p-1 py-2 space-y-0.5">
                 <div class="mb-3 text-center">
-                    <p class="text-white/[.60] text-center text-sm italic">Początek</p>
-                    <p class="tracking-tight">{{ allocation.start_date }}</p>
+                    <div class="text-white/[.60] text-center text-sm italic">Początek</div>
+                    <div>{{ allocation.start_date }}</div>
                 </div>
                 {% if user.railroad_account %}
                 <div class="mb-2 space-y-1 text-center">
-                    <p class="text-center text-white/[.60] text-sm italic mb-1">Pociąg przed służbą</p>
+                    <div class="text-center text-white/[.60] text-sm italic mb-1">Pociąg przed służbą</div>
                     {% if allocation.train.before %}
                     <a href="{% url 'train_detail' allocation.train.before.pk %}">
                         <div class="rounded border border-blue-400 text-blue-400 flex items-center justify-between rounded p-1 px-2">
@@ -69,14 +69,14 @@
                     </div>
                 {% endif %}
             </div>
-            <div class="w-full mb-2 p-1 space-y-0.5">
+            <div class="w-full mb-2 p-1 py-2 space-y-0.5">
                 <div class="mb-3 text-center">
-                    <p class="text-white/[.60] text-center text-sm italic">Koniec</p>
-                    <p class="tracking-tight">{{ allocation.end_date }}</p>
+                    <div class="text-white/[.60] text-center text-sm italic">Koniec</div>
+                    <div>{{ allocation.end_date }}</div>
                 </div>
                 {% if user.railroad_account %}
                 <div class="mb-2 space-y-1 text-center">
-                    <p class="text-white/[.60] text-center text-sm italic mb-1">Pociąg po służbie</p>
+                    <div class="text-white/[.60] text-center text-sm italic mb-1">Pociąg po służbie</div>
                     {% if allocation.train.after %}
                         <a href="{% url 'train_detail' allocation.train.after.pk %}">
                             <div class="rounded border border-blue-400 text-blue-400 flex items-center justify-between rounded p-1 px-2">
@@ -111,30 +111,30 @@
                 {% endif %}
             </div>
         </div>
-        <div class="my-2 text-sm text-center italic">
+        <div class="mt-4 mb-1 text-sm text-center italic">
             Aby zobaczyć załogę, kliknij w numer pociągu.
         </div>
         <div class="space-y-3">
         {% for detail in allocation.allocationdetail_set.all %}
-            <div class="bg-[#212121] p-1 rounded text-center w-full">
+            <div class="bg-[#212121] border border-blue-500/25 py-1 rounded text-center w-full">
                 <div class="text-center text-xl m-1">
                     <div>{{ detail.action }}</div>
                 </div>
                 {% if detail.train_number %}
                 <a href="{% url 'train_crew' detail.train_number detail.action_date|alina_date_str %}">
-                    <div class="rounded border py-0.5 border-blue-400 text-blue-400 text-xl mb-3">
+                    <div class="text-blue-400 text-xl">
                         {{ detail.train_number }}
                     </div>
                 </a>
             {% endif %}
-                <div class="py-1 px-2 space-y-1">
+                <div class="py-1 px-2">
                     <div class="flex items-center justify-between">
                         <div class="text-white/[.60] text-xs italic">Rozpoczęcie</div>
-                        <div class="text-xs">{{ detail.start_location }} {{ detail.start_hour }}</div>
+                        <div class="text-sm tracking-tight">{{ detail.start_location }} {{ detail.start_hour }}</div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="text-white/[.60] text-xs italic">Koniec</div>
-                        <div class="text-xs">{{ detail.end_location }} {{ detail.end_hour }}</div>
+                        <div class="text-sm tracking-tight">{{ detail.end_location }} {{ detail.end_hour }}</div>
                     </div>
                 </div>
             </div>

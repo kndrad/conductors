@@ -5,10 +5,10 @@
 
 {% block content %}
     <div class="mt-10 mx-2 p-4 bg-[#181818] rounded">
-        <div class="text-white/[.60] text-center mb-1">
+        <div class="text-white/[.38] text-center mb-1">
             Wybierz miesiąc i rok harmonogramu, który chcesz zaimportować.
         </div>
-        <form method="POST" class="w-full flex items-center flex-wrap mt-2 italic">
+        <form method="POST" class="text-white/[.60] w-full flex items-center flex-wrap mt-2 italic">
             {% csrf_token %}
             {{ form }}
             <button type="submit" class="my-3 p-2 w-full bg-blue-800 text-center text-white font-medium text-lg rounded">

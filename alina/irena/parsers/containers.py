@@ -129,7 +129,7 @@ class IrenaCrewMemberContainerParser(IrenaContainerParser):
         try:
             number = self._get_column_value('Numer telefonu')
         except AttributeError:
-            return 'Nie znaleziono numeru telefonu'
+            return None
         else:
             return number.text
 

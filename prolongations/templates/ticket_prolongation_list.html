@@ -2,72 +2,81 @@
 
 {% block extra_title %}Prolongaty | {% endblock %}
 
-{% block header_nav %}
+{% block header_items %}
+    <div class="flex items-center flex-wrap justify-between text-sm space-x-3">
     {% include 'utils/date_now_display.html' %}
-    <a class="text-xs tracking-tight" href={{ caldav_account_href }}>
+    <a class="text-white/[.60]" href={{ caldav_account_href }}>
         Konto CalDAV
     </a>
+    </div>
 {% endblock %}
 
 {% block content %}
-    <div class="flex items-center flex-col w-full space-y-1.5">
+    <div class="flex items-center flex-col w-full space-y-1.5 mt-4">
+
     {% if ticket_prolongations %}
-        <div class="flex items-center justify-between w-full px-2">
-            <form method="POST" class="w-full px-1 text-center" action="{% url 'ticket_prolongation_update_each_today' %}">{% csrf_token %}
-                <button class="w-full p-0.5 rounded-2xl tracking-tighter text-sm" type="submit">
-                    Przedłuż od dzisiaj
-                </button>
-            </form>
-            <form method="POST" class="w-full px-1 text-center" action="{% url 'send_ticket_prolongations_to_dav_client' %}">{% csrf_token %}
-                <button class="w-full p-0.5 rounded-2xl tracking-tighter text-sm" type="submit">
-                    Wyślij do kalendarza DAV
-                </button>
-            </form>
-        </div>
+    <div class="flex items-center justify-between">
+        <form method="POST" class="px-1 mb-1 text-center" action="{% url 'ticket_prolongation_update_each_today' %}">
+            {% csrf_token %}
+            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5" type="submit">
+                Aktualizuj od dzisiaj
+            </button>
+        </form>
+        <form method="POST" class="px-1 mb-1 text-center" action="{% url 'send_ticket_prolongations_to_dav_client' %}">
+            {% csrf_token %}
+            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5" type="submit">
+                    Wyślij do kalendarza
+            </button>
+        </form>
+    </div>
     {% endif %}
 
-    {% for ticket_prolongation in ticket_prolongations %}
-        <div class="text-center w-full">
-            <div class="py-1.5 mb-2">
-                <div class="text-2xl font-medium">{{ ticket_prolongation.get_ticket_display }}</div>
-                {% if ticket_prolongation.days_until_expiration <= 7 %}
-                <div class="text-sm italic tracking-tighter font-semibold">
-                    {{ ticket_prolongation.get_expiration_message }}
-                </div>
-                {% else %}
-                <div class="text-sm italic tracking-tighter">
-                    {{ ticket_prolongation.get_expiration_message }}
-                </div>
-                {% endif %}
-            </div>
-            <div class="flex items-center justify-between px-2">
-                <div class="italic tracking-tighter text-sm">Data ostatniego przedłużenia</div>
-                <div class="tracking-tighter">{{ ticket_prolongation.last_renewal_date }}</div>
-            </div>
-            <div class="flex items-center justify-between px-2">
-                <div class="italic tracking-tighter text-sm">Data wygaśnięcia</div>
-                <div class="tracking-tighter">{{ ticket_prolongation.expiration_date }}</div>
-            </div>
-            <div class="flex items-center justify-between mt-3 mb-1 space-x-3 px-2">
-                <a class="w-full" href="{% url 'ticket_prolongation_update' ticket_prolongation.pk %}">
-                    <div class="w-full text-center block rounded py-1 px-2 font-semibold tracking-tight">
-                        Edytuj
+        <div class="p-2 w-full space-y-4">
+            {% for ticket_prolongation in ticket_prolongations %}
+                <div class="bg-[#181818] text-center w-full rounded px-2 py-4">
+                    <div class="py-1.5 mb-2">
+                        <div class="text-2xl font-medium">
+                            {{ ticket_prolongation.get_ticket_display }}
+                        </div>
+                        {% if ticket_prolongation.days_until_expiration <= 7 %}
+                            <div class="italic tracking-tighter font-medium text-red-500">
+                                {{ ticket_prolongation.get_expiration_message }}
+                            </div>
+                        {% else %}
+                            <div class="text-white/[.70] italic tracking-tighter">
+                                {{ ticket_prolongation.get_expiration_message }}
+                            </div>
+                        {% endif %}
                     </div>
-                </a>
-                <form class="w-full" action="{% url 'ticket_prolongation_delete' ticket_prolongation.pk %}">
-                    <button class="w-full text-center block rounded py-1 px-2 font-semibold tracking-tight">
-                        Usuń
-                    </button>
-                </form>
-            </div>
-        </div>
-    {% endfor %}
-        {% if ticket_prolongations|length < 3 %}
-            <a class="w-full px-3" href="{% url 'ticket_prolongation_create' %}">
-                <div class="text-center text-lg tracking-tight font-medium rounded py-1 m-1">
-                    Dodaj prolongatę
+                    <div class="flex items-center justify-between px-2">
+                        <div class="text-white/[.50] italic tracking-tighter text-sm">Data ostatniego przedłużenia</div>
+                        <div class="tracking-tighter">{{ ticket_prolongation.last_renewal_date }}</div>
+                    </div>
+                    <div class="flex items-center justify-between px-2">
+                        <div class="text-white/[.50] italic tracking-tighter text-sm">Data wygaśnięcia</div>
+                        <div class="tracking-tighter">{{ ticket_prolongation.expiration_date }}</div>
+                    </div>
+                    <div class="flex items-center text-center justify-between mt-3 mb-1 space-x-3 px-2">
+                        <a class="w-full" href="{% url 'ticket_prolongation_update' ticket_prolongation.pk %}">
+                            <div class="border border-blue-500 text-blue-500 w-full rounded py-1">
+                                Edytuj
+                            </div>
+                        </a>
+                        <form class="w-full" action="{% url 'ticket_prolongation_delete' ticket_prolongation.pk %}">
+                            <button class="border border-red-500 text-red-500 w-full rounded py-1">
+                                Usuń
+                            </button>
+                        </form>
+                    </div>
                 </div>
-            </a>
+            {% endfor %}
+        </div>
+        {% if ticket_prolongations|length < 3 %}
+        <a class="w-full px-3" href="{% url 'ticket_prolongation_create' %}">
+            <div class="border border-green-500 text-green-500 text-center rounded py-1.5">
+                Dodaj prolongatę
+            </div>
+        </a>
         {% endif %}
     </div>
 {% endblock %}

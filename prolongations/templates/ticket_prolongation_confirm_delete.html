@@ -1,14 +1,18 @@
 {% extends '_base.html' %}
 
 {% block content %}
-    <div class="text-center mb-2">
-        <p class="italic">Na pewno chcesz usunąć prolongatę biletu "{{ ticket_prolongation.get_ticket_display }}",</p>
-        <p class="italic">który wygasa {{ ticket_prolongation.expiration_date }}?</p>
+    <div class="bg-[#181818] rounded p-3 px-4 mt-10">
+        <div class="text-center mb-2">
+            <div class="italic">
+                Na pewno chcesz usunąć prolongatę biletu "{{ ticket_prolongation.get_ticket_display }}",
+            </div>
+            <div class="italic">która wygasa {{ ticket_prolongation.expiration_date }}?</div>
+        </div>
+        <form class="w-full" method="POST">{% csrf_token %}
+            {{ form }}
+            <button type="submit" class="my-3 p-2 w-full bg-red-800 text-center text-white font-medium text-lg rounded">
+                Usuń
+            </button>
+        </form>
     </div>
-    <form class="w-full" method="POST">{% csrf_token %}
-        {{ form }}
-        <button class="w-full rounded py-1" type="submit">
-            Potwierdź
-        </button>
-    </form>
 {% endblock %}

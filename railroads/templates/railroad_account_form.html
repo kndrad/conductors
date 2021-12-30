@@ -5,7 +5,7 @@
 {% block content %}
     <div class="bg-[#181818] rounded p-4 mt-10 mx-2">
         <div class="text-2xl text-center">Konto kolejowe</div>
-        <form method="POST" class="w-full flex items-center flex-wrap mt-2 italic">
+        <form method="POST" class="w-full flex items-center flex-wrap mt-2 italic text-white/[.60]">
             {% csrf_token %}
             {{ form }}
             <button type="submit" class="my-3 p-2 w-full bg-blue-800 text-center text-white font-medium text-lg rounded">

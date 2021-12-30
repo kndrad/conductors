@@ -5,12 +5,13 @@
 {% endblock %}
 
 {% block content %}
-    <form method="POST">{% csrf_token %}
-        <div class="mb-3 text-sm italic">
+    <div class="mt-10 mx-2 p-4 bg-[#181818] rounded">
+        <form method="POST" class="text-white/[.60] w-full flex items-center flex-wrap mt-2 italic">
+            {% csrf_token %}
             {{ form }}
-        </div>
-        <button class="w-full rounded py-2" type="submit">
-            Zapisz
-        </button>
-    </form>
+            <button type="submit" class="my-3 p-2 w-full bg-blue-800 text-center text-white font-medium text-lg rounded">
+                Importuj
+            </button>
+        </form>
+    </div>
 {% endblock %}

@@ -5,46 +5,48 @@
 {% block extra_title %}Pociąg {{ train.number }} | {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col items-center mb-3">
-        <div class="text-3xl font-medium tracking-wider">{{ train.number }}</div>
-        {% if train.carrier %}
-            <div class="flex items-center justify-between px-2">
-                <div class="italic">{{ train.carrier }}</div>
-            </div>
-        {% endif %}
-    </div>
-
-    <div class="w-full p-3 space-y-2">
-        <div class="p-2 rounded">
-            <div class="text-center italic text-2xl tracking-tight mb-2">Odjazd</div>
-            <div class="flex items-center justify-between">
-                <div class="italic tracking-tight">Data odjazdu</div>
-                <div>{{ train.departure_date|full_date }}</div>
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="italic tracking-tight">Stacja</div>
-                <div>{{ train.departure_station }}</div>
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="italic tracking-tight">Peron</div>
-                <div>{{ train.departure_platform }}</div>
-            </div>
+    <div class="bg-[#181818] rounded mx-2 mt-10 py-3">
+        <div class="flex flex-col items-center mb-1">
+            <div class="text-blue-400 text-3xl font-medium tracking-wider">{{ train.number }}</div>
+            {% if train.carrier %}
+                <div class="flex items-center justify-between px-2">
+                    <div class="text-white/[.60] italic">{{ train.carrier }}</div>
+                </div>
+            {% endif %}
         </div>
-        <div class="bg-white bg-opacity-5 p-2 rounded">
-            <div class="text-center italic text-2xl tracking-tight mb-2">
-                Przyjazd
+
+        <div class="w-full p-3 space-y-5">
+            <div class="bg-[#212121] p-2 rounded">
+                <div class="text-center text-2xl tracking-tight mb-2">Odjazd</div>
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Data odjazdu</div>
+                    <div>{{ train.departure_date|full_date }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Stacja</div>
+                    <div>{{ train.departure_station }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Peron</div>
+                    <div>{{ train.departure_platform }}</div>
+                </div>
             </div>
-            <div class="flex items-center justify-between">
-                <div class="italic tracking-tight">Data przyjazdu</div>
-                <div>{{ train.arrival_date|full_date }}</div>
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="italic tracking-tight">Stacja</div>
-                <div>{{ train.arrival_station }}</div>
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="italic tracking-tight">Peron</div>
-                <div>{{ train.arrival_platform }}</div>
+            <div class="bg-[#212121] p-2 rounded">
+                <div class="text-center text-2xl tracking-tight mb-2">
+                    Przyjazd
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Data przyjazdu</div>
+                    <div>{{ train.arrival_date|full_date }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Stacja</div>
+                    <div>{{ train.arrival_station }}</div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="text-white/[.60] italic">Peron</div>
+                    <div>{{ train.arrival_platform }}</div>
+                </div>
             </div>
         </div>
     </div>
