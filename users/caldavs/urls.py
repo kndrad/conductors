@@ -7,7 +7,7 @@ urlpatterns = [
 ]
 
 
-def get_caldav_url(user):
+def get_caldav_account_url(user):
     account = 'caldav_account'
     if not hasattr(user, account):
         return reverse(f'create_{account}')

@@ -3,10 +3,14 @@
 {% block extra_title %}Konto kolejowe | {% endblock %}
 
 {% block content %}
-    <form method="POST" class="w-full flex items-center flex-col mt-2 italic text-sm">{% csrf_token %}
-        {{ form }}
-        <button type="submit" class="mt-2 w-full rounded p-2 text-lg tracking-tight">
-            Zapisz
-        </button>
-    </form>
+    <div class="bg-[#181818] rounded p-4 mt-10 mx-2">
+        <div class="text-2xl text-center">Konto kolejowe</div>
+        <form method="POST" class="w-full flex items-center flex-wrap mt-2 italic">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="my-3 p-2 w-full bg-blue-800 text-center text-white font-medium text-lg rounded">
+                Zapisz
+            </button>
+        </form>
+    </div>
 {% endblock %}

@@ -3,15 +3,16 @@
 {% block extra_title %}CalDAV | {% endblock %}
 
 {% block content %}
-    <div class="tracking-tighter text-center text-sm mb-1">
-        Proszę podać dane logowania do serwera kalendarzowego DAV.
-    </div>
-    <form method="POST">{% csrf_token %}
-        <div class="mb-3 italic text-sm">
-            {{ form }}
+    <div class="mt-10 mx-2 p-4 bg-[#181818] rounded">
+        <div class="text-white/[.60] text-center mb-1">
+            Proszę podać dane logowania do serwera kalendarzowego DAV.
         </div>
-        <button type="submit" class="mt-1 w-full rounded py-2">
-            Zapisz
-        </button>
-    </form>
+        <form method="POST" class="w-full flex items-center flex-wrap mt-2 italic">
+            {% csrf_token %}
+            {{ form }}
+            <button type="submit" class="my-3 p-2 w-full bg-blue-800 text-center text-white font-medium text-lg rounded">
+                Zapisz
+            </button>
+        </form>
+    </div>
 {% endblock %}

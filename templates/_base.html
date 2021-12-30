@@ -16,21 +16,23 @@
     </head>
 
     <body class="bg-black text-white/[.87]">
-        <div id="main-header" class="sticky top-0 bg-[#121212]/[.50]">
+        <div id="main-header" class="sticky top-0 bg-[#212121]">
             <div class="p-2 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <a class="h-8 w-8 mr-1 fill-blue-600" href="{% url 'home' %}" title="Strona Główna">
+                    <a class="h-8 w-8 mr-1 fill-blue-500" href="{% url 'home' %}" title="Strona Główna">
                         {% include 'train-svgrepo-com.svg' %}
                     </a>
-                    {% block header_nav %}{% endblock %}
+                    {% block header_items %}{% endblock %}
                 </div>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'account_logout' %}">
-                        <div class="px-3.5 py-1 bg-[#121212]/[.85] rounded">
-                            Wyloguj
-                        </div>
-                    </a>
-                {% endif %}
+                {% block logout %}
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'account_logout' %}">
+                            <div class="px-3 py-1 text-blue-400 rounded">
+                                Wyloguj
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endblock %}
             </div>
         </div>
         <div id="page-content" class="px-3 my-3">

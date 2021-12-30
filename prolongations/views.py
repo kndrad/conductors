@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from users.caldavs.urls import get_caldav_url
+from users.caldavs.urls import get_caldav_account_url
 from .forms import TicketProlongationModelForm
 from .models import TicketProlongation
 from utils.views import HiddenUserFormMixin
@@ -29,7 +29,7 @@ class TicketProlongationListView(TicketProlongationViewMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['caldav_account_href'] = get_caldav_url(self.request.user)
+        context['caldav_account_href'] = get_caldav_account_url(self.request.user)
         return context
 
 

@@ -11,7 +11,7 @@ from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin, DetailView
 from django.contrib import messages
 from alina.models import AllocationTimetable
-from users.caldavs.urls import get_caldav_url
+from users.caldavs.urls import get_caldav_account_url
 from utils.views import HiddenUserFormMixin
 from .forms import AllocationTimetableImportForm
 
@@ -48,11 +48,10 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMi
         return timetables
 
     def create_or_update_timetables(self):
-        current_date = timezone.now()
-        future_date = timezone.now() + timedelta(days=30)
         user = self.request.user
+        future_date = timezone.now() + timedelta(days=30)
 
-        for date in [current_date, future_date]:
+        for date in [timezone.now(), future_date]:
             timetable, created = self.model.objects.get_or_create(
                 user=user, month=date.month, year=date.year
             )
@@ -61,12 +60,10 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMi
             else:
                 timetable.update_allocations_on_request(self.request)
 
-        return timetable
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         self.create_or_update_timetables()
-        context['caldav_account_href'] = get_caldav_url(self.request.user)
+        context['caldav_account_href'] = get_caldav_account_url(self.request.user)
         return context
 
 

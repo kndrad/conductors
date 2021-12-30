@@ -4,7 +4,7 @@
 
 {% block extra_title %}Załoga {{ train_crew.train_number }} | {% endblock %}
 
-{% block header_nav %}
+{% block header_items %}
     <form method='POST' action='{% url 'update_train_crew' train_crew.pk %}'>
     {% csrf_token %}
         <button class="px-2 py-1 font-semibold">

@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% load static %}
-{% load represent_dates %}
+{% load date_reprs %}
 
 {% block extra_title %}Plany | {% endblock %}
 
@@ -9,37 +9,40 @@
 <script type="module" src="{% static 'timetables.js' %}"></script>
 {% endblock %}
 
-{% block header_nav %}
+{% block header_items %}
     <a href="{% url 'import_allocation_timetable' %}">
-        Importuj plan
+        <div class="text-sm text-white/[.60]">Importuj plan</div>
     </a>
     <a href={{ caldav_account_href }}>
-        Konto CalDAV
+        <div class="text-sm text-white/[.60]">Konto CalDAV</div>
     </a>
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col items-center text-center space-y-2.5">
+    <div class="flex flex-col items-center rounded text-center space-y-3">
     {% for timetable in timetables %}
-        <div id="{{ timetable.month }}-{{ timetable.year }}-not-empty-{{ timetable.allocation_set.exists }}" class="w-screen p-1.5 px-3 bg-opacity-5">
-            <div class="font-medium text-center text-2xl mb-1">{{ timetable.get_month_display }} {{ timetable.year }}</div>
-            <div class="space-y-2 mb-1">
+        <div id="{{ timetable.month }}-{{ timetable.year }}-not-empty-{{ timetable.allocation_set.exists }}"
+             class="p-3 w-screen bg-[#181818]">
+            <div class="font-medium text-center text-2xl">
+                {{ timetable.get_month_display }} {{ timetable.year }}
+            </div>
+            <div class="space-y-3">
                 {% if timetable.allocation_set.exists %}
                 <a href="{% url 'allocation_timetable_detail' timetable.pk %}">
-                    <div class="w-full mt-2 py-1.5 rounded font-medium tracking-tight">
+                    <div class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mt-4">
                         Zobacz służby
                     </div>
                 </a>
-                <div class="mt-3 w-full text-center rounded">
+                <div class="w-full text-center">
                     <form method='POST' action='{% url 'send_allocation_timetable_to_dav_client' timetable.pk %}'>
                         {% csrf_token %}
-                        <button class="w-full py-1.5 font-medium tracking-tight" type="submit">
+                        <button class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mb-2" type="submit">
                             Wyślij do kalendarza DAV
                         </button>
                     </form>
                 </div>
                 {% else %}
-                    <div class="font-semibold">
+                    <div class="text-red-500 italic">
                         Brak służb
                     </div>
                 {% endif %}
