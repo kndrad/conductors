@@ -3,11 +3,11 @@
 {% block extra_title %}Prolongaty | {% endblock %}
 
 {% block header_items %}
-    <div class="flex items-center flex-wrap justify-between text-sm space-x-3">
-    {% include 'utils/date_now_display.html' %}
-    <a class="text-white/[.60]" href={{ caldav_account_href }}>
-        Konto CalDAV
-    </a>
+    <div class="flex items-center justify-between text-sm space-x-2">
+        {% include 'utils/date_now_display.html' %}
+        <a class="text-white/[.60]" href={{ caldav_account_href }}>
+            Konto kolejowe
+        </a>
     </div>
 {% endblock %}
 
