@@ -288,9 +288,7 @@ class TrainCrew(UUIDCommonModel):
             alina = Alina(email, password)
 
             for data in alina.train_crew(self.train_number, self.date):
-                crew_member, _ = TrainCrewMember.objects.get_or_create(
-                    **data
-                )
+                crew_member, _ = TrainCrewMember.objects.get_or_create(**data)
                 self.traincrewmember_set.add(crew_member)
 
             self.updated_now()

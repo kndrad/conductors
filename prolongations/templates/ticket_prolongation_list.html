@@ -16,13 +16,13 @@
 
     {% if ticket_prolongations %}
     <div class="flex items-center justify-between">
-        <form method="POST" class="px-1 mb-1 text-center" action="{% url 'ticket_prolongation_update_each_today' %}">
+        <form method="post" class="px-1 mb-1 text-center" action="{% url 'ticket_prolongation_update_each_today' %}">
             {% csrf_token %}
             <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5" type="submit">
                 Aktualizuj od dzisiaj
             </button>
         </form>
-        <form method="POST" class="px-1 mb-1 text-center" action="{% url 'send_ticket_prolongations_to_dav_client' %}">
+        <form method="post" class="px-1 mb-1 text-center" action="{% url 'send_ticket_prolongations_to_dav_client' %}">
             {% csrf_token %}
             <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5" type="submit">
                     Wyślij do kalendarza
