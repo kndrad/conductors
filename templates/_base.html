@@ -16,7 +16,8 @@
     </head>
 
     <body class="bg-black text-white/[.87]">
-        <div id="main-header" class="sticky top-0 bg-[#212121]">
+    <div class="flex flex-col justify-between h-screen">
+        <header id="main-header" class="sticky top-0 bg-[#212121]">
             <div class="p-2 flex items-center justify-between">
                 <div class="flex items-center space-x-3">
                     <a class="h-8 w-8 mr-1 fill-blue-500" href="{% url 'home' %}" title="Strona Główna">
@@ -34,10 +35,23 @@
                     {% endif %}
                 {% endblock %}
             </div>
+        </header>
+        <div id="page-content" class="mb-auto px-3 my-3">
+            {% block content %}(no content){% endblock %}
         </div>
-        <div id="page-content" class="px-3 my-3">
-        {% block content %}(no content){% endblock %}
+        <div id="footer" class="bg-[#181818]/50 p-2 text-sm text-white/[.38]">
+            <div class="flex flex-row justify-between items-center">
+                <div class="w-2/4">
+                    <img src="{% static 'logo.png' %}" alt="Logo">
+                </div>
+                <div class="space-y-1 mr-5">
+                    <div>O projekcie</div>
+                    <div>Kod źrodłowy</div>
+                    <div>Kontakt</div>
+                </div>
+            </div>
         </div>
+    </div>
     </body>
     <script src="{% static 'node_modules/jquery/dist/jquery.js' %}"></script>
     {% block scripts %}{% endblock %}
