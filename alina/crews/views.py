@@ -19,11 +19,10 @@ class TrainCrewView(TrainCrewViewMixin, DetailView):
 
     def get_object(self, queryset=None):
         train_number = self.kwargs.get('train_number')
-        formatted_action_date = self.kwargs.get('formatted_action_date')
+        date = self.kwargs.get('formatted_action_date')
 
-        self.object, created = self.model.objects.get_or_create(
-            train_number=train_number, date=formatted_action_date,
-        )
+        self.object, created = self.model.objects.get_or_create(train_number=train_number, date=date)
+
         if created:
             self.object.add_members_on_request(self.request)
 

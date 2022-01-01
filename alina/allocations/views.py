@@ -66,17 +66,13 @@ class SearchAllocationTrainBeforeAllocationView(SearchAllocationTrainView):
         user = request.user
 
         self.object = self.get_object()
-        allocation_train, _ = AllocationTrain.objects.get_or_create(
-            allocation=self.object,
-        )
+        allocation_train, _ = AllocationTrain.objects.get_or_create(allocation=self.object)
 
         departure_station = self.get_station('homeplace')
         arrival_station = self.get_station('workplace')
         spare_time = user.railroad_account.spare_time
 
-        allocation_train.search_before(
-            departure_station, arrival_station, spare_time
-        )
+        allocation_train.search_before(departure_station, arrival_station, spare_time)
         return redirect(self.object.get_absolute_url())
 
 
@@ -85,14 +81,10 @@ class SearchAllocationTrainAfterAllocationView(SearchAllocationTrainView):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        allocation_train, _ = AllocationTrain.objects.get_or_create(
-            allocation=self.object,
-        )
+        allocation_train, _ = AllocationTrain.objects.get_or_create(allocation=self.object)
 
         departure_station = self.get_station('workplace')
         arrival_station = self.get_station('homeplace')
 
-        allocation_train.search_after(
-            departure_station, arrival_station, spare_time=0
-        )
+        allocation_train.search_after(departure_station, arrival_station, spare_time=0)
         return redirect(self.object.get_absolute_url())
