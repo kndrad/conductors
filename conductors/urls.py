@@ -25,5 +25,6 @@ urlpatterns = [
     path('allocations/', include('alina.allocations.urls')),
     path('crews/', include('alina.crews.urls')),
     path('prolongations/', include('prolongations.urls')),
+    path('trails/', include('trails.urls')),
     path('', include('pages.urls')),
 ]

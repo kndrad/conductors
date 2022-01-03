@@ -1,16 +1,16 @@
 import caldav
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from users.caldavs.urls import get_caldav_account_url
+from utils.views import HiddenUserFormMixin
 from .forms import TicketProlongationModelForm
 from .models import TicketProlongation
-from utils.views import HiddenUserFormMixin
 
 
 class TicketProlongationViewMixin(LoginRequiredMixin):
@@ -23,9 +23,7 @@ class TicketProlongationListView(TicketProlongationViewMixin, ListView):
     context_object_name = 'ticket_prolongations'
 
     def get_queryset(self):
-        return self.model.objects.filter(user=self.request.user).order_by(
-            'expiration_date'
-        )
+        return self.model.objects.filter(user=self.request.user).order_by('expiration_date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

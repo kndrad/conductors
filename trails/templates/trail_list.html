@@ -1,0 +1,15 @@
+{% extends '_base.html' %}
+
+{% block extra_title %}Szlaki | {% endblock %}
+
+{% block content %}
+    {% for trail in trails %}
+        {{ trail }}
+    {% endfor %}
+
+    <a class="w-full" href="{% url 'trail_create' %}">
+        <div class="border border-green-500 text-green-500 w-full rounded py-1">
+            Dodaj
+        </div>
+    </a>
+{% endblock %}
