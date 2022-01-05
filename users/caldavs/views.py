@@ -1,10 +1,9 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
-from utils.views import HiddenUserFormMixin
 
+from utils.views import HiddenUserFormMixin
 from .forms import CalDAVAccountModelForm
 from .models import CalDAVAccount
 

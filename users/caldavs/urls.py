@@ -1,4 +1,5 @@
 from django.urls import path, reverse
+
 from .views import CalDAVAccountCreateView, CalDAVAccountUpdateView
 
 urlpatterns = [

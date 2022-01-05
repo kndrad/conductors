@@ -1,23 +1,24 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from .models import TicketProlongation
+from facades.models import AllocationTimetable
 
 
-class TicketProlongationModelForm(forms.ModelForm):
+class AllocationTimetableImportForm(forms.ModelForm):
+    """Contains only month and year fields.
+    Takes user instance in it's constructor to provide user initial value in this form field.
+    """
+
     class Meta:
-        model = TicketProlongation
+        model = AllocationTimetable
         fields = '__all__'
-        exclude = ('expiration_date',)
+        exclude = ('last_updated',)
         widgets = {
             'user': forms.HiddenInput(),
-            'last_renewal_date': forms.DateInput(
-                attrs={'type': 'date'}
-            )
         }
         error_messages = {
             NON_FIELD_ERRORS: {
-                'unique_together': 'Prolongata takiego biletu już istnieje.',
+                'unique_together': 'Plan został już zaimportowany.',
             }
         }
 
@@ -28,3 +29,5 @@ class TicketProlongationModelForm(forms.ModelForm):
 
         for key, field in self.fields.items():
             field.widget.attrs['class'] = 'w-full rounded text-black mb-2 text-base'
+
+
