@@ -8,17 +8,30 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(UserManager):
 
-    def create_non_password_user(self, email=None, **kwargs):
+    def create_passwordless(self, email=None, **kwargs):
         """Creates user without any password. Only with email, username and first_name.
         """
         validate_email(email)
+
         username, _ = str(email).rsplit('@', 1)
         first_name = (username.split('.', 1)[0] or username).title()
+
         user = self.model(
             email=email, username=username, first_name=first_name, **kwargs
         )
+
         user.save()
         return user
+
+    @classmethod
+    def get_or_create_passwordless(cls, email=None, **kwargs):
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            user = User.objects.create_passwordless(email=email, **kwargs)
+            return user
+        else:
+            return user
 
 
 class User(AbstractUser):

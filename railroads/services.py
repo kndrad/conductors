@@ -39,9 +39,10 @@ def search_train(departure_station, arrival_station, date):
 def arriving_trains(departure_station, arrival_station, date):
     if not is_aware(date):
         date = make_aware(date)
-    engine_date = date
 
+    engine_date = date
     trains = set()
+
     while not trains:
         engine_date -= datetime.timedelta(minutes=15)
         for train in search_train(departure_station, arrival_station, engine_date):

@@ -10,7 +10,7 @@ class UnauthenticatedIrenaClientError(IrenaError):
         super().__init__('tried to perform an action while being unauthenticated;')
 
 
-class IrenaCredentialsDeniedError(IrenaError):
+class IrenaAuthenticationError(IrenaError):
     """Raised on authentication.
     """
 

@@ -1,6 +1,6 @@
 from requests import Session
 
-from alina.irena import IrenaCredentialsDeniedError, UnauthenticatedIrenaClientError
+from alina.irena import IrenaAuthenticationError, UnauthenticatedIrenaClientError
 from alina.irena.requests import IrenaRequest
 
 
@@ -18,7 +18,7 @@ class IrenaClient:
             response.raise_for_status()
 
             if response.request.path_url == '/mbweb/login?login-status=failed':
-                raise IrenaCredentialsDeniedError(self._credentials)
+                raise IrenaAuthenticationError(self._credentials)
 
         return True
 

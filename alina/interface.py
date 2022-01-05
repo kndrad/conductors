@@ -6,7 +6,9 @@ from alina.irena.factories import (
 
 
 class Alina:
-    """Init creates an instance of the class with the following parameters: username, password, and authenticate.
+    """
+    Facade for Irena requests.
+    Init creates an instance of the class with the following parameters: username, password, and authenticate.
     These are passed to the constructor function which creates an instance of IrenaClient with these values
     as its parameters. The 'authenticate' parameter represents whether or not authentication was required when creating
     this object from IrenaClient(). If True, then authentication must have been performed before being able to create
@@ -94,3 +96,7 @@ class Alina:
         factory = IrenaTripCrewMembersFactory(self._client, train_number, date)
         crew = factory.produce()
         return crew
+
+
+def alina_authentication(username, password):
+    return Alina(username, password, authenticate=True)

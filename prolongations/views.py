@@ -46,14 +46,14 @@ class TicketProlongationUpdateEachToday(LoginRequiredMixin, View):
 
     def post(self, request, **kwargs):
         user = self.request.user
-        ticket_prolongations = TicketProlongation.objects.filter(user=user)
+        prolongations = TicketProlongation.objects.filter(user=user)
 
-        for ticket_prolongation in ticket_prolongations:
-            ticket_prolongation.last_renewal_date = timezone.now().date()
-            ticket_prolongation.save()
+        for prolongation in prolongations:
+            prolongation.last_renewal_date = timezone.now().date()
+            prolongation.save()
 
-        path = reverse('ticket_prolongations', kwargs={'pk': user.pk})
-        return redirect(path)
+        url = reverse('ticket_prolongations', kwargs={'pk': user.pk})
+        return redirect(url)
 
 
 class SendTicketProlongationsToDAVClientView(LoginRequiredMixin, View):

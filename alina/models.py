@@ -12,7 +12,7 @@ from django.utils.dates import MONTHS
 from django.utils.timezone import make_aware
 
 from alina.interface import Alina
-from alina.tools.utils import get_session_credentials, alina_strftime
+from alina.tools.utils import fetch_credentials, alina_strftime
 from alina.tools.utils import timetable_alina_strftime
 from railroads.models import PublicRailroadTrain
 from railroads.services import nearest_arriving_train, nearest_departing_train
@@ -49,15 +49,21 @@ class AllocationTimetable(UUIDCommonModel):
     def get_absolute_url(self):
         return reverse('allocation_timetable_detail', kwargs={'pk': self.pk})
 
+    def get_date(self):
+        return datetime.date(year=self.year, month=self.month, day=1)
+
+    def get_related_objects(self):
+        return self.allocation_set
+
     def add_allocations_on_request(self, request):
         if self.allocation_set.exists():
             return self.allocation_set
         else:
-            email, password = get_session_credentials(request)
+            email, password = fetch_credentials(request)
             alina = Alina(email, password)
-            date_str = timetable_alina_strftime(self)
+            date = self.get_date().strftime('%Y-%m-%d')
 
-            for data in alina.timetable_allocations(date_str):
+            for data in alina.timetable_allocations(date):
                 date = data['date']
                 start_hour = data['start_hour']
                 end_hour = data['end_hour']
@@ -128,13 +134,16 @@ class Allocation(UUIDCommonModel, ICalComponentable):
     def start_day(self):
         return int(self.start_date.day)
 
+    def get_related_objects(self):
+        return self.allocationdetail_set
+
     def add_details_on_request(self, request):
         if self.allocationdetail_set.exists():
             return self.allocationdetail_set
         else:
-            email, password = get_session_credentials(request)
+            email, password = fetch_credentials(request)
             alina = Alina(email, password)
-            date = alina_strftime(self.start_date)
+            date = self.start_date.strftime('%Y-%m-%d')
 
             for data in alina.allocation_details(title=self.title, date=date):
                 start_hour = data['start_hour']
@@ -147,7 +156,6 @@ class Allocation(UUIDCommonModel, ICalComponentable):
                 detail, _ = AllocationDetail.objects.get_or_create(
                     action_date=action_date,
                     **data,
-
                 )
                 self.allocationdetail_set.add(detail)
 
@@ -177,6 +185,7 @@ class Allocation(UUIDCommonModel, ICalComponentable):
         cal.add_component(event)
         return cal
 
+    @property
     def is_month_old(self):
         days = 30
         month_ago = timezone.now() - datetime.timedelta(days=days)
@@ -280,11 +289,14 @@ class TrainCrew(UUIDCommonModel):
         date = make_aware(datetime.datetime.strptime(self.date, fmt))
         return date
 
+    def get_related_objects(self):
+        return self.traincrewmember_set
+
     def add_members_on_request(self, request):
         if self.traincrewmember_set.exists():
             return self.traincrewmember_set
         else:
-            email, password = get_session_credentials(request)
+            email, password = fetch_credentials(request)
             alina = Alina(email, password)
 
             for data in alina.train_crew(self.train_number, self.date):

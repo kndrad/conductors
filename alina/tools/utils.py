@@ -1,12 +1,18 @@
 import datetime
 
-STORED_PASSWORD_KEY = 'stored_password'
+
+def session_password_key():
+    return 'stored_password'
 
 
-def get_session_credentials(request):
-    email = request.user.email
-    password = request.session.get(STORED_PASSWORD_KEY)
-    return email, password
+def fetch_credentials(request):
+    username = getattr(request.user, 'authentication_field', None)
+
+    if not username:
+        raise ValueError(f'invalid authentication field value - got {username}')
+
+    password = request.session.get(session_password_key())
+    return username, password
 
 
 def alina_strftime(date):
