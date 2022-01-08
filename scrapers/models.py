@@ -11,14 +11,14 @@ from django.utils import timezone
 from django.utils.dates import MONTHS
 from django.utils.timezone import make_aware
 
-from facades.backends import facade_authentication
+from scrapers.backends import facade_authentication
 from railroads.models import PublicRailroadTrain
 from railroads.services import nearest_arriving_train, nearest_departing_train
 from utils.dates import YEARS
 from utils.icals import ICalComponentable, TriggeredAlarm
 from utils.models import UUIDCommonModel
 
-ACCEPTED_DATETIME_FORMAT = '%Y-%m-%d'
+REQUEST_DATE_FMT = '%Y-%m-%d'
 
 
 class AllocationTimetable(UUIDCommonModel):
@@ -52,15 +52,12 @@ class AllocationTimetable(UUIDCommonModel):
     def get_date(self):
         return datetime.date(year=self.year, month=self.month, day=1)
 
-    def get_related_objects(self):
-        return self.allocation_set
-
-    def add_allocations_on_request(self, request):
+    def add_related_objects_on_request(self, request):
         if self.allocation_set.exists():
             return self.allocation_set
         else:
             facade = facade_authentication(request)
-            date = self.get_date().strftime('%Y-%m-%d')
+            date = self.get_date().strftime(REQUEST_DATE_FMT)
 
             for data in facade.timetable_allocations(date):
                 date = data['date']
@@ -79,14 +76,14 @@ class AllocationTimetable(UUIDCommonModel):
                 )
                 self.allocation_set.add(allocation)
 
-            self.updated_now()
+            self.update_now()
             self.save()
             return self.allocation_set
 
-    def update_allocations_on_request(self, request):
+    def update_related_objects_on_request(self, request):
         if self.allocation_set.exists():
             self.allocation_set.clear()
-        return self.add_allocations_on_request(request)
+        return self.add_related_objects_on_request(request)
 
     @property
     def name(self):
@@ -132,15 +129,12 @@ class Allocation(UUIDCommonModel, ICalComponentable):
     def start_day(self):
         return int(self.start_date.day)
 
-    def get_related_objects(self):
-        return self.allocationdetail_set
-
-    def add_details_on_request(self, request):
+    def add_related_objects_on_request(self, request):
         if self.allocationdetail_set.exists():
             return self.allocationdetail_set
         else:
             facade = facade_authentication(request)
-            date = self.start_date.strftime('%Y-%m-%d')
+            date = self.start_date.strftime(REQUEST_DATE_FMT)
 
             for data in facade.allocation_details(title=self.title, date=date):
                 start_hour = data['start_hour']
@@ -156,14 +150,14 @@ class Allocation(UUIDCommonModel, ICalComponentable):
                 )
                 self.allocationdetail_set.add(detail)
 
-            self.updated_now()
+            self.update_now()
             self.save()
             return self.allocationdetail_set
 
-    def update_details_on_request(self, request):
+    def update_related_objects_on_request(self, request):
         if self.allocationdetail_set.exists():
             self.allocationdetail_set.clear()
-        return self.add_details_on_request(request)
+        return self.add_related_objects_on_request(request)
 
     def get_as_ical_component(self):
         cal = icalendar.Calendar()
@@ -286,10 +280,7 @@ class TrainCrew(UUIDCommonModel):
         date = make_aware(datetime.datetime.strptime(self.date, fmt))
         return date
 
-    def get_related_objects(self):
-        return self.traincrewmember_set
-
-    def add_members_on_request(self, request):
+    def add_related_objects_on_request(self, request):
         if self.traincrewmember_set.exists():
             return self.traincrewmember_set
         else:
@@ -298,14 +289,14 @@ class TrainCrew(UUIDCommonModel):
                 crew_member, _ = TrainCrewMember.objects.get_or_create(**data)
                 self.traincrewmember_set.add(crew_member)
 
-            self.updated_now()
+            self.update_now()
             self.save()
             return self.traincrewmember_set
 
-    def update_members_on_request(self, request):
+    def update_related_objects_on_request(self, request):
         if self.traincrewmember_set.exists():
             self.traincrewmember_set.clear()
-        return self.add_members_on_request(request)
+        return self.add_related_objects_on_request(request)
 
 
 class TrainCrewMember(UUIDCommonModel):

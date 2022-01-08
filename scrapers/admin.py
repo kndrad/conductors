@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from facades.models import (
+from scrapers.models import (
     Allocation, AllocationDetail, AllocationTimetable, TrainCrew, TrainCrewMember, AllocationTrain
 )
 

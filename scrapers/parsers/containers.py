@@ -1,6 +1,6 @@
 import abc
 
-from facades.tools.expressions import (
+from scrapers.tools.expressions import (
     irena_date_regex, common_hour_regex, common_word_regex, allocation_information_container_regex,
     allocation_timeline_regex
 )

@@ -11,7 +11,7 @@ class UUIDCommonModel(models.Model):
     class Meta:
         abstract = True
 
-    def updated_now(self):
+    def update_now(self):
         self.last_updated = timezone.now()
         self.save()
         return self.last_updated

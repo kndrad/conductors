@@ -4,7 +4,7 @@ Contains common template filters for datetime fields of objects.
 
 from django import template
 
-from facades.models import ACCEPTED_DATETIME_FORMAT
+from scrapers.models import REQUEST_DATE_FMT
 
 register = template.Library()
 
@@ -13,4 +13,4 @@ register = template.Library()
 def facade_strftime(value):
     """Returns parsed date string in irena facade accepted date pattern.
     """
-    return value.strftime(ACCEPTED_DATETIME_FORMAT)
+    return value.strftime(REQUEST_DATE_FMT)

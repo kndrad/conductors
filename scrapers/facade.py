@@ -1,5 +1,5 @@
-from facades.irena.client import IrenaClient
-from facades.irena.factories import (
+from scrapers.client import IrenaClient
+from scrapers.factories import (
     TimetableAllocationsResponseFactory, AllocationSignatureResponseFactory, AllocationDetailsResponseFactory,
     CrewMembersResponseFactory
 )

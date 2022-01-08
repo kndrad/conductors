@@ -4,7 +4,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
-from facades.models import TrainCrew
+from scrapers.models import TrainCrew
 
 
 class TrainCrewViewMixin(LoginRequiredMixin, View):
@@ -22,7 +22,7 @@ class TrainCrewView(TrainCrewViewMixin, DetailView):
         self.object, created = self.model.objects.get_or_create(train_number=train_number, date=date)
 
         if created:
-            self.object.add_members_on_request(self.request)
+            self.object.add_related_objects_on_request(self.request)
 
         return self.object
 
@@ -32,5 +32,5 @@ class UpdateTrainCrewView(TrainCrewViewMixin, SingleObjectMixin):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.object.update_members_on_request(self.request)
+        self.object.update_related_objects_on_request(self.request)
         return redirect(request.META.get('HTTP_REFERER'))

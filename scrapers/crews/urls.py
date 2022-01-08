@@ -1,6 +1,6 @@
 from django.urls import path
 
-from facades.crews.views import TrainCrewView, UpdateTrainCrewView
+from scrapers.crews.views import TrainCrewView, UpdateTrainCrewView
 
 urlpatterns = [
     path(

@@ -1,6 +1,6 @@
 from django.urls import path
 
-from facades.timetables.views import (
+from scrapers.timetables.views import (
     AllocationTimetableListView,
     AllocationTimetableDetailView,
     ImportAllocationTimetableFormView,

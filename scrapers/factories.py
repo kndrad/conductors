@@ -1,4 +1,4 @@
-from facades.irena.requests import (
+from scrapers.requests import (
     IrenaAllocationTimetableRequest, IrenaAllocationSignatureRequest, IrenaAllocationDetailsRequest,
     IrenaTripCrewMembersRequest
 )

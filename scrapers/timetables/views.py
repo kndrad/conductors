@@ -11,10 +11,12 @@ from django.views import View
 from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin, DetailView
 
-from facades.models import AllocationTimetable
+from scrapers.models import AllocationTimetable
 from users.caldavs.urls import get_caldav_account_url
 from utils.views import HiddenUserFormMixin
 from .forms import AllocationTimetableImportForm
+
+REQUEST_DATE_FMT = '%Y-%m-%d'
 
 
 class AllocationTimetableViewMixin(LoginRequiredMixin, View):
@@ -42,10 +44,7 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMi
             return has_permissions
 
     def get_queryset(self):
-        timetables = self.model.objects.filter(
-            user=self.request.user).all().order_by(
-            '-year', '-month'
-        )
+        timetables = self.model.objects.filter(user=self.request.user).all().order_by('-year', '-month')
         return timetables
 
     def create_or_update_timetables(self):
@@ -57,9 +56,9 @@ class AllocationTimetableListView(AllocationTimetableViewMixin, UserPassesTestMi
                 user=user, month=date.month, year=date.year
             )
             if created:
-                timetable.add_allocations_on_request(self.request)
+                timetable.add_related_objects_on_request(self.request)
             else:
-                timetable.update_allocations_on_request(self.request)
+                timetable.update_related_objects_on_request(self.request)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -88,7 +87,7 @@ class ImportAllocationTimetableFormView(
 
     def form_valid(self, form):
         self.object = form.save()
-        self.object.add_allocations_on_request(self.request)
+        self.object.add_related_objects_on_request(self.request)
         return super().form_valid(form)
 
 
@@ -99,7 +98,7 @@ class UpdateAllocationTimetableAllocationsView(AllocationTimetableViewMixin, Sin
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.object.update_allocations_on_request(self.request)
+        self.object.update_related_objects_on_request(self.request)
         return redirect(self.object.get_absolute_url())
 
 
@@ -129,7 +128,7 @@ class SendAllocationTimetableToDAVClientView(AllocationTimetableViewMixin, Singl
                     event.delete()
 
                 for allocation in self.object.allocation_set.all():
-                    allocation.add_details_on_request(self.request)
+                    allocation.add_related_objects_on_request(self.request)
 
                     component = allocation.get_as_ical_component()
                     ical = component.to_ical()

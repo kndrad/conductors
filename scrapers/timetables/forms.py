@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from facades.models import AllocationTimetable
+from scrapers.models import AllocationTimetable
 
 
 class AllocationTimetableImportForm(forms.ModelForm):

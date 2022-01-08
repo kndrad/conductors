@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
-from facades.models import Allocation, AllocationTrain
+from scrapers.models import Allocation, AllocationTrain
 
 
 class AllocationViewMixin(LoginRequiredMixin, View):
@@ -19,7 +19,7 @@ class AllocationView(AllocationViewMixin, DetailView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        self.object.add_details_on_request(self.request)
+        self.object.add_related_objects_on_request(self.request)
         return self.object
 
     def get_context_data(self, **kwargs):
@@ -41,7 +41,7 @@ class UpdateAllocationView(AllocationViewMixin, SingleObjectMixin):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.object.update_details_on_request(self.request)
+        self.object.update_related_objects_on_request(self.request)
         return redirect(self.object.get_absolute_url())
 
 

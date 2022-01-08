@@ -4,11 +4,11 @@ import concurrent.futures
 from bs4 import BeautifulSoup
 from bs4.element import SoupStrainer
 
-from facades.irena.parsers.containers import (
+from scrapers.parsers.containers import (
     AllocationContainerMarkupParser, AllocationDetailRowContainerMarkupParser,
     CrewMemberContainerMarkupParser
 )
-from facades.tools.expressions import (
+from scrapers.tools.expressions import (
     allocation_id_regex, allocation_component_regex
 )
 

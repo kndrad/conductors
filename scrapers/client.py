@@ -1,7 +1,7 @@
 from requests import Session
 
-from facades.irena import AuthenticationError, UnauthenticatedError
-from facades.irena.requests import IrenaRequest
+from scrapers import AuthenticationError, UnauthenticatedError
+from scrapers.requests import IrenaRequest
 
 
 class IrenaClient:
@@ -20,7 +20,8 @@ class IrenaClient:
             if response.request.path_url == '/mbweb/login?login-status=failed':
                 raise AuthenticationError(self._credentials)
 
-        return True
+        self._authenticated = True
+        return self._authenticated
 
     def __init__(self, username, password, authenticate=True):
         self._session = Session()

@@ -1,11 +1,11 @@
 from requests import Request
 
-from facades.irena.parsers.responses import (
+from scrapers.parsers.responses import (
     AllocationTimetableRequestResponseMarkupParser, AllocationDetailsRequestResponseMarkupParser,
     AllocationSignatureRequestResponseMarkupParser, TripCrewMembersRequestResponseMarkupParser
 )
-from facades.tools import DateExpressionPatternError, TextExpressionPatternError
-from facades.tools.expressions import irena_date_regex, common_word_regex
+from scrapers.tools import DateExpressionPatternError, TextExpressionPatternError
+from scrapers.tools.expressions import irena_date_regex, common_word_regex
 
 
 class IrenaRequest(Request):

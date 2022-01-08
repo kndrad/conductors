@@ -1,6 +1,6 @@
 from django.urls import path
 
-from facades.allocations.views import (
+from scrapers.allocations.views import (
     AllocationView,
     UpdateAllocationView,
     SearchAllocationTrainBeforeAllocationView,

@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 
 from users.models import User
-from .interface import IrenaFacade
-from .irena import AuthenticationError
+from .facade import IrenaFacade
+from scrapers import AuthenticationError
 
 
 def fetch_credentials(request):
@@ -56,7 +56,7 @@ def facade_authentication(request, facade=IrenaFacade):
     facade = facade(username, password)
 
     try:
-        facade = facade.make_authentication()
+        facade.make_authentication()
     except AuthenticationError:
         return redirect(settings.LOGIN_URL)
     else:
