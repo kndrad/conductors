@@ -4,7 +4,7 @@ from scrapers.crews.views import TrainCrewView, UpdateTrainCrewView
 
 urlpatterns = [
     path(
-        'members/<str:train_number>/<str:formatted_action_date>/',
+        'members/<str:trip>/<str:formatted_action_date>/',
         TrainCrewView.as_view(), name='train_crew'
     ),
     path(

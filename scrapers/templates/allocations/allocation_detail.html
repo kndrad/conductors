@@ -121,7 +121,7 @@
                     <div>{{ detail.action }}</div>
                 </div>
                 {% if detail.train_number %}
-                <a href="{% url 'train_crew' detail.train_number detail.action_date|facade_strftime %}">
+                <a href="{% url 'train_crew' detail.train_number detail.action_date|ivu_strftime %}">
                     <div class="text-blue-400 text-xl">
                         {{ detail.train_number }}
                     </div>

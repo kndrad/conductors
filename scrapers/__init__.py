@@ -1,18 +1,14 @@
-class IrenaError(Exception):
-    """Error for Irena"""
+class IVUServerError(Exception):
+    pass
 
 
-class UnauthenticatedError(IrenaError):
-    """Raised when IrenaClient wants to make request to irena1.intercity.pl while being unauthenticated.
-    """
-
+class IVUServerConnectionError(IVUServerError):
     def __init__(self):
-        super().__init__('tried to perform an action while being unauthenticated;')
+        super().__init__(
+            'tried make request to a server while connection is not established;'
+            'please authenticate first;'
+        )
 
 
-class AuthenticationError(IrenaError):
-    """Raised on authentication.
-    """
-
-    def __init__(self, credentials):
-        super().__init__(f'{credentials};')
+class IVUServerAuthenticationError(IVUServerError):
+    pass

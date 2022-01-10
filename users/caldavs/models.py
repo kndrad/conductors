@@ -2,10 +2,10 @@ import caldav
 from django.conf import settings
 from django.db import models
 
-from utils.models import UUIDCommonModel
+from utils.models import UUIDModel
 
 
-class CalDAVAccount(UUIDCommonModel):
+class CalDAVAccount(UUIDModel):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, related_name='caldav_account',
         verbose_name='Użytkownik', on_delete=models.CASCADE

@@ -4,11 +4,11 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
-from scrapers.models import TrainCrew
+from intermediaries.models import TripCrew
 
 
 class TrainCrewViewMixin(LoginRequiredMixin, View):
-    model = TrainCrew
+    model = TripCrew
     context_object_name = 'train_crew'
 
 
@@ -16,7 +16,7 @@ class TrainCrewView(TrainCrewViewMixin, DetailView):
     template_name = 'train_crews/train_crew.html'
 
     def get_object(self, queryset=None):
-        train_number = self.kwargs.get('train_number')
+        train_number = self.kwargs.get('trip')
         date = self.kwargs.get('formatted_action_date')
 
         self.object, created = self.model.objects.get_or_create(train_number=train_number, date=date)

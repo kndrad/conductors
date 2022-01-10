@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
-from scrapers.models import Allocation, AllocationTrain
+from intermediaries.models import Allocation, AllocationTrain
 
 
 class AllocationViewMixin(LoginRequiredMixin, View):
@@ -68,7 +68,7 @@ class SearchAllocationTrainBeforeAllocationView(SearchAllocationTrainView):
 
         departure_station = self.get_station('homeplace')
         arrival_station = self.get_station('workplace')
-        spare_time = user.railroad_account.spare_time
+        spare_time = user.railroad_account.administration_time
 
         allocation_train.search_before(departure_station, arrival_station, spare_time)
         return redirect(self.object.get_absolute_url())

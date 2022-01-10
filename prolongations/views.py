@@ -80,7 +80,7 @@ class SendTicketProlongationsToDAVClientView(LoginRequiredMixin, View):
                     event.delete()
 
                 for ticket_prolongation in TicketProlongation.objects.filter(user=user):
-                    component = ticket_prolongation.get_as_ical_component()
+                    component = ticket_prolongation.to_ical_component()
                     ical = component.to_ical()
                     calendar.save_event(ical)
         else:

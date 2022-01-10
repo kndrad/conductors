@@ -67,7 +67,7 @@ class TicketProlongation(models.Model, ICalComponentable):
         else:
             return f'Wygaśnie za {days} dni.'
 
-    def get_as_ical_component(self):
+    def to_ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
         event.add('summary', self.get_ticket_display())
