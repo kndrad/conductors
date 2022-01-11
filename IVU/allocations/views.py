@@ -81,7 +81,7 @@ class AllocationTimetableDetailView(AllocationTimetableViewMixin, DetailView):
 class ImportAllocationTimetableFormView(
     AllocationTimetableViewMixin, SuccessMessageMixin, HiddenUserFormMixin, CreateView
 ):
-    """Serves as a CreateView. Imports IVUTimetableAllocationsResource.
+    """Serves as a CreateView. Imports IVUTimetableAllocations.
     """
     template_name = "allocation_timetable_import.html"
     form_class = ImportAllocationTimetableForm

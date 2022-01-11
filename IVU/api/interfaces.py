@@ -18,14 +18,14 @@ class IVUResource:
         pass
 
 
-class IVUTimetableAllocationsResource(IVUResource):
+class IVUTimetableAllocations(IVUResource):
     def fetch(self, date):
         factory = IVUTimetableAllocationsFactory(self._server, date)
         allocations = factory.run()
         return allocations
 
 
-class IVUAllocationActionsResource(IVUResource):
+class IVUAllocationActions(IVUResource):
     def fetch(self, title, date):
         factory = IVUAllocationIDFactory(self._server, title, date)
 
@@ -39,7 +39,7 @@ class IVUAllocationActionsResource(IVUResource):
             return actions
 
 
-class IVUCrewResource(IVUResource):
+class IVUCrew(IVUResource):
     def fetch(self, trip, date):
         factory = IVUCrewFactory(self._server, trip, date)
         crew = factory.run()
