@@ -6,8 +6,8 @@ from django.utils.timezone import make_aware
 from utils.models import UUIDModel
 
 
-class TrainCrew(UUIDModel):
-    train_number = models.CharField('Podróż', max_length=32)
+class Crew(UUIDModel):
+    trip = models.CharField('Number pociągu', max_length=32)
     date = models.CharField('Data', max_length=32)
 
     class Meta:
@@ -15,10 +15,10 @@ class TrainCrew(UUIDModel):
         verbose_name_plural = 'Załogi pociągów'
 
     def __str__(self):
-        return f'{self.train_number}, {self.date}'
+        return f'{self.trip}, {self.date}'
 
     def __repr__(self):
-        return f'TrainCrew({self.train_number}, {self.date})'
+        return f'TripCrew({self.trip}, {self.date})'
 
     @property
     def date_as_datetime(self):
@@ -29,8 +29,7 @@ class TrainCrew(UUIDModel):
 
 class Member(UUIDModel):
     crew = models.ForeignKey(
-        TrainCrew, verbose_name="Członek załogi", related_query_name='members', on_delete=models.CASCADE,
-        null=True, blank=True
+        Crew, verbose_name='Członek załogi', on_delete=models.CASCADE, null=True, blank=True
     )
     person = models.CharField('Osoba', max_length=128)
     phone = models.CharField('Telefon', max_length=32, null=True, blank=True)

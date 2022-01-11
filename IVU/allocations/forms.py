@@ -1,18 +1,17 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from .models import Timetable
+from .models import AllocationTimetable
 
 
-class AllocationTimetableImportForm(forms.ModelForm):
+class ImportAllocationTimetableForm(forms.ModelForm):
     """Contains only month and year fields.
     Takes user instance in it's constructor to provide user initial value in this form field.
     """
 
     class Meta:
-        model = Timetable
+        model = AllocationTimetable
         fields = '__all__'
-        exclude = ('last_updated',)
         widgets = {
             'user': forms.HiddenInput(),
         }

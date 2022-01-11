@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Timetable, Allocation, Action
+from .models import AllocationTimetable, Allocation, AllocationAction
 
 
 class TimetableAdmin(admin.ModelAdmin):
@@ -21,6 +21,6 @@ class ActionAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Timetable, TimetableAdmin)
+admin.site.register(AllocationTimetable, TimetableAdmin)
 admin.site.register(Allocation, AllocationAdmin)
-admin.site.register(Action, ActionAdmin)
+admin.site.register(AllocationAction, ActionAdmin)

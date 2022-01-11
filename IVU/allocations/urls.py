@@ -1,6 +1,6 @@
 from django.urls import path
 
-from IVU.views import (
+from .views import (
     AllocationTimetableListView,
     AllocationTimetableDetailView,
     ImportAllocationTimetableFormView,
@@ -31,3 +31,21 @@ urlpatterns = [
     ),
 
 ]
+
+urlpatterns = [
+    path(
+        'details/<uuid:pk>/', AllocationView.as_view(), name='allocation_detail'
+    ),
+    path(
+        'update/<uuid:pk>/', UpdateAllocationView.as_view(), name='update_allocation'
+    ),
+    path(
+        'train/heading/<uuid:pk>/',
+        SearchAllocationTrainBeforeAllocationView.as_view(),
+        name='search_train_before_allocation'
+    ),
+    path('train/returning/<uuid:pk>/',
+         SearchAllocationTrainAfterAllocationView.as_view(),
+         name='search_train_after_allocation'),
+]
+

@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from bs4.element import SoupStrainer
 
 from .expressions import (
-    timeline_regex,
+    timeline_re,
     start_container_selector_regex,
     end_container_selector_regex,
     time_container_selector_regex,
@@ -20,7 +20,7 @@ class RailroadScheduleRowParser:
         self._markup = row
 
     def get_waypoint(self, timeline):
-        if not timeline_regex.match(timeline):
+        if not timeline_re.match(timeline):
             raise ValueError("unable to get location info; given timeline must be either 'start' or 'end'.")
 
         if timeline == 'start':
@@ -44,7 +44,7 @@ class RailroadScheduleRowParser:
         }
 
     def get_date(self, timeline):
-        if not timeline_regex.match(timeline):
+        if not timeline_re.match(timeline):
             raise ValueError("unable to get date and time; given timeline must be either 'start' or 'end'.")
 
         if timeline == 'start':
@@ -94,27 +94,26 @@ class RailroadScheduleRowParser:
             carrier = executor.submit(self.get_carrier)
             number = executor.submit(self.get_train_number)
 
-            result = {
+        return {
+                'number': number.result(),
                 'carrier': carrier.result(),
-                'trip': number.result(),
                 'start_waypoint': start_waypoint.result(),
                 'end_waypoint': end_waypoint.result(),
                 'start_date': start_date.result(),
                 'end_date': end_date.result(),
             }
-        return result
 
 
 class RailroadScheduleParser:
 
-    def __init__(self, schedule_markup):
-        self._markup = schedule_markup
+    def __init__(self, markup):
+        self._markup = markup
 
         tag = 'div'
         rows_container_cls = 'search-results__container'
         soup_strainer = SoupStrainer(name=tag, class_=rows_container_cls)
 
-        self._soup = BeautifulSoup(schedule_markup, features='html.parser', parse_only=soup_strainer)
+        self._soup = BeautifulSoup(markup, features='html.parser', parse_only=soup_strainer)
 
     def get_rows(self):
         tag = 'div'

@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from .engines import RailroadSearchEngine
+from .engines import TrainSearchEngine
 from .models import RailroadAccount
 from .models import RailroadStation
 
@@ -11,7 +11,6 @@ class RailroadAccountModelForm(forms.ModelForm):
     class Meta:
         model = RailroadAccount
         fields = '__all__'
-        exclude = ('last_updated',)
         widgets = {
             'user': forms.HiddenInput(),
         }
@@ -37,7 +36,7 @@ class RailroadAccountModelForm(forms.ModelForm):
             for station in [departure_station, arrival_station]:
                 RailroadStation.objects.get(name__iexact=station)
         except RailroadStation.DoesNotExist:
-            engine = RailroadSearchEngine()
+            engine = TrainSearchEngine()
             stations_exist = engine.check_stations_existence(departure_station, arrival_station)
 
             if not stations_exist:

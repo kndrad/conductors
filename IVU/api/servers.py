@@ -1,7 +1,7 @@
 from requests import Session
 
 from . import IVUServerAuthenticationError, IVUServerConnectionNotEstablishedError
-from IVU.requests import IVURequest
+from .requests import IVURequest
 
 
 class IVUServer:
@@ -34,7 +34,7 @@ class IVUServer:
         self._connection_established = authenticated
         return authenticated
 
-    def ask(self, request: IVURequest):
+    def send(self, request: IVURequest):
         if not self._connection_established:
             raise IVUServerConnectionNotEstablishedError()
 

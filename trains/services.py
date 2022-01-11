@@ -3,7 +3,7 @@ import datetime
 from dateutil.parser import parse as dateutil_parse
 from django.utils.timezone import make_aware, is_aware
 
-from transports.engines import RailroadSearchEngine
+from trains.engines import TrainSearchEngine
 from .models import PublicTrain
 from .utils import format_date_for_engine
 
@@ -12,7 +12,7 @@ def search_train(departure_station, arrival_station, date):
     if not isinstance(date, datetime.datetime):
         raise ValueError(f'date must be instance of {datetime.datetime}.')
 
-    search_engine = RailroadSearchEngine(hide_actions=True)
+    search_engine = TrainSearchEngine(hide_actions=True)
     hour, date = format_date_for_engine(date)
     results = search_engine.run_searching(departure_station, arrival_station, hour, date)
 

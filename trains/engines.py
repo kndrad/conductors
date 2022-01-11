@@ -21,7 +21,7 @@ class WaypointStationSubmitError(Exception):
     """
 
 
-class RailroadSearchEngine:
+class TrainSearchEngine:
 
     def __init__(self, hide_actions=True):
         options = Options()
@@ -37,7 +37,7 @@ class RailroadSearchEngine:
         )
         self._input_elements = None
 
-    def start_engine(self):
+    def start(self):
         self._driver.get("https://portalpasazera.pl/Wyszukiwarka/Index")
         self._search_input_elements()
         return self
@@ -61,7 +61,7 @@ class RailroadSearchEngine:
 
         return self._input_elements
 
-    def submit_stations(self, departure_station: str, arrival_station: str):
+    def send_stations(self, departure_station: str, arrival_station: str):
         if not self._input_elements:
             self._search_input_elements()
 
@@ -78,7 +78,7 @@ class RailroadSearchEngine:
         for element, value in zip(elements, [departure_station, arrival_station]):
             element.send_keys(value)
 
-    def submit_date(self, hour: str, date: str):
+    def send_date(self, hour: str, date: str):
         if not self._input_elements:
             self._search_input_elements()
 
@@ -124,8 +124,8 @@ class RailroadSearchEngine:
             self._search_input_elements()
 
         with concurrent.futures.ThreadPoolExecutor() as executor:
-            submit_stations = executor.submit(self.submit_stations, departure_station, arrival_station)
-            submit_date = executor.submit(self.submit_date, hour, date)
+            submit_stations = executor.submit(self.send_stations, departure_station, arrival_station)
+            submit_date = executor.submit(self.send_date, hour, date)
 
             for process in [submit_stations, submit_date]:
                 process.result()
@@ -150,9 +150,9 @@ class RailroadSearchEngine:
         """Verifies stations existence by submitting them to webpage fields and
         awaiting schedule appearance. When the schedule appears, the stations are correct, otherwise not.
         """
-        self.start_engine()
+        self.start()
         self._search_input_elements()
-        self.submit_stations(departure_station, arrival_station)
+        self.send_stations(departure_station, arrival_station)
         self.click_enter()
 
         try:
@@ -185,7 +185,7 @@ class RailroadSearchEngine:
             'end_date': {'date': '23.11.2021', 'hour': '19:56'}, 'carrier': '„PKP Intercity” Spółka Akcyjna',
             'trip': '63102'}
         """
-        self.start_engine()
+        self.start()
         self._search_input_elements()
 
         schedule_markup = self.request_schedule_markup(

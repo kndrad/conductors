@@ -4,7 +4,7 @@ Contains common template filters for datetime fields of objects.
 
 from django import template
 
-from IVU.requests import IVUDatedRequest
+from IVU.requests import IVURequestWithDateString
 
 register = template.Library()
 
@@ -13,5 +13,5 @@ register = template.Library()
 def ivu_strftime(value):
     """Returns parsed date string in irena facade accepted date pattern.
     """
-    fmt = IVUDatedRequest.fmt
+    fmt = IVURequestWithDateString.fmt
     return value.strftime(fmt)

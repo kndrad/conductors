@@ -9,14 +9,12 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.dates import MONTHS
 
-from IVU.requests import IVUDatedRequest
-from transports.models import PublicTrain
 from utils.dates import YEARS
 from utils.icals import ICalComponentable, TriggeredAlarm
-from utils.models import UUIDModel, UUIDTimestampedModel
+from utils.models import UUIDTimestampedModel
 
 
-class Timetable(UUIDTimestampedModel):
+class AllocationTimetable(UUIDTimestampedModel):
     month = models.PositiveIntegerField('Miesiąc', default=timezone.now().month, choices=list(MONTHS.items()))
     year = models.PositiveIntegerField('Rok', default=timezone.now().year, choices=list(YEARS().items()))
 
@@ -25,13 +23,13 @@ class Timetable(UUIDTimestampedModel):
     )
 
     class Meta:
-        verbose_name = 'Plan'
-        verbose_name_plural = 'Plany'
+        verbose_name = 'Plan slużb'
+        verbose_name_plural = 'Plany służb'
         constraints = [
             models.CheckConstraint(check=Q(month__lte=12), name='month_lte_12'),
             models.UniqueConstraint(
                 fields=['user_id', 'month', 'year'],
-                name='unique_timetable_for_user',
+                name='unique_allocation_timetable_for_user',
             ),
         ]
 
@@ -39,7 +37,7 @@ class Timetable(UUIDTimestampedModel):
         return f'{self.month}-{self.year}'
 
     def __repr__(self):
-        return f'Timetable({self.month}, {self.year}, {self.user})'
+        return f'AllocationTimetable({self.month}, {self.year}, {self.user})'
 
     def get_absolute_url(self):
         return reverse('timetable_detail', kwargs={'pk': self.pk})
@@ -65,7 +63,7 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
     end_date = models.DateTimeField('Data zakończenia')
 
     timetable = models.ForeignKey(
-        Timetable, verbose_name='Plan', null=True, blank=True, on_delete=models.CASCADE
+        AllocationTimetable, verbose_name='Plan', null=True, blank=True, on_delete=models.CASCADE
     )
 
     class Meta:
@@ -118,8 +116,8 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
         return month_ago > self.start_date
 
 
-class Action(models.Model):
-    train_number = models.CharField('Numer pociągu', max_length=32, null=True)
+class AllocationAction(models.Model):
+    trip = models.CharField('Pociąg', max_length=32, null=True)
     date = models.DateTimeField('Data', null=True)
     name = models.CharField('Nazwa', max_length=128, null=True)
     start_location = models.CharField('Lokalizacja początkowa', max_length=128, null=True)
@@ -138,15 +136,15 @@ class Action(models.Model):
 
     def __str__(self):
         return f"""
-        {self.train_number} {self.name}
+        {self.trip} {self.name}
         {self.start_location} {self.start_hour} 
         {self.end_location} {self.end_hour}
         """
 
     @property
     def ical_description(self):
-        if self.train_number:
-            return f"""{self.train_number} {self.name}
+        if self.trip:
+            return f"""{self.trip} {self.name}
         {self.start_location} {self.start_hour} 
         {self.end_location} {self.end_hour}
         """

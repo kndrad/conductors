@@ -4,7 +4,7 @@ start_container_selector_regex = compile('^timeline__item timeline__item--start.
 end_container_selector_regex = compile('^timeline__item timeline__item--end.*')
 
 timeline_start, timeline_end = 'start', 'end'
-timeline_regex = compile(f"^({timeline_start}|{timeline_end})")
+timeline_re = compile(f"^({timeline_start}|{timeline_end})")
 
 time_container_selector_regex = compile(f"^stime search-results__item-hour.*")
 hour_regex = compile('(\d+:\d+)')

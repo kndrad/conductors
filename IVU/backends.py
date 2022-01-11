@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 
 from users.models import User
-from .servers import IVUServer
+from IVU.api.servers import IVUServer
 from scrapers import IVUServerAuthenticationError
 
 
