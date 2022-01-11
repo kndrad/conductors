@@ -12,7 +12,7 @@
 {% block header_items %}
     <div class="text-sm">{{ timetable.get_month_display }} {{ timetable.year }}</div>
     <form class="text-center" method='POST'
-          action='{% url 'update_allocations' timetable.pk %}'>
+          action='{% url 'update_timetable' timetable.pk %}'>
         {% csrf_token %}
         <button class="text-white/[.60] text-sm" type="submit">
             Aktualizuj

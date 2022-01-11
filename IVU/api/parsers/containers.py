@@ -3,6 +3,7 @@ import datetime
 from re import compile
 
 from dateutil.parser import parse as parse_date
+from django.utils.timezone import make_aware
 
 from IVU.api import text_re, hour_re, date_re
 
@@ -46,8 +47,7 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
             raise ValueError(f'{timeline} expression does not match {timeline_re}.')
 
         value = self._inner_markup.find('span', class_=f'time {timeline}').text.strip()
-        hour = hour_re.search(value).group()
-        return hour
+        return hour_re.search(value).group()
 
     def _get_date(self):
         value = self.markup['data-date']
@@ -56,10 +56,10 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
     def to_dict(self):
         try:
             date = self._get_date()
-            start_date = parse_date(f"{date} {self._get_hour('begin')}")
-            end_date = parse_date(f"{date} {self._get_hour('end')}")
+            start_date = make_aware(parse_date(f"{date} {self._get_hour('begin')}"))
+            end_date = make_aware(parse_date(f"{date} {self._get_hour('end')}"))
 
-            if start_date < end_date:
+            if start_date > end_date:
                 end_date += datetime.timedelta(days=1)
 
             return {

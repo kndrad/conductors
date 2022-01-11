@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 import caldav
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -6,6 +8,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView, CreateView
@@ -14,6 +17,7 @@ from django.views.generic.detail import SingleObjectMixin
 from utils.views import HiddenUserFormMixin
 from .forms import ImportTimetableForm
 from .models import Timetable
+from ..allocations.models import Allocation
 
 
 class TimetableListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
@@ -22,21 +26,29 @@ class TimetableListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name = 'timetables'
 
     def test_func(self):
-        has_permissions = True
-
-        for timetable in self.get_queryset():
-            has_permissions = timetable.user == self.request.user
-
-        if not has_permissions:
+        if not all(timetable.user == self.request.user for timetable in self.get_queryset()):
             return render(self.request, 'not_allowed_to_view.html')
         else:
-            return has_permissions
+            return True
 
     def get_queryset(self):
-        request = self.request
-        self.model.objects.create_present_on_request(request)
-        self.model.objects.create_future_on_request(request)
-        return self.model.objects.filter(user=request.user).all().order_by('-year', '-month')
+        present, future = timezone.now(), timezone.now() + timedelta(days=30)
+
+        for date in [present, future]:
+            timetable, created = self.model.objects.get_or_create(
+                user=self.request.user, month=date.month, year=date.year
+            )
+            if not timetable.allocation_set.exists():
+                resources = timetable.fetch_external_resources(self.request)
+
+                for kwargs in resources:
+                    allocation, _ = Allocation.objects.get_or_create(**kwargs)
+                    timetable.allocation_set.add(allocation)
+
+                timetable.update_now()
+                timetable.save()
+
+        return self.model.objects.get_time_ordered_user_timetables(user=self.request.user)
 
 
 class TimetableDetailView(LoginRequiredMixin, DetailView):
