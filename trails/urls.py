@@ -7,6 +7,6 @@ from .views import (
 )
 
 urlpatterns = [
-    path('<uuid:pk>/', TrailListView.as_view(), name='trails'),
+    path('<uuid:pk>/', TrailListView.as_view(), name='trail_list'),
     path('create/', TrailCreateView.as_view(), name='trail_create'),
 ]

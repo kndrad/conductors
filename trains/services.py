@@ -4,7 +4,7 @@ from dateutil.parser import parse as dateutil_parse
 from django.utils.timezone import make_aware, is_aware
 
 from trains.engines import TrainSearchEngine
-from .models import PublicTrain
+from .models import Train
 from .utils import format_date_for_engine
 
 
@@ -23,8 +23,8 @@ def search_train(departure_station, arrival_station, date):
         arrival_date = make_aware(dateutil_parse(
             f"{result['end_date']['date']} {result['end_date']['hour']}", dayfirst=True)
         )
-        train, _ = PublicTrain.objects.get_or_create(
-            number=result['trip'],
+        train, _ = Train.objects.get_or_create(
+            number=result['number'],
             carrier=result['carrier'],
             departure_date=departure_date,
             departure_station=result['start_waypoint']['station'],

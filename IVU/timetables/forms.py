@@ -1,16 +1,16 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from .models import AllocationTimetable
+from IVU.timetables.models import Timetable
 
 
-class ImportAllocationTimetableForm(forms.ModelForm):
+class ImportTimetableForm(forms.ModelForm):
     """Contains only month and year fields.
     Takes user instance in it's constructor to provide user initial value in this form field.
     """
 
     class Meta:
-        model = AllocationTimetable
+        model = Timetable
         fields = '__all__'
         widgets = {
             'user': forms.HiddenInput(),

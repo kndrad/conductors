@@ -16,7 +16,7 @@ from .expressions import search_engine_date_regex, hour_regex
 from .parsers import RailroadScheduleParser
 
 
-class WaypointStationSubmitError(Exception):
+class SentExactStationsError(Exception):
     """Raised when submitted stations (departure station, arrival station) are identical.
     """
 
@@ -66,7 +66,7 @@ class TrainSearchEngine:
             self._search_input_elements()
 
         if str(departure_station).lower() == str(arrival_station).lower():
-            raise WaypointStationSubmitError(
+            raise SentExactStationsError(
                 'departure station must be different than arrival station and vice versa.'
             )
 
@@ -119,7 +119,7 @@ class TrainSearchEngine:
         schedule_appearance = ec.presence_of_element_located((By.XPATH, xpath))
         return wait.until(schedule_appearance)
 
-    def request_schedule_markup(self, departure_station, arrival_station, hour, date):
+    def get_schedule_markup(self, departure_station, arrival_station, hour, date):
         if not self._input_elements:
             self._search_input_elements()
 
@@ -188,7 +188,7 @@ class TrainSearchEngine:
         self.start()
         self._search_input_elements()
 
-        schedule_markup = self.request_schedule_markup(
+        schedule_markup = self.get_schedule_markup(
             departure_station, arrival_station, hour, date
         )
         parser = RailroadScheduleParser(schedule_markup)

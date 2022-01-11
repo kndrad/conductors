@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% load static %}
-{% load date_reprs %}
+{% load date_strings %}
 
 {% block extra_title %}Plany | {% endblock %}
 
@@ -10,10 +10,10 @@
 {% endblock %}
 
 {% block header_items %}
-    <a href="{% url 'import_allocation_timetable' %}">
+    <a href="{% url 'import_timetable' %}">
         <div class="text-sm text-white/[.60]">Importuj plan</div>
     </a>
-    <a href={{ caldav_account_href }}>
+    <a href={{ user.caldav_account_url }}>
         <div class="text-sm text-white/[.60]">Konto CalDAV</div>
     </a>
 {% endblock %}
@@ -28,13 +28,13 @@
             </div>
             <div class="space-y-3">
                 {% if timetable.allocation_set.exists %}
-                <a href="{% url 'allocation_timetable_detail' timetable.pk %}">
+                <a href="{% url 'timetable_detail' timetable.pk %}">
                     <div class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mt-4">
                         Zobacz służby
                     </div>
                 </a>
                 <div class="w-full text-center">
-                    <form method='POST' action='{% url 'send_allocation_timetable_to_dav_client' timetable.pk %}'>
+                    <form method='POST' action='{% url 'caldav_send_timetable' timetable.pk %}'>
                         {% csrf_token %}
                         <button class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mb-2" type="submit">
                             Wyślij do kalendarza DAV

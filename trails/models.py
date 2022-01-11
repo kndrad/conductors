@@ -7,7 +7,7 @@ from django.utils import timezone
 from utils.fields import LowercaseCharField
 
 
-class TrailStation(models.Model):
+class StationAtTrail(models.Model):
     name = LowercaseCharField('Nazwa stacji', max_length=128)
 
     class Meta:
@@ -26,7 +26,7 @@ class Trail(models.Model):
     beginning = models.CharField('Początek szlaku', max_length=128)
     finale = models.CharField('Koniec szlaku', max_length=128)
     last_driven = models.DateField('Data ostatniego przejazdu', default=timezone.now)
-    stations_through = models.ManyToManyField(TrailStation, verbose_name='Stacje na szlaku', blank=True)
+    stations = models.ManyToManyField(StationAtTrail, verbose_name='Stacje na szlaku', blank=True)
 
     class Meta:
         verbose_name = 'Szlak'
@@ -34,14 +34,14 @@ class Trail(models.Model):
         constraints = [
             models.CheckConstraint(
                 check=~Q(beginning=F('finale')),
-                name='trail_beginning_and_finale_can_not_be_equal')
+                name='trail_beginning_and_finale_cannot_be_equal')
         ]
 
     def __repr__(self):
         return f'Trail({self.user},{self.beginning},{self.finale},{self.last_driven})'
 
     def __str__(self):
-        stations = [str(station) for station in self.stations_through.all()]
+        stations = [str(station) for station in self.stations.all()]
         return f'Szlak od {self.beginning} do {self.finale}, przez {stations}'
 
     @property

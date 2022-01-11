@@ -3,7 +3,7 @@ from django.core.exceptions import NON_FIELD_ERRORS
 
 from .engines import TrainSearchEngine
 from .models import RailroadAccount
-from .models import RailroadStation
+from .models import VerifiedStation
 
 
 class RailroadAccountModelForm(forms.ModelForm):
@@ -33,9 +33,9 @@ class RailroadAccountModelForm(forms.ModelForm):
                                   'Należy wpisać stacje, które się od siebie różnią.',
             )
         try:
-            for station in [departure_station, arrival_station]:
-                RailroadStation.objects.get(name__iexact=station)
-        except RailroadStation.DoesNotExist:
+            for name in [departure_station, arrival_station]:
+                VerifiedStation.objects.get(name__iexact=name)
+        except VerifiedStation.DoesNotExist:
             engine = TrainSearchEngine()
             stations_exist = engine.check_stations_existence(departure_station, arrival_station)
 
@@ -45,7 +45,7 @@ class RailroadAccountModelForm(forms.ModelForm):
                                       'literówka.',
                 )
             else:
-                for station in [departure_station, arrival_station]:
-                    RailroadStation.objects.get_or_create(name=station)
+                for name in [departure_station, arrival_station]:
+                    VerifiedStation.objects.get_or_create(name=name)
 
         return cleaned_data

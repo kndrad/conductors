@@ -1,69 +1,26 @@
 import datetime
-from calendar import monthrange
 
 import icalendar
-from django.conf import settings
 from django.db import models
 from django.db.models import Q, F
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.dates import MONTHS
 
-from utils.dates import YEARS
+from IVU.api.requests import IVURequestWithDateValue
+from IVU.timetables.models import Timetable
+from trains.models import Train
 from utils.icals import ICalComponentable, TriggeredAlarm
-from utils.models import UUIDTimestampedModel
-
-
-class AllocationTimetable(UUIDTimestampedModel):
-    month = models.PositiveIntegerField('Miesiąc', default=timezone.now().month, choices=list(MONTHS.items()))
-    year = models.PositiveIntegerField('Rok', default=timezone.now().year, choices=list(YEARS().items()))
-
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, verbose_name='Użytkownik', null=True, blank=True, on_delete=models.CASCADE
-    )
-
-    class Meta:
-        verbose_name = 'Plan slużb'
-        verbose_name_plural = 'Plany służb'
-        constraints = [
-            models.CheckConstraint(check=Q(month__lte=12), name='month_lte_12'),
-            models.UniqueConstraint(
-                fields=['user_id', 'month', 'year'],
-                name='unique_allocation_timetable_for_user',
-            ),
-        ]
-
-    def __str__(self):
-        return f'{self.month}-{self.year}'
-
-    def __repr__(self):
-        return f'AllocationTimetable({self.month}, {self.year}, {self.user})'
-
-    def get_absolute_url(self):
-        return reverse('timetable_detail', kwargs={'pk': self.pk})
-
-    @property
-    def date(self):
-        return datetime.date(year=self.year, month=self.month, day=1)
-
-    @property
-    def name(self):
-        return f'Służby {self.month}-{self.year}'
-
-    @property
-    def days_in_month(self):
-        days = monthrange(self.year, self.month)[1]
-        return range(1, days + 1)
+from dates.models import UUIDTimestampedModel
 
 
 class Allocation(UUIDTimestampedModel, ICalComponentable):
     title = models.CharField('Tytuł', max_length=32)
     signature = models.CharField('Sygnatura', max_length=64)
-    start_date = models.DateTimeField('Data rozpoczęcia')
-    end_date = models.DateTimeField('Data zakończenia')
+    start_date = models.DateTimeField('Rozpoczęcie')
+    end_date = models.DateTimeField('Zakończenie')
 
     timetable = models.ForeignKey(
-        AllocationTimetable, verbose_name='Plan', null=True, blank=True, on_delete=models.CASCADE
+        Timetable, verbose_name='Plan', null=True, blank=True, on_delete=models.CASCADE
     )
 
     class Meta:
@@ -78,9 +35,9 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
 
     def __str__(self):
         fmt = '%H:%M'
-        start_date_local = timezone.localtime(self.start_date).strftime(fmt)
-        end_date_local = timezone.localtime(self.end_date).strftime(fmt)
-        return f'{start_date_local} {self.title} {end_date_local}'
+        start_date = timezone.localtime(self.start_date).strftime(fmt)
+        end_date = timezone.localtime(self.end_date).strftime(fmt)
+        return f'{start_date} {self.title} {end_date}'
 
     def __repr__(self):
         return f'Allocation({self.title}, {self.start_date}, {self.end_date})'
@@ -116,7 +73,32 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
         return month_ago > self.start_date
 
 
-class AllocationAction(models.Model):
+class AllocationTrain(models.Model):
+    allocation = models.OneToOneField(
+        Allocation, verbose_name='Pociąg dla służby', related_name='train',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+    before = models.OneToOneField(
+        Train, verbose_name='Pociąg przed służbą', related_name='before',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+    after = models.OneToOneField(
+        Train, verbose_name='Pociąg po służbie', related_name='after',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = 'Pociąg dla służby'
+        verbose_name_plural = 'Pociągi dla służb'
+
+    def __str__(self):
+        return f'Pociągi dla {self.allocation}, przed: {self.before}, po: {self.after}.'
+
+    def __repr__(self):
+        return f'AllocationTrain({repr(self.allocation)}, {repr(self.before)}, {repr(self.after)})'
+
+
+class Action(models.Model):
     trip = models.CharField('Pociąg', max_length=32, null=True)
     date = models.DateTimeField('Data', null=True)
     name = models.CharField('Nazwa', max_length=128, null=True)
@@ -140,6 +122,10 @@ class AllocationAction(models.Model):
         {self.start_location} {self.start_hour} 
         {self.end_location} {self.end_hour}
         """
+
+    @property
+    def date_str(self):
+        return timezone.localtime(self.date).strftime(IVURequestWithDateValue.fmt)
 
     @property
     def ical_description(self):

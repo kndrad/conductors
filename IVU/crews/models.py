@@ -3,28 +3,26 @@ import datetime
 from django.db import models
 from django.utils.timezone import make_aware
 
-from utils.models import UUIDModel
+from dates.models import UUIDModel
 
 
 class Crew(UUIDModel):
-    trip = models.CharField('Number pociągu', max_length=32)
+    trip = models.CharField('Pociąg', max_length=32)
     date = models.CharField('Data', max_length=32)
 
     class Meta:
-        verbose_name = 'Załoga pociągu'
-        verbose_name_plural = 'Załogi pociągów'
+        verbose_name = 'Załoga'
+        verbose_name_plural = 'Załogi'
 
     def __str__(self):
         return f'{self.trip}, {self.date}'
 
     def __repr__(self):
-        return f'TripCrew({self.trip}, {self.date})'
+        return f'Crew({self.trip}, {self.date})'
 
     @property
-    def date_as_datetime(self):
-        fmt = '%Y-%m-%d'
-        date = make_aware(datetime.datetime.strptime(self.date, fmt))
-        return date
+    def trip_datetime(self):
+        return make_aware(datetime.datetime.strptime(self.date, '%Y-%m-%d'))
 
 
 class Member(UUIDModel):
@@ -38,11 +36,8 @@ class Member(UUIDModel):
     end_location = models.CharField('Lokalizacja końcowa', max_length=32)
 
     class Meta:
-        verbose_name = 'Członek załogi pociągu'
-        verbose_name_plural = 'Członkowie załogi pociągów'
+        verbose_name = 'Członek'
+        verbose_name_plural = 'Członkowie'
 
     def __str__(self):
-        return f"""
-        {self.person}, {self.profession}, {self.phone},
-        {self.start_location}, {self.end_location}
-        """
+        return f'{self.person}, {self.profession}, {self.phone},{self.start_location}, {self.end_location}'

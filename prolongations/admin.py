@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import TicketProlongation
+from .models import Prolongation
 
 
 class TicketProlongationAdmin(admin.ModelAdmin):
@@ -9,4 +9,4 @@ class TicketProlongationAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(TicketProlongation, TicketProlongationAdmin)
+admin.site.register(Prolongation, TicketProlongationAdmin)

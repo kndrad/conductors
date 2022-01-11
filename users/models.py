@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core.validators import validate_email
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -46,7 +47,7 @@ class User(AbstractUser):
         constraints = [
             models.UniqueConstraint(
                 fields=['email', 'username'],
-                name='unique_email_username',
+                name='unique_email_and_username',
             ),
         ]
 
@@ -55,3 +56,18 @@ class User(AbstractUser):
 
     def __repr__(self):
         return f'User({self.email})'
+
+    def get_account_url(self, account):
+        if not hasattr(self, account):
+            return reverse(f'{account}_create')
+        else:
+            pk = getattr(self, account).pk
+            return reverse(f'{account}_update', kwargs={'pk': pk})
+
+    @property
+    def caldav_account_url(self):
+        return self.get_account_url('caldav_account')
+
+    @property
+    def railroad_account_url(self):
+        return self.get_account_url('railroad_account')

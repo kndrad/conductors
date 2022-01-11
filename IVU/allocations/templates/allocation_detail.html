@@ -2,7 +2,7 @@
 
 {% load static %}
 {% load dates %}
-{% load date_reprs %}
+{% load date_strings %}
 
 {% block extra_title %}{{ allocation.title }} | {% endblock %}
 
@@ -12,7 +12,7 @@
             {% csrf_token %}
             <button class="text-white/[.60]" type="submit">Aktualizuj służbę</button>
         </form>
-        <a href={{ railroad_account_href }}>
+        <a href={{ user.railroad_account_url }}>
             <div class="font-light text-white/[.60]">Konto kolejowe</div>
         </a>
     </div>
@@ -39,9 +39,9 @@
                     {% if allocation.train.before %}
                     <a href="{% url 'train_detail' allocation.train.before.pk %}">
                         <div class="rounded border border-blue-400 text-blue-400 flex items-center justify-between rounded p-1 px-2">
-                            <div>{{ allocation.train.before.departure_date|hour_only }}</div>
+                            <div>{{ allocation.train.before.departure_date|time_only }}</div>
                             <div>{{ allocation.train.before.carrier_initials }}</div>
-                            <div>{{ allocation.train.before.arrival_date|hour_only }}</div>
+                            <div>{{ allocation.train.before.arrival_date|time_only }}</div>
                         </div>
                     </a>
                     {% else %}
@@ -80,9 +80,9 @@
                     {% if allocation.train.after %}
                         <a href="{% url 'train_detail' allocation.train.after.pk %}">
                             <div class="rounded border border-blue-400 text-blue-400 flex items-center justify-between rounded p-1 px-2">
-                                <div>{{ allocation.train.after.departure_date|hour_only }}</div>
+                                <div>{{ allocation.train.after.departure_date|time_only }}</div>
                                 <div>{{ allocation.train.after.carrier_initials }}</div>
-                                <div>{{ allocation.train.after.arrival_date|hour_only }}</div>
+                                <div>{{ allocation.train.after.arrival_date|time_only }}</div>
                             </div>
                         </a>
                     {% else %}
@@ -115,26 +115,26 @@
             Aby zobaczyć załogę, kliknij w numer pociągu.
         </div>
         <div class="space-y-3">
-        {% for detail in allocation.allocationdetail_set.all %}
+        {% for action in allocation.action_set.all %}
             <div class="bg-[#212121] border border-blue-500/25 py-1 rounded text-center w-full">
                 <div class="text-center text-xl m-1">
-                    <div>{{ detail.action }}</div>
+                    <div>{{ action.name }}</div>
                 </div>
-                {% if detail.train_number %}
-                <a href="{% url 'train_crew' detail.train_number detail.action_date|ivu_strftime %}">
+                {% if action.trip %}
+                <a href="{% url 'crew_detail' action.trip action.date_str %}">
                     <div class="text-blue-400 text-xl">
-                        {{ detail.train_number }}
+                        {{ action.trip }}
                     </div>
                 </a>
             {% endif %}
                 <div class="py-1 px-2">
                     <div class="flex items-center justify-between">
                         <div class="text-white/[.60] text-xs italic">Rozpoczęcie</div>
-                        <div class="text-sm tracking-tight">{{ detail.start_location }} {{ detail.start_hour }}</div>
+                        <div class="text-sm tracking-tight">{{ action.start_location }} {{ action.start_hour }}</div>
                     </div>
                     <div class="flex items-center justify-between">
                         <div class="text-white/[.60] text-xs italic">Koniec</div>
-                        <div class="text-sm tracking-tight">{{ detail.end_location }} {{ detail.end_hour }}</div>
+                        <div class="text-sm tracking-tight">{{ action.end_location }} {{ action.end_hour }}</div>
                     </div>
                 </div>
             </div>

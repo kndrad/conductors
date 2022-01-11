@@ -9,7 +9,7 @@ from django.utils import timezone
 from utils.icals import ICalComponentable, TriggeredAlarm
 
 
-class TicketProlongation(models.Model, ICalComponentable):
+class Prolongation(models.Model, ICalComponentable):
     class Ticket(models.TextChoices):
         FINE = ('FINE', 'Wezwania do zapłaty')
         BLANKET = ('BLANKET', 'Bilety blankietowe')
@@ -25,13 +25,13 @@ class TicketProlongation(models.Model, ICalComponentable):
     )
 
     class Meta:
-        verbose_name = 'Prolongata Biletu'
-        verbose_name_plural = 'Prolongaty Biletów'
+        verbose_name = 'Prolongata'
+        verbose_name_plural = 'Prolongaty'
 
         constraints = [
             models.UniqueConstraint(
                 fields=['user_id', 'ticket'],
-                name='unique_user_ticket_prolongation',
+                name='unique_user_prolongation',
             ),
         ]
 
@@ -42,7 +42,7 @@ class TicketProlongation(models.Model, ICalComponentable):
         return f'{self.ticket}'
 
     def get_absolute_url(self):
-        return reverse('ticket_prolongations', kwargs={'pk':  self.user.pk})
+        return reverse('prolongation_list', kwargs={'pk':  self.user.pk})
 
     def save(self, *args, **kwargs):
         self.clean_fields()
@@ -78,7 +78,7 @@ class TicketProlongation(models.Model, ICalComponentable):
         for alarm in alarms:
             event.add_component(alarm)
 
-        event.add('description', 'Prolongata biletów')
+        event.add('description', 'Prolongata')
         cal.add_component(event)
         return cal
 

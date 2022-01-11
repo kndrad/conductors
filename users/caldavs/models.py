@@ -2,7 +2,7 @@ import caldav
 from django.conf import settings
 from django.db import models
 
-from utils.models import UUIDModel
+from dates.models import UUIDModel
 
 
 class CalDAVAccount(UUIDModel):

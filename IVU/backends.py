@@ -4,9 +4,9 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.shortcuts import redirect
 
+from IVU.api import IVUServerAuthenticationError
 from users.models import User
 from IVU.api.servers import IVUServer
-from scrapers import IVUServerAuthenticationError
 
 
 def get_credentials(request):

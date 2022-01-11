@@ -1,14 +1,14 @@
 from django.urls import path
 
-from IVU.crews.views import TrainCrewView, UpdateTrainCrewView
+from IVU.crews.views import CrewDetailView, UpdateCrewView
 
 urlpatterns = [
     path(
-        'members/<str:trip>/<str:formatted_action_date>/',
-        TrainCrewView.as_view(), name='crew'
+        '<str:trip>/<str:action_date>/',
+        CrewDetailView.as_view(), name='crew_detail'
     ),
     path(
         'update/<uuid:pk>/',
-        UpdateTrainCrewView.as_view(), name='update_crew'
+        UpdateCrewView.as_view(), name='update_crew'
     ),
 ]

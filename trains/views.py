@@ -5,7 +5,7 @@ from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
 from utils.views import HiddenUserFormMixin
 from .forms import RailroadAccountModelForm
-from .models import RailroadAccount, PublicTrain
+from .models import RailroadAccount, Train
 
 
 class RailroadAccountViewMixin(LoginRequiredMixin, HiddenUserFormMixin, ModelFormMixin, ProcessFormView):
@@ -25,7 +25,7 @@ class RailroadAccountUpdateView(RailroadAccountViewMixin, UpdateView):
     """
 
 
-class PublicRailroadTrainDetailView(DetailView):
-    model = PublicTrain
-    context_object_name = 'trip'
+class TrainDetailView(DetailView):
+    model = Train
+    context_object_name = 'train'
     template_name = 'train_detail.html'

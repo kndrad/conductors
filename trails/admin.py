@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from trails.models import Trail, TrailStation
+from trails.models import Trail, StationAtTrail
 
 
 class TrailAdmin(admin.ModelAdmin):
@@ -10,8 +10,8 @@ class TrailAdmin(admin.ModelAdmin):
 admin.site.register(Trail, TrailAdmin)
 
 
-class TrailStationAdmin(admin.ModelAdmin):
+class StationAtTrailAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
-admin.site.register(TrailStation, TrailStationAdmin)
+admin.site.register(StationAtTrail, StationAtTrailAdmin)

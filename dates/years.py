@@ -1,12 +1,5 @@
 import datetime
-import enum
 from collections import UserDict
-
-
-class StringDateFormat(enum.Enum):
-    FULL_DATE = "%H:%M %d.%m.%Yr."
-    DATE_ONLY = "%d.%m.%Yr."
-    TIME = "%H:%M"
 
 
 class YEARS:

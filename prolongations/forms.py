@@ -1,12 +1,12 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
-from .models import TicketProlongation
+from .models import Prolongation
 
 
-class TicketProlongationModelForm(forms.ModelForm):
+class ProlongationModelForm(forms.ModelForm):
     class Meta:
-        model = TicketProlongation
+        model = Prolongation
         fields = '__all__'
         exclude = ('expiration_date',)
         widgets = {

@@ -4,9 +4,9 @@
     <div class="bg-[#181818] rounded p-3 px-4 mt-10">
         <div class="text-center mb-2">
             <div class="italic">
-                Na pewno chcesz usunąć prolongatę biletu "{{ ticket_prolongation.get_ticket_display }}",
+                Na pewno chcesz usunąć prolongatę biletu "{{ prolongation.get_ticket_display }}",
             </div>
-            <div class="italic">która wygasa {{ ticket_prolongation.expiration_date }}?</div>
+            <div class="italic">która wygasa {{ prolongation.expiration_date }}?</div>
         </div>
         <form class="w-full" method="POST">{% csrf_token %}
             {{ form }}

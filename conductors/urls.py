@@ -22,6 +22,7 @@ urlpatterns = [
     path('caldavs/', include('users.caldavs.urls')),
     path('transports/', include('trains.urls')),
     path('ivu/allocations/', include('IVU.allocations.urls')),
+    path('ivu/timetables/', include('IVU.timetables.urls')),
     path('ivu/crews/', include('IVU.crews.urls')),
     path('prolongations/', include('prolongations.urls')),
     path('trails/', include('trails.urls')),

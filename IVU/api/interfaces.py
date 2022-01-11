@@ -4,7 +4,7 @@ from .factories import (
     IVUTimetableAllocationsFactory,
     IVUAllocationIDFactory,
     IVUAllocationActionsFactory,
-    IVUCrewFactory
+    IVUCrewMembersFactory
 )
 
 
@@ -39,8 +39,8 @@ class IVUAllocationActions(IVUResource):
             return actions
 
 
-class IVUCrew(IVUResource):
+class IVUCrewMembers(IVUResource):
     def fetch(self, trip, date):
-        factory = IVUCrewFactory(self._server, trip, date)
-        crew = factory.run()
-        return crew
+        factory = IVUCrewMembersFactory(self._server, trip, date)
+        members = factory.run()
+        return members

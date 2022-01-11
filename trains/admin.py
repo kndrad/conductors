@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import RailroadAccount, RailroadStation, PublicTrain
+from .models import RailroadAccount, VerifiedStation, Train
 
 
 class RailroadAccountAdmin(admin.ModelAdmin):
@@ -12,21 +12,21 @@ class RailroadAccountAdmin(admin.ModelAdmin):
 admin.site.register(RailroadAccount, RailroadAccountAdmin)
 
 
-class RailroadStationAdmin(admin.ModelAdmin):
+class VerifiedStationAdmin(admin.ModelAdmin):
     list_display = (
         'name',
     )
 
 
-admin.site.register(RailroadStation, RailroadStationAdmin)
+admin.site.register(VerifiedStation, VerifiedStationAdmin)
 
 
-class PublicRailroadTrainAdmin(admin.ModelAdmin):
+class TrainAdmin(admin.ModelAdmin):
     list_display = (
-        'trip', 'carrier',
+        'number', 'carrier',
         'departure_date', 'departure_station', 'departure_platform',
         'arrival_date', 'arrival_station', 'arrival_platform',
     )
 
 
-admin.site.register(PublicTrain, PublicRailroadTrainAdmin)
+admin.site.register(Train, TrainAdmin)

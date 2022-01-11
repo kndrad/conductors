@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from utils.icals import ICalComponentable, TriggeredAlarm
-from utils.models import UUIDModel
+from dates.models import UUIDModel
 
 
 class RailroadAccount(UUIDModel):
@@ -30,8 +30,8 @@ class RailroadAccount(UUIDModel):
     )
 
     class Meta:
-        verbose_name = 'Konto kolejowe użytkownika'
-        verbose_name_plural = 'Konta kolejowe użytkowników'
+        verbose_name = 'Konto kolejowe'
+        verbose_name_plural = 'Konta kolejowe'
 
         constraints = [
             models.CheckConstraint(
@@ -46,21 +46,21 @@ class RailroadAccount(UUIDModel):
         return f'RailroadAccount({self.user}, {self.homeplace}, {self.workplace})'
 
 
-class RailroadStation(models.Model):
-    name = models.CharField('Nazwa stacji kolejowej', max_length=64, unique=True)
+class VerifiedStation(models.Model):
+    name = models.CharField('Nazwa', max_length=64, unique=True)
 
     class Meta:
-        verbose_name = 'Stacja kolejowa'
-        verbose_name_plural = 'Stacje kolejowe'
+        verbose_name = 'Zweryfikowana stacja'
+        verbose_name_plural = 'Zweryfikowane stacje'
 
     def __str__(self):
         return self.name
 
     def __repr__(self):
-        return f'RailroadStation({self.name})'
+        return f'VerifiedStation({self.name})'
 
 
-class PublicTrain(models.Model, ICalComponentable):
+class Train(models.Model, ICalComponentable):
     number = models.CharField('Numer', max_length=64)
     carrier = models.CharField('Przewoźnik', max_length=64, null=True, blank=True)
 
@@ -73,8 +73,8 @@ class PublicTrain(models.Model, ICalComponentable):
     arrival_platform = models.CharField('Przyjazd na peron', max_length=32)
 
     class Meta:
-        verbose_name = 'Publiczny pociąg'
-        verbose_name_plural = 'Publiczne pociągi'
+        verbose_name = 'Pociąg'
+        verbose_name_plural = 'Pociągi'
 
     def __str__(self):
         fmt = '%H:%M'
@@ -86,8 +86,7 @@ class PublicTrain(models.Model, ICalComponentable):
 
     def __repr__(self):
         return f"""
-        PublicRailroadTransport(
-        {self.number}, {self.carrier}, 
+        Train({self.number}, {self.carrier}, 
         {self.departure_station}, {self.departure_platform}, {self.departure_date}, 
         {self.arrival_station}, {self.arrival_platform}, {self.arrival_date})
         """

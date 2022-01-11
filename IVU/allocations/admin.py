@@ -1,12 +1,6 @@
 from django.contrib import admin
 
-from .models import AllocationTimetable, Allocation, AllocationAction
-
-
-class TimetableAdmin(admin.ModelAdmin):
-    list_display = (
-        'month', 'year', 'user', 'last_updated',
-    )
+from .models import Allocation, Action
 
 
 class AllocationAdmin(admin.ModelAdmin):
@@ -17,10 +11,9 @@ class AllocationAdmin(admin.ModelAdmin):
 
 class ActionAdmin(admin.ModelAdmin):
     list_display = (
-        'train_number', 'name', 'date', 'start_location', 'start_hour', 'end_location', 'end_hour'
+        'trip', 'name', 'date', 'start_location', 'start_hour', 'end_location', 'end_hour'
     )
 
 
-admin.site.register(AllocationTimetable, TimetableAdmin)
 admin.site.register(Allocation, AllocationAdmin)
-admin.site.register(AllocationAction, ActionAdmin)
+admin.site.register(Action, ActionAdmin)

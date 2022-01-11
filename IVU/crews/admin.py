@@ -2,9 +2,9 @@ from django.contrib import admin
 from .models import Crew, Member
 
 
-class TrainCrewAdmin(admin.ModelAdmin):
+class CrewAdmin(admin.ModelAdmin):
     list_display = (
-        'train_number', 'date'
+        'trip', 'date'
     )
 
 
@@ -14,5 +14,5 @@ class MemberAdmin(admin.ModelAdmin):
     )
 
 
-admin.site.register(Crew, TrainCrewAdmin)
+admin.site.register(Crew, CrewAdmin)
 admin.site.register(Member, MemberAdmin)

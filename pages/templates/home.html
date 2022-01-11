@@ -7,21 +7,21 @@
     </div>
     <div class="space-y-3 py-5 bg-[#161618] rounded">
         <div id="timetables-href" class="px-4 text-center">
-            <a href="{% url 'allocation_timetables' user.pk %}">
+            <a href="{% url 'timetable_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
                     Harmonogramy
                 </div>
             </a>
         </div>
         <div id="prolongations-href" class="px-4 text-center">
-            <a href="{% url 'ticket_prolongations' user.pk %}">
+            <a href="{% url 'prolongation_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
                     Prolongaty
                 </div>
             </a>
         </div>
         <div id="trails-href" class="px-4 text-center">
-            <a href="{% url 'trails' user.pk %}">
+            <a href="{% url 'trail_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
                     Szlaki
                 </div>
