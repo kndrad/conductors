@@ -27,7 +27,7 @@
                 {{ timetable.get_month_display }} {{ timetable.year }}
             </div>
             <div class="space-y-3">
-                {% if timetable.allocation_set.exists %}
+                {% if timetable.allocations.exists %}
                 <a href="{% url 'timetable_detail' timetable.pk %}">
                     <div class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mt-4">
                         Zobacz służby

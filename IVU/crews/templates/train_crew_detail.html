@@ -2,10 +2,10 @@
 
 {% load date_strings %}
 
-{% block extra_title %}Załoga {{ crew.trip }} | {% endblock %}
+{% block extra_title %}Załoga {{ crew.train_number }} | {% endblock %}
 
 {% block header_items %}
-    <form method='POST' action='{% url 'update_crew' crew.pk %}'>
+    <form method='POST' action='{% url 'update_train_crew' crew.pk %}'>
     {% csrf_token %}
         <button class="text-white/[.60] px-2 py-1 font-medium">
             Aktualizuj załogę
@@ -18,8 +18,8 @@
         <div class="mb-2 text-white/[.60] text-sm">
             Ostatnia aktualizacja: {{ crew.last_updated|full_date }}
         </div>
-        <div class="text-blue-400 text-5xl font-medium mb-2">{{ crew.trip }}</div>
-        <div class="text-white/[.60] italic mb-2">{{ crew.trip_datetime|date_only }}</div>
+        <div class="text-blue-400 text-5xl font-medium mb-2">{{ crew.train_number }}</div>
+        <div class="text-white/[.60] italic mb-2">{{ crew.datetime|date_only }}</div>
     </div>
 
     <div class="bg-[#181818] px-2.5 py-3 rounded space-y-4">

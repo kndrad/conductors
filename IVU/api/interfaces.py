@@ -4,43 +4,43 @@ from .factories import (
     IVUTimetableAllocationsFactory,
     IVUAllocationIDFactory,
     IVUAllocationActionsFactory,
-    IVUCrewMembersFactory
+    IVUTrainCrewMembersFactory
 )
 
 
 class IVUResource:
+    factory = None
 
-    def __init__(self, server):
-        self._server = server
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
 
-    @abc.abstractmethod
-    def fetch(self, *args, **kwargs):
-        pass
+    def request(self, server):
+        resources = self.factory(server, **self.kwargs).run()
+        return resources
 
 
 class IVUTimetableAllocations(IVUResource):
-    def fetch(self, date):
-        factory = IVUTimetableAllocationsFactory(self._server, date)
-        allocations = factory.run()
-        return allocations
+    factory = IVUTimetableAllocationsFactory
 
 
 class IVUAllocationActions(IVUResource):
-    def fetch(self, title, date):
-        factory = IVUAllocationIDFactory(self._server, title, date)
+    def request(self, server):
+        factory = IVUAllocationIDFactory(server, **self.kwargs)
 
         try:
             id = factory.run()
         except TypeError:
             return {}
         else:
-            factory = IVUAllocationActionsFactory(self._server, id, date)
+            kwargs = {
+                'id' : id,
+                'date' : self.kwargs.pop('date')
+            }
+
+            factory = IVUAllocationActionsFactory(server, **kwargs)
             actions = factory.run()
             return actions
 
 
-class IVUCrewMembers(IVUResource):
-    def fetch(self, trip, date):
-        factory = IVUCrewMembersFactory(self._server, trip, date)
-        members = factory.run()
-        return members
+class IVUTrainCrewMembers(IVUResource):
+    factory = IVUTrainCrewMembersFactory

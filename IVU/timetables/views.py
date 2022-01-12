@@ -6,7 +6,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
-from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
 from django.views import View
@@ -18,16 +17,26 @@ from utils.views import HiddenUserFormMixin
 from .forms import ImportTimetableForm
 from .models import Timetable
 from ..allocations.models import Allocation
+from ..api.interfaces import IVUTimetableAllocations
+from ..mixins import ModelRelatedObjectsMixin
 
 
-class TimetableListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+class TimetableModelViewMixin(LoginRequiredMixin, ModelRelatedObjectsMixin):
     model = Timetable
+    related_model = Allocation
+    resource = IVUTimetableAllocations
+    context_object_name = 'timetable'
+
+
+class TimetableListView(TimetableModelViewMixin, UserPassesTestMixin, ListView):
     template_name = 'timetable_list.html'
     context_object_name = 'timetables'
 
     def test_func(self):
-        if not all(timetable.user == self.request.user for timetable in self.get_queryset()):
-            return render(self.request, 'not_allowed_to_view.html')
+        query = self.model.objects.filter(user=self.request.user)
+
+        if not all(timetable.user == self.request.user for timetable in query):
+            return redirect('not_allowed')
         else:
             return True
 
@@ -38,49 +47,36 @@ class TimetableListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             timetable, created = self.model.objects.get_or_create(
                 user=self.request.user, month=date.month, year=date.year
             )
-            if not timetable.allocation_set.exists():
-                resources = timetable.fetch_external_resources(self.request)
-
-                for kwargs in resources:
-                    allocation, _ = Allocation.objects.get_or_create(**kwargs)
-                    timetable.allocation_set.add(allocation)
-
-                timetable.update_now()
-                timetable.save()
-
-        return self.model.objects.get_time_ordered_user_timetables(user=self.request.user)
+            self.add_related_objects(instance=timetable)
+        return self.model.objects.get_user_timetables_queryset(user=self.request.user)
 
 
-class TimetableDetailView(LoginRequiredMixin, DetailView):
-    model = Timetable
-    context_object_name = 'timetable'
+class TimetableDetailView(TimetableModelViewMixin, DetailView):
     template_name = 'timetable_detail.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['allocations'] = self.object.allocation_set.all()
+        context['allocations'] = self.object.allocations.all()
         return context
 
 
-class ImportTimetableFormView(LoginRequiredMixin, SuccessMessageMixin, HiddenUserFormMixin, CreateView):
-    model = Timetable
-    context_object_name = 'timetable'
+class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, HiddenUserFormMixin, CreateView):
     template_name = 'import_timetable_form.html'
     form_class = ImportTimetableForm
     success_message = 'Importowanie planu powiodło się.'
 
     def form_valid(self, form):
         self.object = form.save()
+        self.add_related_objects(instance=self.object)
         return super().form_valid(form)
 
 
-class UpdateTimetableView(LoginRequiredMixin, SingleObjectMixin, View):
-    model = Timetable
-    context_object_name = 'timetable'
+class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
+        self.update_related_objects(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 
@@ -108,7 +104,7 @@ class CalDAVSendTimetable(LoginRequiredMixin, SingleObjectMixin, View):
                 for event in calendar.events():
                     event.delete()
 
-                for allocation in self.object.allocation_set.all():
+                for allocation in self.object.allocations.all():
                     allocation.add_related_objects_on_request(self.request)
 
                     component = allocation.to_ical_component()

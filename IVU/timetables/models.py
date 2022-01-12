@@ -8,12 +8,10 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.dates import MONTHS
 
-from IVU.api.interfaces import IVUTimetableAllocations
 from IVU.api.requests import IVURequestWithDateValue
-from IVU.backends import get_server_or_redirect
 from IVU.timetables.managers import TimetableManager
-from dates.years import YEARS
 from dates.models import UUIDTimestampedModel
+from dates.years import YEARS
 
 
 class Timetable(UUIDTimestampedModel):
@@ -59,8 +57,6 @@ class Timetable(UUIDTimestampedModel):
         days = monthrange(self.year, self.month)[1]
         return range(1, days + 1)
 
-    def fetch_external_resources(self, request):
-        server = get_server_or_redirect(request)
-        allocations = IVUTimetableAllocations(server)
-        date = self.date.strftime(IVURequestWithDateValue.fmt)
-        return allocations.fetch(date)
+    @property
+    def resource_kwargs(self):
+        return {'date': self.date.strftime(IVURequestWithDateValue.fmt)}

@@ -1,18 +1,18 @@
 from django.contrib import admin
-from .models import Crew, Member
+from .models import TrainCrew, TrainCrewMember
 
 
-class CrewAdmin(admin.ModelAdmin):
+class TrainCrewAdmin(admin.ModelAdmin):
     list_display = (
-        'trip', 'date'
+        'train_number', 'date'
     )
 
 
-class MemberAdmin(admin.ModelAdmin):
+class TrainCrewMemberAdmin(admin.ModelAdmin):
     list_display = (
         'person', 'phone', 'profession', 'start_location', 'end_location'
     )
 
 
-admin.site.register(Crew, CrewAdmin)
-admin.site.register(Member, MemberAdmin)
+admin.site.register(TrainCrew, TrainCrewAdmin)
+admin.site.register(TrainCrewMember, TrainCrewMemberAdmin)

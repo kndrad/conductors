@@ -80,7 +80,7 @@ class IVUAllocationActionContainerHTML(IVUContainerHTML):
         cell = self.markup.find('td', class_=cls)
         return cell.find('span', class_='value').text.strip()
 
-    def _get_trip(self):
+    def _get_train_number(self):
         return self.__get_text('trip_numbers mdl-data-table__cell--non-numeric')
 
     def _get_name(self):
@@ -95,7 +95,7 @@ class IVUAllocationActionContainerHTML(IVUContainerHTML):
     def to_dict(self):
         try:
             return {
-                'trip': self._get_trip(),
+                'train_number': self._get_train_number(),
                 'name': self._get_name(),
                 'start_location': self._get_location('start'),
                 'start_hour': self._get_hour('start'),
@@ -106,7 +106,7 @@ class IVUAllocationActionContainerHTML(IVUContainerHTML):
             return
 
 
-class IVUMemberContainerHTML(IVUContainerHTML):
+class IVUTrainCrewMemberContainerHTML(IVUContainerHTML):
     name = 'div'
     attrs = {'class': 'crew-value'}
 

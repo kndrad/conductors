@@ -20,7 +20,7 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
     end_date = models.DateTimeField('Zakończenie')
 
     timetable = models.ForeignKey(
-        Timetable, verbose_name='Plan', null=True, blank=True, on_delete=models.CASCADE
+        Timetable, related_name='allocations', verbose_name='Plan', null=True, blank=True, on_delete=models.CASCADE
     )
 
     class Meta:
@@ -32,6 +32,8 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
             ),
         ]
         ordering = ['start_date']
+
+    query_name = 'allocations'
 
     def __str__(self):
         fmt = '%H:%M'
@@ -45,6 +47,7 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
     def get_absolute_url(self):
         return reverse('allocation_detail', kwargs={'pk': self.pk})
 
+    @property
     def start_day(self):
         return int(self.start_date.day)
 
@@ -59,7 +62,7 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
         event.add_component(alarm)
 
         description = ""
-        for action in self.action_set.all():
+        for action in self.actions.all():
             description += f'{action.ical_description} \n'
 
         event.add('description', description)
@@ -79,11 +82,11 @@ class AllocationTrain(models.Model):
         null=True, blank=True, on_delete=models.CASCADE
     )
     before = models.OneToOneField(
-        Train, verbose_name='Pociąg przed służbą', related_name='before',
+        Train, verbose_name='Przed', related_name='before',
         null=True, blank=True, on_delete=models.CASCADE
     )
     after = models.OneToOneField(
-        Train, verbose_name='Pociąg po służbie', related_name='after',
+        Train, verbose_name='Po', related_name='after',
         null=True, blank=True, on_delete=models.CASCADE
     )
 
@@ -98,8 +101,8 @@ class AllocationTrain(models.Model):
         return f'AllocationTrain({repr(self.allocation)}, {repr(self.before)}, {repr(self.after)})'
 
 
-class Action(models.Model):
-    trip = models.CharField('Pociąg', max_length=32, null=True)
+class AllocationAction(models.Model):
+    train_number = models.CharField('Numer pociągu', max_length=32, null=True)
     date = models.DateTimeField('Data', null=True)
     name = models.CharField('Nazwa', max_length=128, null=True)
     start_location = models.CharField('Lokalizacja początkowa', max_length=128, null=True)
@@ -108,7 +111,7 @@ class Action(models.Model):
     end_hour = models.CharField('Godzina', max_length=32, null=True)
 
     allocation = models.ForeignKey(
-        Allocation, verbose_name='Służba', null=True, blank=True, on_delete=models.CASCADE
+        Allocation, verbose_name='Służba', related_name='actions', null=True, blank=True, on_delete=models.CASCADE
     )
 
     class Meta:
@@ -118,19 +121,19 @@ class Action(models.Model):
 
     def __str__(self):
         return f"""
-        {self.trip} {self.name}
+        {self.train_number} {self.name}
         {self.start_location} {self.start_hour} 
         {self.end_location} {self.end_hour}
         """
 
     @property
-    def date_str(self):
+    def date_string(self):
         return timezone.localtime(self.date).strftime(IVURequestWithDateValue.fmt)
 
     @property
     def ical_description(self):
-        if self.trip:
-            return f"""{self.trip} {self.name}
+        if self.train_number:
+            return f"""{self.train_number} {self.name}
         {self.start_location} {self.start_hour} 
         {self.end_location} {self.end_hour}
         """

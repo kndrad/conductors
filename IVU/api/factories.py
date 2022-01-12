@@ -4,7 +4,7 @@ from .requests import (
     IVUTimetableAllocationsRequest,
     IVUAllocationIDRequest,
     IVUAllocationActionsRequest,
-    IVUCrewMembersRequest
+    IVUTrainCrewMembersRequest
 )
 
 
@@ -13,7 +13,7 @@ class IVUResourceFactory(ABC):
 
     def __init__(self, server, *args, **kwargs):
         self._server = server
-        self._request = self.request(*args, *kwargs)
+        self._request = self.request(*args, **kwargs)
 
     def run(self):
         if not self.request:
@@ -37,5 +37,5 @@ class IVUAllocationActionsFactory(IVUResourceFactory):
     request = IVUAllocationActionsRequest
 
 
-class IVUCrewMembersFactory(IVUResourceFactory):
-    request = IVUCrewMembersRequest
+class IVUTrainCrewMembersFactory(IVUResourceFactory):
+    request = IVUTrainCrewMembersRequest

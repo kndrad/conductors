@@ -4,19 +4,21 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
-from .models import Crew
+from .models import TrainCrew
 
 
-class CrewDetailView(LoginRequiredMixin, DetailView):
-    model = Crew
-    template_name = 'crew_detail.html'
+class TripCrewDetailView(LoginRequiredMixin, DetailView):
+    model = TrainCrew
+    template_name = 'train_crew_detail.html'
     context_object_name = 'crew'
 
     def get_object(self, queryset=None):
-        trip = self.kwargs.get('trip')
+        train_number = self.kwargs.get('train_number')
         date = self.kwargs.get('action_date')
 
-        self.object, created = self.model.objects.get_or_create(trip=trip, date=date)
+        self.object, created = self.model.objects.get_or_create(
+            train_number=train_number, date=date
+        )
 
         if created:
             self.object.add_related_objects_on_request(self.request)
@@ -24,7 +26,7 @@ class CrewDetailView(LoginRequiredMixin, DetailView):
         return self.object
 
 
-class UpdateCrewView(LoginRequiredMixin, SingleObjectMixin, View):
+class UpdateTripCrewView(LoginRequiredMixin, SingleObjectMixin, View):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):

@@ -4,7 +4,7 @@ from abc import ABC
 from bs4 import BeautifulSoup
 from bs4.element import SoupStrainer
 from re import compile
-from .containers import IVUAllocationHTMLContainer, IVUAllocationActionContainerHTML, IVUMemberContainerHTML
+from .containers import IVUAllocationHTMLContainer, IVUAllocationActionContainerHTML, IVUTrainCrewMemberContainerHTML
 
 
 class IVURequestResponseContentParser(ABC):
@@ -59,5 +59,5 @@ class IVUAllocationActionsRequestResponseParser(IVURequestResponseContentParser)
     container = IVUAllocationActionContainerHTML
 
 
-class IVUCrewMembersRequestResponseParser(IVURequestResponseContentParser):
-    container = IVUMemberContainerHTML
+class IVUTrainCrewMembersRequestResponseParser(IVURequestResponseContentParser):
+    container = IVUTrainCrewMemberContainerHTML
