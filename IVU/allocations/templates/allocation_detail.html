@@ -123,10 +123,10 @@
                 <div class="text-center text-xl m-1">
                     <div>{{ action.name }}</div>
                 </div>
-                {% if action.trip %}
+                {% if action.train_number %}
                 <a href="{% url 'train_crew_detail' action.train_number action.date_string %}">
                     <div class="text-blue-400 text-xl">
-                        {{ action.trip }}
+                        {{ action.train_number }}
                     </div>
                 </a>
             {% endif %}

@@ -1,36 +1,57 @@
+import datetime
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
+from django.utils.timezone import make_aware, make_naive
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
-from .models import Allocation, AllocationTrain
+from .models import Allocation, AllocationTrain, AllocationAction
+from ..api.interfaces import IVUAllocationActions
+from ..mixins import ModelRelatedResourcesMixin
+from dateutil.parser import parse as dateutil_parse
 
 
-class AllocationView(LoginRequiredMixin, DetailView):
+class AllocationModelMixin(LoginRequiredMixin, ModelRelatedResourcesMixin):
     model = Allocation
     context_object_name = 'allocation'
+    related_model = AllocationAction
+    resource = IVUAllocationActions
+
+    def add_related_objects(self, instance):
+        super().add_related_objects(instance)
+        for action in instance.actions.all():
+            start_date = make_naive(instance.start_date)
+            date = make_aware(dateutil_parse(f'{action.start_hour} {start_date}'))
+
+            if date >= instance.start_date:
+                date += datetime.timedelta(days=1)
+
+            action.date = date
+            action.save()
+
+
+class AllocationView(AllocationModelMixin, DetailView):
     template_name = 'allocation_detail.html'
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
+        self.add_related_objects(instance=self.object)
         return self.object
 
 
-class UpdateAllocationView(LoginRequiredMixin, SingleObjectMixin, View):
-    model = Allocation
-    context_object_name = 'allocation'
+class UpdateAllocationView(AllocationModelMixin, SingleObjectMixin, View):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
+        self.update_related_objects(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 
 class SearchAllocationTrainViewMixin(LoginRequiredMixin, SingleObjectMixin, View):
-    model = Allocation
-    context_object_name = 'allocation'
     http_method_names = ['post']
 
     def get_station(self, place):

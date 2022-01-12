@@ -37,6 +37,8 @@ class TrainCrewMember(UUIDModel):
     start_location = models.CharField('Lokalizacja początkowa', max_length=32)
     end_location = models.CharField('Lokalizacja końcowa', max_length=32)
 
+    query_name = 'members'
+
     class Meta:
         verbose_name = 'Członek załogi pociągu'
         verbose_name_plural = 'Członkowie załogi pociągów'

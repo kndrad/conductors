@@ -51,6 +51,13 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
     def start_day(self):
         return int(self.start_date.day)
 
+    @property
+    def resource_kwargs(self):
+        return {
+            'title': self.title,
+            'date': self.start_date.strftime(IVURequestWithDateValue.fmt)
+        }
+
     def to_ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
@@ -113,6 +120,8 @@ class AllocationAction(models.Model):
     allocation = models.ForeignKey(
         Allocation, verbose_name='Służba', related_name='actions', null=True, blank=True, on_delete=models.CASCADE
     )
+
+    query_name = 'actions'
 
     class Meta:
         verbose_name = 'Akcja'
