@@ -3,7 +3,7 @@ from django.views import View
 from .backends import get_server_or_redirect
 
 
-class ModelRelatedObjectsMixin(View):
+class ModelRelatedResourcesMixin(View):
     model = None
     related_model = None
     resource = None

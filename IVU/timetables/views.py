@@ -18,10 +18,10 @@ from .forms import ImportTimetableForm
 from .models import Timetable
 from ..allocations.models import Allocation
 from ..api.interfaces import IVUTimetableAllocations
-from ..mixins import ModelRelatedObjectsMixin
+from ..mixins import ModelRelatedResourcesMixin
 
 
-class TimetableModelViewMixin(LoginRequiredMixin, ModelRelatedObjectsMixin):
+class TimetableModelViewMixin(LoginRequiredMixin, ModelRelatedResourcesMixin):
     model = Timetable
     related_model = Allocation
     resource = IVUTimetableAllocations
