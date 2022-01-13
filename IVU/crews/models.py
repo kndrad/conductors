@@ -1,6 +1,7 @@
 from datetime import datetime
 from django.db import models
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.utils.timezone import make_aware
 
 from dates.models import UUIDTimestampedModel
@@ -25,7 +26,7 @@ class TrainCrew(UUIDTimestampedModel):
 
     def get_absolute_url(self):
         data = {'train_number': self.train_number, 'date': self.date}
-        return redirect('train_crew_detail', kwargs=data)
+        return reverse('train_crew_detail', kwargs=data)
 
     @property
     def attrs_dict(self):

@@ -9,18 +9,18 @@ from django.views.generic.detail import SingleObjectMixin
 
 from .models import Allocation, AllocationTrain, AllocationAction
 from ..api.resources import IVUAllocationActions
-from ..mixins import IVUModelFetchResourcesViewMixin
+from ..mixins import IVUModelFetchResourcesMixin
 from dateutil.parser import parse as dateutil_parse
 
 
-class AllocationModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesViewMixin):
+class AllocationModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesMixin, View):
     model = Allocation
     context_object_name = 'allocation'
     related_model = AllocationAction
     resource_cls = IVUAllocationActions
 
-    def add_fetched_objects(self, instance):
-        super().add_fetched_objects(instance=instance)
+    def add_fetched_resources(self, instance):
+        super().add_fetched_resources(instance=instance)
         for action in instance.actions.all():
             date = make_aware(
                 dateutil_parse(f'{instance.start_date_str} {action.start_hour}')
@@ -37,7 +37,7 @@ class AllocationView(AllocationModelViewMixin, DetailView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        self.add_fetched_objects(instance=self.object)
+        self.add_fetched_resources(instance=self.object)
         return self.object
 
 
@@ -46,7 +46,7 @@ class UpdateAllocationView(AllocationModelViewMixin, SingleObjectMixin):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.update_fetched_objects(instance=self.object)
+        self.update_fetched_resources(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 

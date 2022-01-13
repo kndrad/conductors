@@ -18,10 +18,10 @@ from .forms import ImportTimetableForm
 from .models import Timetable
 from ..allocations.models import Allocation
 from ..api.resources import IVUTimetableAllocations
-from ..mixins import IVUModelFetchResourcesViewMixin
+from ..mixins import IVUModelFetchResourcesMixin
 
 
-class TimetableModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesViewMixin):
+class TimetableModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesMixin, View):
     model = Timetable
     related_model = Allocation
     resource_cls = IVUTimetableAllocations
@@ -47,7 +47,7 @@ class TimetableListView(TimetableModelViewMixin, UserPassesTestMixin, ListView):
             timetable, created = self.model.objects.get_or_create(
                 user=self.request.user, month=date.month, year=date.year
             )
-            self.add_fetched_objects(instance=timetable)
+            self.add_fetched_resources(instance=timetable)
         return self.model.objects.get_user_timetables_queryset(user=self.request.user)
 
 
@@ -67,7 +67,7 @@ class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, Hidd
 
     def form_valid(self, form):
         self.object = form.save()
-        self.add_fetched_objects(instance=self.object)
+        self.add_fetched_resources(instance=self.object)
         return super().form_valid(form)
 
 
@@ -76,7 +76,7 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.update_fetched_objects(instance=self.object)
+        self.update_fetched_resources(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 
