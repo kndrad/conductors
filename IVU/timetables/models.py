@@ -58,5 +58,5 @@ class Timetable(UUIDTimestampedModel):
         return range(1, days + 1)
 
     @property
-    def resource_kwargs(self):
+    def attrs_dict(self):
         return {'date': self.date.strftime(IVURequestWithDateValue.fmt)}

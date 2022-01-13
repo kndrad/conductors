@@ -7,7 +7,7 @@
 {% block header_items %}
     <form method='POST' action='{% url 'update_train_crew' crew.pk %}'>
     {% csrf_token %}
-        <button class="text-white/[.60] px-2 py-1 font-medium">
+        <button class="text-white/[.60] px-2 py-1 font-medium" type="submit">
             Aktualizuj załogę
         </button>
     </form>
@@ -19,21 +19,21 @@
             Ostatnia aktualizacja: {{ crew.last_updated|full_date }}
         </div>
         <div class="text-blue-400 text-5xl font-medium mb-2">{{ crew.train_number }}</div>
-        <div class="text-white/[.60] italic mb-2">{{ crew.datetime|date_only }}</div>
+        <div class="text-white/[.60] italic mb-2">{{ crew.date_to_datetime|date_only }}</div>
     </div>
 
     <div class="bg-[#181818] px-2.5 py-3 rounded space-y-4">
-    {% if crew.member_set.exists %}
-        {% for member in crew.member_set.all %}
+    {% if crew.members.exists %}
+        {% for member in crew.members.all %}
             <div class="bg-[#212121] rounded mb-3 px-3 py-2 space-y-1">
                 <div class="flex items-center justify-between">
                     <div class="text-white/[.60] italic">Imię i nazwisko</div>
                     <div>{{ member.person }}</div>
                 </div>
-                {% if member.phone_number %}
+                {% if member.phone %}
                 <div class="flex items-center justify-between">
                     <div class="text-white/[.60] italic">Numer telefonu</div>
-                    <div>{{ member.phone_number }}</div>
+                    <div>{{ member.phone }}</div>
                 </div>
                 {% endif %}
                 <div class="flex items-center justify-between">

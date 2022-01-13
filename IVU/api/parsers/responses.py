@@ -59,5 +59,5 @@ class IVUAllocationActionsRequestResponseParser(IVURequestResponseContentParser)
     container = IVUAllocationActionContainerHTML
 
 
-class IVUTrainCrewMembersRequestResponseParser(IVURequestResponseContentParser):
+class IVUTrainCrewRequestResponseParser(IVURequestResponseContentParser):
     container = IVUTrainCrewMemberContainerHTML

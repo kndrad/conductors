@@ -46,7 +46,8 @@
                     {% else %}
                         {% if not allocation.is_month_old %}
                             <div class="flex items-center rounded">
-                                <form class="text-center w-full" method='POST' action="{% url 'search_train_before_allocation' allocation.pk %}">
+                                <form class="text-center w-full" method='POST'
+                                      action="{% url 'search_train_before_allocation' allocation.pk %}">
                                 {% csrf_token %}
                                     <button class="rounded border border-blue-400 text-blue-400 w-full p-1">
                                         Załaduj pociąg
@@ -89,7 +90,8 @@
                     {% else %}
                         {% if not allocation.is_month_old %}
                         <div class="flex items-center rounded">
-                            <form class="text-center w-full" method='POST' action="{% url 'search_train_after_allocation' allocation.pk %}">
+                            <form class="text-center w-full" method='POST'
+                                  action="{% url 'search_train_after_allocation' allocation.pk %}">
                             {% csrf_token %}
                                 <button class="rounded border border-blue-400 text-blue-400 w-full p-1">
                                     Załaduj pociąg
@@ -124,7 +126,7 @@
                     <div>{{ action.name }}</div>
                 </div>
                 {% if action.train_number %}
-                <a href="{% url 'train_crew_detail' action.train_number action.date_string %}">
+                <a href="{% url 'train_crew_detail' action.train_number action.date_to_str %}">
                     <div class="text-blue-400 text-xl">
                         {{ action.train_number }}
                     </div>

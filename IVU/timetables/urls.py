@@ -1,10 +1,11 @@
 from django.urls import path
 
 from .views import (
+    TimetableListView,
     TimetableDetailView,
     ImportTimetableFormView,
     UpdateTimetableView,
-    CalDAVSendTimetable, TimetableListView,
+    CalDAVSendTimetable,
 )
 
 

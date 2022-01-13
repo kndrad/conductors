@@ -1,6 +1,6 @@
 from django.urls import path
 
-from IVU.allocations.views import (
+from .views import (
     AllocationView,
     UpdateAllocationView,
     SearchTrainBeforeAllocationView,

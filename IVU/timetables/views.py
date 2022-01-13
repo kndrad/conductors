@@ -17,14 +17,14 @@ from utils.views import HiddenUserFormMixin
 from .forms import ImportTimetableForm
 from .models import Timetable
 from ..allocations.models import Allocation
-from ..api.interfaces import IVUTimetableAllocations
-from ..mixins import ModelRelatedResourcesMixin
+from ..api.resources import IVUTimetableAllocations
+from ..mixins import IVUModelFetchResourcesViewMixin
 
 
-class TimetableModelViewMixin(LoginRequiredMixin, ModelRelatedResourcesMixin):
+class TimetableModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesViewMixin):
     model = Timetable
     related_model = Allocation
-    resource = IVUTimetableAllocations
+    resource_cls = IVUTimetableAllocations
     context_object_name = 'timetable'
 
 
@@ -47,7 +47,7 @@ class TimetableListView(TimetableModelViewMixin, UserPassesTestMixin, ListView):
             timetable, created = self.model.objects.get_or_create(
                 user=self.request.user, month=date.month, year=date.year
             )
-            self.add_related_objects(instance=timetable)
+            self.add_fetched_objects(instance=timetable)
         return self.model.objects.get_user_timetables_queryset(user=self.request.user)
 
 
@@ -67,7 +67,7 @@ class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, Hidd
 
     def form_valid(self, form):
         self.object = form.save()
-        self.add_related_objects(instance=self.object)
+        self.add_fetched_objects(instance=self.object)
         return super().form_valid(form)
 
 
@@ -76,7 +76,7 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.update_related_objects(instance=self.object)
+        self.update_fetched_objects(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 

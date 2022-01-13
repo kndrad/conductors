@@ -1,5 +1,4 @@
-import datetime
-
+from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
@@ -9,45 +8,45 @@ from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
 from .models import Allocation, AllocationTrain, AllocationAction
-from ..api.interfaces import IVUAllocationActions
-from ..mixins import ModelRelatedResourcesMixin
+from ..api.resources import IVUAllocationActions
+from ..mixins import IVUModelFetchResourcesViewMixin
 from dateutil.parser import parse as dateutil_parse
 
 
-class AllocationModelMixin(LoginRequiredMixin, ModelRelatedResourcesMixin):
+class AllocationModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesViewMixin):
     model = Allocation
     context_object_name = 'allocation'
     related_model = AllocationAction
-    resource = IVUAllocationActions
+    resource_cls = IVUAllocationActions
 
-    def add_related_objects(self, instance):
-        super().add_related_objects(instance)
+    def add_fetched_objects(self, instance):
+        super().add_fetched_objects(instance=instance)
         for action in instance.actions.all():
-            start_date = make_naive(instance.start_date)
-            date = make_aware(dateutil_parse(f'{action.start_hour} {start_date}'))
-
-            if date >= instance.start_date:
-                date += datetime.timedelta(days=1)
+            date = make_aware(
+                dateutil_parse(f'{instance.start_date_str} {action.start_hour}')
+            )
+            if date < instance.start_date:
+                date += timedelta(days=1)
 
             action.date = date
             action.save()
 
 
-class AllocationView(AllocationModelMixin, DetailView):
+class AllocationView(AllocationModelViewMixin, DetailView):
     template_name = 'allocation_detail.html'
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        self.add_related_objects(instance=self.object)
+        self.add_fetched_objects(instance=self.object)
         return self.object
 
 
-class UpdateAllocationView(AllocationModelMixin, SingleObjectMixin, View):
+class UpdateAllocationView(AllocationModelViewMixin, SingleObjectMixin):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.update_related_objects(instance=self.object)
+        self.update_fetched_objects(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 

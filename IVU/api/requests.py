@@ -5,7 +5,7 @@ from .parsers.responses import (
     IVUTimetableAllocationsRequestResponseParser,
     IVUAllocationActionsRequestResponseParser,
     IVUAllocationIDRequestResponseParser,
-    IVUTrainCrewMembersRequestResponseParser,
+    IVUTrainCrewRequestResponseParser,
 )
 
 
@@ -61,8 +61,8 @@ class IVUAllocationActionsRequest(IVURequestWithTextValue, IVURequestWithDateVal
         super().__init__(text=id, date=date, url=url, *args, **kwargs)
 
 
-class IVUTrainCrewMembersRequest(IVURequestWithTextValue, IVURequestWithDateValue):
-    response_parser = IVUTrainCrewMembersRequestResponseParser
+class IVUTrainCrewRequest(IVURequestWithTextValue, IVURequestWithDateValue):
+    response_parser = IVUTrainCrewRequestResponseParser
 
     def __init__(self, train_number, date, *args, **kwargs):
         url = (f'https://irena1.intercity.pl/mbweb/main/matter/desktop/'

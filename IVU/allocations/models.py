@@ -52,10 +52,14 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
         return int(self.start_date.day)
 
     @property
-    def resource_kwargs(self):
+    def start_date_str(self):
+        return self.start_date.strftime(IVURequestWithDateValue.fmt)
+
+    @property
+    def attrs_dict(self):
         return {
             'title': self.title,
-            'date': self.start_date.strftime(IVURequestWithDateValue.fmt)
+            'date': self.start_date_str
         }
 
     def to_ical_component(self):
@@ -79,8 +83,8 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
     @property
     def is_month_old(self):
         days = 30
-        month_ago = timezone.now() - datetime.timedelta(days=days)
-        return month_ago > self.start_date
+        date_month_ago = timezone.now() - datetime.timedelta(days=days)
+        return date_month_ago > self.start_date
 
 
 class AllocationTrain(models.Model):
@@ -135,8 +139,7 @@ class AllocationAction(models.Model):
         {self.end_location} {self.end_hour}
         """
 
-    @property
-    def date_string(self):
+    def date_to_str(self):
         return timezone.localtime(self.date).strftime(IVURequestWithDateValue.fmt)
 
     @property

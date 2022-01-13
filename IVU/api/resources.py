@@ -1,10 +1,8 @@
-import abc
-
 from .factories import (
     IVUTimetableAllocationsFactory,
     IVUAllocationIDFactory,
     IVUAllocationActionsFactory,
-    IVUTrainCrewMembersFactory
+    IVUTrainCrewFactory
 )
 
 
@@ -33,8 +31,8 @@ class IVUAllocationActions(IVUResource):
             return {}
         else:
             kwargs = {
-                'id' : id,
-                'date' : self.kwargs.pop('date')
+                'id': id,
+                'date': self.kwargs.pop('date')
             }
 
             factory = IVUAllocationActionsFactory(server, **kwargs)
@@ -42,5 +40,5 @@ class IVUAllocationActions(IVUResource):
             return actions
 
 
-class IVUTrainCrewMembers(IVUResource):
-    factory = IVUTrainCrewMembersFactory
+class IVUTrainCrew(IVUResource):
+    factory = IVUTrainCrewFactory

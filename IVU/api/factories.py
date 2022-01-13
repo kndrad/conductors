@@ -4,7 +4,7 @@ from .requests import (
     IVUTimetableAllocationsRequest,
     IVUAllocationIDRequest,
     IVUAllocationActionsRequest,
-    IVUTrainCrewMembersRequest
+    IVUTrainCrewRequest
 )
 
 
@@ -37,5 +37,5 @@ class IVUAllocationActionsFactory(IVUResourceFactory):
     request = IVUAllocationActionsRequest
 
 
-class IVUTrainCrewMembersFactory(IVUResourceFactory):
-    request = IVUTrainCrewMembersRequest
+class IVUTrainCrewFactory(IVUResourceFactory):
+    request = IVUTrainCrewRequest
