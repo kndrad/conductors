@@ -11,7 +11,7 @@ from django.views.generic import DetailView
 from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 
-from users.caldavs.mixins import SingleObjectCalDAVMixin
+from users.caldavs.mixins import CalDAVSendEventsMixin
 from utils.views import HiddenUserFormMixin
 from .forms import ImportTimetableForm
 from .models import Timetable
@@ -79,19 +79,22 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
         return redirect(self.object.get_absolute_url())
 
 
-class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectCalDAVMixin):
+class CalDAVSendTimetable(TimetableModelViewMixin, CalDAVSendEventsMixin):
     model = Timetable
     related_model = Allocation
     context_object_name = 'timetable'
     http_method_names = ['post']
 
-    def get_saveable_queryset(self):
+    def get_query_to_send(self):
         return self.object.allocations.all()
+
+    def get_calendar_name(self):
+        return self.object.calendar_name
 
     def post_events(self):
         self.add_related_resources(instance=self.object)
         self.save_events()
-        for instance in self.get_saveable_queryset():
+        for instance in self.get_query_to_send():
             if hasattr(instance, 'train'):
                 self.save_other_events([instance.train.before, instance.train.after])
 

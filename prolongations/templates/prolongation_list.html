@@ -14,7 +14,7 @@
 {% block content %}
     <div class="flex items-center flex-col w-full space-y-1.5 mt-4">
 
-    {% if ticket_prolongations %}
+    {% if prolongations %}
     <div class="flex items-center justify-between">
         <form method="post" class="px-1 mb-1 text-center" action="{% url 'update_prolongations_today' %}">
             {% csrf_token %}

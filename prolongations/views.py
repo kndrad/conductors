@@ -7,7 +7,7 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
-from users.caldavs.mixins import SingleObjectCalDAVMixin
+from users.caldavs.mixins import CalDAVSendEventsMixin
 from utils.views import HiddenUserFormMixin
 from .forms import ProlongationModelForm
 from .models import Prolongation
@@ -41,29 +41,28 @@ class UpdateProlongationsToday(ProlongationModelViewMixin, View):
 
     def post(self, request, **kwargs):
         user = self.request.user
-        prolongations = Prolongation.objects.filter(user=user)
 
-        for prolongation in prolongations:
+        for prolongation in Prolongation.objects.filter(user=user):
             prolongation.last_renewal_date = timezone.now().date()
             prolongation.save()
 
-        url = reverse('prolongation_list', kwargs={'pk': user.pk})
-        return redirect(url)
+        return redirect(reverse('prolongation_list', kwargs={'pk': user.pk}))
 
 
-class CalDAVSendProlongations(ProlongationModelViewMixin, SingleObjectCalDAVMixin, View):
+class CalDAVSendProlongations(ProlongationModelViewMixin, CalDAVSendEventsMixin, View):
     http_method_names = ['post']
+
+    def get_query_to_send(self):
+        return self.model.objects.filter(user=self.request.user)
 
     def final_redirect(self):
         return redirect(reverse('prolongation_list', kwargs={'pk': self.request.user.pk}))
 
-    def get_saveable_queryset(self):
-        return self.model.objects.filter(user=self.request.user)
+    def get_calendar_name(self):
+        return 'Prolongaty biletów'
 
 
-class ProlongationDeleteView(LoginRequiredMixin, DeleteView):
-    model = Prolongation
-    context_object_name = 'prolongation'
+class ProlongationDeleteView(ProlongationModelViewMixin, DeleteView):
     template_name = 'prolongation_delete.html'
 
     def get_success_url(self):

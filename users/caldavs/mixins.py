@@ -3,23 +3,26 @@ import abc
 import caldav
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.views.generic.detail import SingleObjectMixin
 
 
 class CalDAVAccountDoesNotExist(Exception):
     pass
 
 
-class SingleObjectCalDAVMixin(SingleObjectMixin):
+class CalDAVSendEventsMixin:
     request = None
     calendar = None
 
     @abc.abstractmethod
-    def get_saveable_queryset(self):
+    def get_query_to_send(self):
         pass
 
     @abc.abstractmethod
     def final_redirect(self):
+        pass
+
+    @abc.abstractmethod
+    def get_calendar_name(self):
         pass
 
     def post_events(self):
@@ -36,7 +39,7 @@ class SingleObjectCalDAVMixin(SingleObjectMixin):
             messages.error(self.request, message)
             raise CalDAVAccountDoesNotExist
 
-    def server_calendar(self, name):
+    def get_dav_calendar(self, name):
         client = self._get_davclient()
         principal = client.principal()
 
@@ -54,7 +57,7 @@ class SingleObjectCalDAVMixin(SingleObjectMixin):
         for event in self.calendar.events():
             event.delete()
 
-        for instance in self.get_saveable_queryset():
+        for instance in self.get_query_to_send():
             ical = instance.ical_component().to_ical()
             self.calendar.save_event(ical)
 
@@ -65,10 +68,8 @@ class SingleObjectCalDAVMixin(SingleObjectMixin):
                 self.calendar.save_event(ical)
 
     def post(self, request, **kwargs):
-        self.object = self.get_object()
-
         try:
-            self.calendar = self.server_calendar(self.object.calendar_name)
+            self.calendar = self.get_dav_calendar(self.get_calendar_name())
         except CalDAVAccountDoesNotExist:
             message = "Do wysyłania wydarzeń, potrzebna jest konfiguracja konta CalDAV."
             messages.error(self.request, message)

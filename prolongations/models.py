@@ -66,10 +66,6 @@ class Prolongation(models.Model, ICalComponentable):
         else:
             return f'Wygaśnie za {days} dni.'
 
-    @property
-    def calendar_name(self):
-        return 'Prolongaty'
-
     def ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
