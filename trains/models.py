@@ -46,6 +46,7 @@ class RailroadAccount(UUIDModel):
         return f'RailroadAccount({self.user}, {self.homeplace}, {self.workplace})'
 
 
+
 class VerifiedStation(models.Model):
     name = models.CharField('Nazwa', max_length=64, unique=True)
 

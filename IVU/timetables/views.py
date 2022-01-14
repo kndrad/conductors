@@ -79,7 +79,7 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
         return redirect(self.object.get_absolute_url())
 
 
-class CalDAVSendTimetable(TimetableModelViewMixin, CalDAVSendEventsMixin):
+class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectMixin, CalDAVSendEventsMixin):
     model = Timetable
     related_model = Allocation
     context_object_name = 'timetable'
@@ -92,6 +92,7 @@ class CalDAVSendTimetable(TimetableModelViewMixin, CalDAVSendEventsMixin):
         return self.object.calendar_name
 
     def post_events(self):
+        self.object = self.get_object()
         self.add_related_resources(instance=self.object)
         self.save_events()
         for instance in self.get_query_to_send():

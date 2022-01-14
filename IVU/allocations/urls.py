@@ -15,11 +15,11 @@ urlpatterns = [
         'update/<uuid:pk>/', UpdateAllocationView.as_view(), name='update_allocation'
     ),
     path(
-        'search-train-before/<uuid:pk>/',
+        'train/search/before/<uuid:pk>/',
         SearchTrainBeforeAllocationView.as_view(),
         name='search_train_before_allocation'
     ),
-    path('search-train-after/<uuid:pk>/',
+    path('train/search/after/<uuid:pk>/',
          SearchTrainAfterAllocationView.as_view(),
          name='search_train_after_allocation'),
 ]

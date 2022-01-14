@@ -1,3 +1,4 @@
+import abc
 from datetime import timedelta
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -7,6 +8,7 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
 
+from trains.searching import trains_before, DateArrivingTrain, trains_after, DateDepartingTrain
 from .models import Allocation, AllocationTrain, AllocationAction
 from ..api.resources import IVUAllocationActions
 from ..mixins import ManageRelatedResourcesMixin
@@ -49,10 +51,10 @@ class UpdateAllocationView(AllocationModelViewMixin, SingleObjectMixin):
         return redirect(self.object.get_absolute_url())
 
 
-class SearchAllocationTrainViewMixin(LoginRequiredMixin, SingleObjectMixin, View):
+class SearchAllocationTrainViewMixin(AllocationModelViewMixin, SingleObjectMixin, View):
     http_method_names = ['post']
 
-    def get_station(self, place):
+    def get_user_place(self, place):
         if not self.request.user.railroad_account:
             messages.warning(
                 self.request, "Aby załadować pociąg, potrzebna jest konfiguracja konta kolejowego."
@@ -65,15 +67,19 @@ class SearchTrainBeforeAllocationView(SearchAllocationTrainViewMixin):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
-        user = request.user
         self.object = self.get_object()
         allocation_train, _ = AllocationTrain.objects.get_or_create(allocation=self.object)
 
-        departure_station = self.get_station('homeplace')
-        arrival_station = self.get_station('workplace')
-        spare_time = user.railroad_account.administration_time
+        date = self.object.start_date
+        departure = self.get_user_place('homeplace')
+        arrival = self.get_user_place('workplace')
 
-        # allocation_train.search_before(departure_station, arrival_station, spare_time)
+        trains = trains_before(date, departure, arrival)
+        date = date - timedelta(minutes=self.request.user.railroad_account.administration_time)
+
+        train = DateArrivingTrain(date).inspect(trains)
+        allocation_train.before = train
+        allocation_train.save()
         return redirect(self.object.get_absolute_url())
 
 
@@ -84,8 +90,12 @@ class SearchTrainAfterAllocationView(SearchAllocationTrainViewMixin):
         self.object = self.get_object()
         allocation_train, _ = AllocationTrain.objects.get_or_create(allocation=self.object)
 
-        departure_station = self.get_station('workplace')
-        arrival_station = self.get_station('homeplace')
+        date = self.object.end_date
+        departure = self.get_user_place('workplace')
+        arrival = self.get_user_place('homeplace')
 
-        # allocation_train.search_after(departure_station, arrival_station, spare_time=0)
+        trains = trains_after(date, departure, arrival)
+        train = DateDepartingTrain(date).inspect(trains)
+        allocation_train.after = train
+        allocation_train.save()
         return redirect(self.object.get_absolute_url())

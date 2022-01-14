@@ -14,7 +14,7 @@ from .expressions import (
 )
 
 
-class RailroadScheduleRowParser:
+class TrainScheduleRowParser:
 
     def __init__(self, row):
         self._markup = row
@@ -80,7 +80,7 @@ class RailroadScheduleRowParser:
 
     def get_train_number(self):
         tag = 'p'
-        number_container_element = 'search-results__item-trip-nr'
+        number_container_element = 'search-results__item-train-nr'
         number = self._markup.find(name=tag, class_=number_container_element)
         number = number_regex.search(number.text.strip()).group()
         return number
@@ -104,7 +104,7 @@ class RailroadScheduleRowParser:
             }
 
 
-class RailroadScheduleParser:
+class TrainScheduleParser:
 
     def __init__(self, markup):
         self._markup = markup
@@ -123,7 +123,5 @@ class RailroadScheduleParser:
 
     def parse_schedule(self):
         rows = self.get_rows()
-        trains = [
-            RailroadScheduleRowParser(row).parse_row() for row in rows
-        ]
+        trains = [TrainScheduleRowParser(row).parse_row() for row in rows]
         return [train for train in trains if train]
