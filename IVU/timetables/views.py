@@ -1,7 +1,5 @@
 from datetime import timedelta
 
-import caldav
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
@@ -13,15 +11,16 @@ from django.views.generic import DetailView
 from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 
+from users.caldavs.mixins import SingleObjectCalDAVMixin
 from utils.views import HiddenUserFormMixin
 from .forms import ImportTimetableForm
 from .models import Timetable
 from ..allocations.models import Allocation
 from ..api.resources import IVUTimetableAllocations
-from ..mixins import FetchIVUResourcesMixin
+from ..mixins import ManageRelatedResourcesMixin
 
 
-class TimetableModelViewMixin(LoginRequiredMixin, FetchIVUResourcesMixin, View):
+class TimetableModelViewMixin(LoginRequiredMixin, ManageRelatedResourcesMixin, View):
     model = Timetable
     related_model = Allocation
     resource_cls = IVUTimetableAllocations
@@ -47,7 +46,7 @@ class TimetableListView(TimetableModelViewMixin, UserPassesTestMixin, ListView):
             timetable, created = self.model.objects.get_or_create(
                 user=self.request.user, month=date.month, year=date.year
             )
-            self.add_fetched_resources(instance=timetable)
+            self.add_related_resources(instance=timetable)
         return self.model.objects.get_user_timetables_queryset(user=self.request.user)
 
 
@@ -67,7 +66,7 @@ class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, Hidd
 
     def form_valid(self, form):
         self.object = form.save()
-        self.add_fetched_resources(instance=self.object)
+        self.add_related_resources(instance=self.object)
         return super().form_valid(form)
 
 
@@ -76,50 +75,25 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
 
     def post(self, request, **kwargs):
         self.object = self.get_object()
-        self.update_fetched_resources(instance=self.object)
+        self.update_related_resources(instance=self.object)
         return redirect(self.object.get_absolute_url())
 
 
-class CalDAVSendTimetable(LoginRequiredMixin, SingleObjectMixin, View):
+class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectCalDAVMixin):
     model = Timetable
+    related_model = Allocation
     context_object_name = 'timetable'
     http_method_names = ['post']
 
-    def post(self, request, **kwargs):
-        self.object = self.get_object()
+    def get_saveable_queryset(self):
+        return self.object.allocations.all()
 
-        if request.user.caldav_account:
-            client = request.user.caldav_account.get_client()
+    def post_events(self):
+        self.add_related_resources(instance=self.object)
+        self.save_events()
+        for instance in self.get_saveable_queryset():
+            if hasattr(instance, 'train'):
+                self.save_other_events([instance.train.before, instance.train.after])
 
-            try:
-                principal = client.principal()
-            except caldav.error.DAVError:
-                messages.error(request, "Wystąpił błąd podczas wysyłania kalendarza. Spróbuj jescze raz.")
-            else:
-                try:
-                    calendar = principal.calendar(name=self.object.name)
-                except caldav.error.NotFoundError:
-                    calendar = principal.make_calendar(name=self.object.name)
-
-                for event in calendar.events():
-                    event.delete()
-
-                for allocation in self.object.allocations.all():
-                    allocation.add_related_objects_on_request(self.request)
-
-                    component = allocation.to_ical_component()
-                    ical = component.to_ical()
-                    calendar.save_event(ical)
-
-                    if hasattr(allocation, 'trip'):
-                        for train in [allocation.train_number.before, allocation.train_number.after]:
-                            if train:
-                                component = train.to_ical_component()
-                                ical = component.to_ical()
-                                calendar.save_event(ical)
-        else:
-            messages.warning(
-                self.request, "Aby wysłać służby do serwera CalDAV, potrzebna jest konfiguracja konta."
-            )
-        path = reverse('allocation_timetables', kwargs={'pk': request.user.pk})
-        return redirect(path)
+    def final_redirect(self):
+        return redirect(reverse('timetable_list', kwargs={'pk': self.request.user.pk}))

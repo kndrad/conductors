@@ -22,5 +22,5 @@ class ICalComponentable:
     """Interface for any instance that can be converted to ical event or calendar component.
     """
     @abc.abstractmethod
-    def to_ical_component(self):
+    def ical_component(self):
         return NotImplemented

@@ -6,10 +6,10 @@ from django.views.generic.detail import SingleObjectMixin
 
 from .models import TrainCrew, TrainCrewMember
 from ..api.resources import IVUTrainCrew
-from ..mixins import FetchIVUResourcesMixin
+from ..mixins import ManageRelatedResourcesMixin
 
 
-class TrainCrewModelViewMixin(LoginRequiredMixin, FetchIVUResourcesMixin, View):
+class TrainCrewModelViewMixin(LoginRequiredMixin, ManageRelatedResourcesMixin, View):
     model = TrainCrew
     context_object_name = 'crew'
     related_model = TrainCrewMember
@@ -26,8 +26,8 @@ class TrainCrewDetailView(TrainCrewModelViewMixin, DetailView):
         self.object, created = self.model.objects.get_or_create(train_number=train_number, date=date)
 
         if created:
-            self.add_fetched_resources(instance=self.object)
+            self.add_related_resources(instance=self.object)
         else:
-            self.update_fetched_resources(instance=self.object)
+            self.update_related_resources(instance=self.object)
 
         return self.object

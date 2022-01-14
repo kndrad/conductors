@@ -78,7 +78,7 @@ class CalDAVSendProlongations(LoginRequiredMixin, View):
                     event.delete()
 
                 for prolongation in Prolongation.objects.filter(user=user):
-                    component = prolongation.to_ical_component()
+                    component = prolongation.ical_component()
                     ical = component.to_ical()
                     calendar.save_event(ical)
         else:

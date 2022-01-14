@@ -8,18 +8,16 @@ from .forms import CalDAVAccountModelForm
 from .models import CalDAVAccount
 
 
-class CalDAVAccountMixin(LoginRequiredMixin, HiddenUserFormMixin, ModelFormMixin, ProcessFormView):
+class CalDAVAccountModelMixin(LoginRequiredMixin, HiddenUserFormMixin, ModelFormMixin, ProcessFormView):
     model = CalDAVAccount
     form_class = CalDAVAccountModelForm
     template_name = 'caldav_account_form.html'
     success_url = reverse_lazy('home')
 
 
-class CalDAVAccountCreateView(CalDAVAccountMixin, CreateView):
-    """CalDAVAccount create view.
-    """
+class CalDAVAccountCreateView(CalDAVAccountModelMixin, CreateView):
+    pass
 
 
-class CalDAVAccountUpdateView(CalDAVAccountMixin, UpdateView):
-    """CalDAVAccount create view.
-    """
+class CalDAVAccountUpdateView(CalDAVAccountModelMixin, UpdateView):
+    pass

@@ -114,7 +114,7 @@ class Train(models.Model, ICalComponentable):
     def summary(self):
         return f'{self.carrier_initials} {self.number} | {self.departure_station.title()} -> {self.arrival_station.title()}'
 
-    def to_ical_component(self):
+    def ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
         summary = (

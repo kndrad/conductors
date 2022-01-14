@@ -62,7 +62,7 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
             'date': self.start_date_str
         }
 
-    def to_ical_component(self):
+    def ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
         event.add('summary', self.title)

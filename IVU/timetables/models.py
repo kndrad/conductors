@@ -49,8 +49,8 @@ class Timetable(UUIDTimestampedModel):
         return datetime.date(year=self.year, month=self.month, day=1)
 
     @property
-    def name(self):
-        return f'Plan {self.month}-{self.year}'
+    def calendar_name(self):
+        return f'Służby {self.month}-{self.year}'
 
     @property
     def days_in_month(self):
