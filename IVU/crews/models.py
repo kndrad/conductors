@@ -1,6 +1,6 @@
 from datetime import datetime
+
 from django.db import models
-from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import make_aware
 
@@ -16,8 +16,6 @@ class TrainCrew(UUIDTimestampedModel):
         verbose_name = 'Załoga pociągu'
         verbose_name_plural = 'Załogi pociągów'
 
-    query_name = 'members'
-
     def __str__(self):
         return f'{self.train_number}, {self.date}'
 
@@ -25,19 +23,14 @@ class TrainCrew(UUIDTimestampedModel):
         return f'TrainCrew({self.train_number}, {self.date})'
 
     def get_absolute_url(self):
-        data = {'train_number': self.train_number, 'date': self.date}
-        return reverse('train_crew_detail', kwargs=data)
+        return reverse('train_crew_detail', kwargs={'train_number': self.train_number, 'date': self.date})
 
     @property
     def attrs_dict(self):
-        return {
-            'train_number': self.train_number,
-            'date': self.date
-        }
+        return {'train_number': self.train_number, 'date': self.date}
 
     def date_to_datetime(self):
-        date = datetime.strptime(self.date, '%Y-%m-%d')
-        return make_aware(date)
+        return make_aware(datetime.strptime(self.date, '%Y-%m-%d'))
 
 
 class TrainCrewMember(UUIDModel):

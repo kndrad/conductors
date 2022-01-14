@@ -9,11 +9,11 @@ from django.views.generic.detail import SingleObjectMixin
 
 from .models import Allocation, AllocationTrain, AllocationAction
 from ..api.resources import IVUAllocationActions
-from ..mixins import IVUModelFetchResourcesMixin
+from ..mixins import FetchIVUResourcesMixin
 from dateutil.parser import parse as dateutil_parse
 
 
-class AllocationModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesMixin, View):
+class AllocationModelViewMixin(LoginRequiredMixin, FetchIVUResourcesMixin, View):
     model = Allocation
     context_object_name = 'allocation'
     related_model = AllocationAction
@@ -22,9 +22,8 @@ class AllocationModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesMixin, 
     def add_fetched_resources(self, instance):
         super().add_fetched_resources(instance=instance)
         for action in instance.actions.all():
-            date = make_aware(
-                dateutil_parse(f'{instance.start_date_str} {action.start_hour}')
-            )
+            date = make_aware(dateutil_parse(f'{instance.start_date_str} {action.start_hour}'))
+
             if date < instance.start_date:
                 date += timedelta(days=1)
 

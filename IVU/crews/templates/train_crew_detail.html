@@ -4,15 +4,6 @@
 
 {% block extra_title %}Załoga {{ crew.train_number }} | {% endblock %}
 
-{% block header_items %}
-    <form method='POST' action='{% url 'update_train_crew' crew.pk %}'>
-    {% csrf_token %}
-        <button class="text-white/[.60] px-2 py-1 font-medium" type="submit">
-            Aktualizuj załogę
-        </button>
-    </form>
-{% endblock %}
-
 {% block content %}
     <div class="mt-5 mb-2 flex flex-col w-full px-2.5 items-center">
         <div class="mb-2 text-white/[.60] text-sm">

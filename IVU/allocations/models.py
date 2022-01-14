@@ -82,9 +82,7 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
 
     @property
     def is_month_old(self):
-        days = 30
-        date_month_ago = timezone.now() - datetime.timedelta(days=days)
-        return date_month_ago > self.start_date
+        return timezone.now() - datetime.timedelta(days=30) > self.start_date
 
 
 class AllocationTrain(models.Model):

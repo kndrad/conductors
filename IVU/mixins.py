@@ -1,7 +1,7 @@
 from .backends import get_server_or_redirect
 
 
-class IVUModelFetchResourcesMixin:
+class FetchIVUResourcesMixin:
     model = None
     related_model = None
     resource_cls = None

@@ -6,10 +6,10 @@ from django.views.generic.detail import SingleObjectMixin
 
 from .models import TrainCrew, TrainCrewMember
 from ..api.resources import IVUTrainCrew
-from ..mixins import IVUModelFetchResourcesMixin
+from ..mixins import FetchIVUResourcesMixin
 
 
-class TrainCrewModelViewMixin(LoginRequiredMixin, IVUModelFetchResourcesMixin, View):
+class TrainCrewModelViewMixin(LoginRequiredMixin, FetchIVUResourcesMixin, View):
     model = TrainCrew
     context_object_name = 'crew'
     related_model = TrainCrewMember
@@ -23,20 +23,11 @@ class TrainCrewDetailView(TrainCrewModelViewMixin, DetailView):
         train_number = self.kwargs.get('train_number')
         date = self.kwargs.get('date')
 
-        self.object, created = self.model.objects.get_or_create(
-            train_number=train_number, date=date
-        )
+        self.object, created = self.model.objects.get_or_create(train_number=train_number, date=date)
 
         if created:
             self.add_fetched_resources(instance=self.object)
+        else:
+            self.update_fetched_resources(instance=self.object)
 
         return self.object
-
-
-class UpdateTrainCrewView(TrainCrewModelViewMixin, SingleObjectMixin):
-    http_method_names = ['post']
-
-    def post(self, request, **kwargs):
-        self.object = self.get_object()
-        self.update_fetched_resources(instance=self.object)
-        return redirect(request.META.get('HTTP_REFERER'))

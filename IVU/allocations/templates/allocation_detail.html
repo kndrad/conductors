@@ -127,11 +127,9 @@
                 </div>
                 {% if action.train_number %}
                 <a href="{% url 'train_crew_detail' action.train_number action.date_to_str %}">
-                    <div class="text-blue-400 text-xl">
-                        {{ action.train_number }}
-                    </div>
+                    <div class="text-blue-400 text-xl">{{ action.train_number }}</div>
                 </a>
-            {% endif %}
+                {% endif %}
                 <div class="py-1 px-2">
                     <div class="flex items-center justify-between">
                         <div class="text-white/[.60] text-xs italic">Rozpoczęcie</div>
