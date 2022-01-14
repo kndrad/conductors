@@ -7,13 +7,18 @@ from django.utils import timezone
 from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
+from users.caldavs.mixins import SingleObjectCalDAVMixin
 from utils.views import HiddenUserFormMixin
 from .forms import ProlongationModelForm
 from .models import Prolongation
 
 
-class ProlongationListView(LoginRequiredMixin, ListView):
+class ProlongationModelViewMixin(LoginRequiredMixin):
     model = Prolongation
+    context_object_name = 'prolongation'
+
+
+class ProlongationListView(ProlongationModelViewMixin, ListView):
     template_name = 'prolongation_list.html'
     context_object_name = 'prolongations'
 
@@ -21,23 +26,17 @@ class ProlongationListView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(user=self.request.user).order_by('expiration_date')
 
 
-class ProlongationCreateView(LoginRequiredMixin, CreateView, HiddenUserFormMixin):
-    model = Prolongation
-    context_object_name = 'prolongation'
+class ProlongationCreateView(ProlongationModelViewMixin, CreateView, HiddenUserFormMixin):
     template_name = 'prolongation_form.html'
     form_class = ProlongationModelForm
 
 
-class ProlongationUpdateView(LoginRequiredMixin, UpdateView, HiddenUserFormMixin):
-    model = Prolongation
-    context_object_name = 'prolongation'
+class ProlongationUpdateView(ProlongationModelViewMixin, UpdateView, HiddenUserFormMixin):
     template_name = 'prolongation_form.html'
     form_class = ProlongationModelForm
 
 
-class UpdateProlongationsToday(LoginRequiredMixin, View):
-    model = Prolongation
-    context_object_name = 'prolongation'
+class UpdateProlongationsToday(ProlongationModelViewMixin, View):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
@@ -52,41 +51,14 @@ class UpdateProlongationsToday(LoginRequiredMixin, View):
         return redirect(url)
 
 
-class CalDAVSendProlongations(LoginRequiredMixin, View):
-    model = Prolongation
-    context_object_name = 'prolongation'
+class CalDAVSendProlongations(ProlongationModelViewMixin, SingleObjectCalDAVMixin, View):
     http_method_names = ['post']
 
-    def post(self, request, **kwargs):
-        user = self.request.user
+    def final_redirect(self):
+        return redirect(reverse('prolongation_list', kwargs={'pk': self.request.user.pk}))
 
-        if user.caldav_account:
-            client = request.user.caldav_account.get_client()
-
-            try:
-                principal = client.principal()
-            except caldav.error.DAVError:
-                messages.error(request, "Wystąpił błąd podczas wysyłania kalendarza. Spróbuj jescze raz.")
-            else:
-                calendar_name = 'Prolongaty'
-                try:
-                    calendar = principal.calendar(name=calendar_name)
-                except caldav.error.NotFoundError:
-                    calendar = principal.make_calendar(name=calendar_name)
-
-                for event in calendar.events():
-                    event.delete()
-
-                for prolongation in Prolongation.objects.filter(user=user):
-                    component = prolongation.ical_component()
-                    ical = component.to_ical()
-                    calendar.save_event(ical)
-        else:
-            message = "Aby wysłać prolongaty do kalendarza DAV, potrzebna jest konfiguracja konta."
-            messages.warning(self.request, message)
-
-        path = reverse('prolongation_list', kwargs={'pk': request.user.pk})
-        return redirect(path)
+    def get_saveable_queryset(self):
+        return self.model.objects.filter(user=self.request.user)
 
 
 class ProlongationDeleteView(LoginRequiredMixin, DeleteView):

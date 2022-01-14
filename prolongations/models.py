@@ -13,7 +13,6 @@ class Prolongation(models.Model, ICalComponentable):
     class Ticket(models.TextChoices):
         FINE = ('FINE', 'Wezwania do zapłaty')
         BLANKET = ('BLANKET', 'Bilety blankietowe')
-        REPLACEMENT = ('REPLACEMENT', 'Bilety zastępcze')
 
     ticket = models.CharField('Bilety', choices=Ticket.choices, max_length=128, default=Ticket.FINE)
     last_renewal_date = models.DateField(verbose_name='Data ostatniego przedłużenia', default=timezone.now)
@@ -66,6 +65,10 @@ class Prolongation(models.Model, ICalComponentable):
             return 'Wygaśnie jutro.'
         else:
             return f'Wygaśnie za {days} dni.'
+
+    @property
+    def calendar_name(self):
+        return 'Prolongaty'
 
     def ical_component(self):
         cal = icalendar.Calendar()

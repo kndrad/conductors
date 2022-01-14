@@ -19,12 +19,11 @@ class SingleObjectCalDAVMixin(SingleObjectMixin):
         pass
 
     @abc.abstractmethod
-    def post_events(self):
-        pass
-
-    @abc.abstractmethod
     def final_redirect(self):
         pass
+
+    def post_events(self):
+        self.save_events()
 
     def _get_davclient(self):
         user = self.request.user
