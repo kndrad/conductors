@@ -30,10 +30,10 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
 
     def __init__(self, markup):
         super().__init__(markup)
-        self._inner_markup = self.markup.inspect('div', class_=info_cls)
+        self._inner_markup = self.markup.find('div', class_=info_cls)
 
     def _get_title(self):
-        value = self._inner_markup.inspect('div', class_='title-text').text.strip()
+        value = self._inner_markup.find('div', class_='title-text').text.strip()
         title = text_re.search(value).group()
         return title
 
@@ -46,7 +46,7 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
         if not timeline_re.match(timeline):
             raise ValueError(f'{timeline} expression does not match {timeline_re}.')
 
-        value = self._inner_markup.inspect('span', class_=f'time {timeline}').text.strip()
+        value = self._inner_markup.find('span', class_=f'time {timeline}').text.strip()
         return hour_re.search(value).group()
 
     def _get_date(self):
@@ -77,8 +77,8 @@ class IVUAllocationActionContainerHTML(IVUContainerHTML):
     attrs = {'class': compile('^(duty-components).*')}
 
     def __get_text(self, cls):
-        cell = self.markup.inspect('td', class_=cls)
-        return cell.inspect('span', class_='value').text.strip()
+        cell = self.markup.find('td', class_=cls)
+        return cell.find('span', class_='value').text.strip()
 
     def _get_train_number(self):
         return self.__get_text('trip_numbers mdl-data-table__cell--non-numeric')
@@ -115,8 +115,8 @@ class IVUTrainCrewMemberContainerHTML(IVUContainerHTML):
             'class': 'crew-info-column',
             'title': name,
         }
-        column = self.markup.inspect('li', attrs=attrs)
-        value = column.inspect('span')
+        column = self.markup.find('li', attrs=attrs)
+        value = column.find('span')
         return value
 
     def _get_person(self):
