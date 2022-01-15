@@ -21,6 +21,7 @@ class StationAtTrail(models.Model):
         return self.name.title()
 
 
+# todo: konczymy apkę!
 class Trail(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Użytkownik', on_delete=models.CASCADE)
     beginning = models.CharField('Początek szlaku', max_length=128)
@@ -44,15 +45,13 @@ class Trail(models.Model):
         stations = [str(station) for station in self.stations.all()]
         return f'Szlak od {self.beginning} do {self.finale}, przez {stations}'
 
-    @property
-    def expiration_months(self):
-        return 12
+    EXPIRATION_MONTHS = 12
 
     @property
     def expiration_date(self):
         """By now, expiraton date for a trail is defined in this class as a property.
         """
-        months = self.expiration_months
+        months = self.EXPIRATION_MONTHS
         expiration_date = self.last_driven + relativedelta(months=+months)
         return timezone.localtime(expiration_date)
 
@@ -62,6 +61,6 @@ class Trail(models.Model):
         It is less than expiration months value.
         """
         factor = 2
-        months = self.expiration_months - factor
+        months = self.EXPIRATION_MONTHS - factor
         announcement_date = self.expiration_date - relativedelta(months=-months)
         return timezone.localtime(announcement_date)

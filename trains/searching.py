@@ -2,7 +2,7 @@ import abc
 import datetime
 
 from dateutil.parser import parse as dateutil_parse
-from django.utils.timezone import make_aware, is_aware
+from django.utils.timezone import make_aware, is_aware, localtime
 
 from trains.services import SearchingTrainScheduleService
 from .models import Train
@@ -12,8 +12,8 @@ def search_train(date, departure, arrival):
     if not isinstance(date, datetime.datetime):
         raise ValueError(f'date must be instance of {datetime.datetime}.')
 
-    service = SearchingTrainScheduleService(hide_actions=True)
-    hour, date = date.strftime('%H:%M'), date.strftime('%d.%m.%Y')
+    service = SearchingTrainScheduleService(hide_actions=False)
+    hour, date = localtime(date).strftime('%H:%M'), localtime(date).strftime('%d.%m.%Y')
     trains = service.get_trains(date, hour, departure, arrival)
 
     for parsed in trains:

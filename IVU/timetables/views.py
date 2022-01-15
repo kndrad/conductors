@@ -89,6 +89,7 @@ class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectMixin, CalDAVSend
         return self.object.allocations.all()
 
     def get_calendar_name(self):
+        self.object = self.get_object()
         return self.object.calendar_name
 
     def post_events(self):

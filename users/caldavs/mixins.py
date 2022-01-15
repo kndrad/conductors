@@ -68,8 +68,10 @@ class CalDAVSendEventsMixin:
                 self.calendar.save_event(ical)
 
     def post(self, request, **kwargs):
+        calendar_name = self.get_calendar_name()
+
         try:
-            self.calendar = self.get_dav_calendar(self.get_calendar_name())
+            self.calendar = self.get_dav_calendar(name=calendar_name)
         except CalDAVAccountDoesNotExist:
             message = "Do wysyłania wydarzeń, potrzebna jest konfiguracja konta CalDAV."
             messages.error(self.request, message)
