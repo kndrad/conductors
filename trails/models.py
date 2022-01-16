@@ -5,10 +5,11 @@ from django.db.models import Q, F
 from django.utils import timezone
 
 from utils.fields import LowercaseCharField
+from .validators import sentence_validator
 
 
 class Waypoint(models.Model):
-    name = LowercaseCharField('Nazwa punktu', max_length=128)
+    name = LowercaseCharField('Nazwa', max_length=128, validators=[sentence_validator])
 
     class Meta:
         verbose_name = 'Punkt na szlaku'
@@ -23,9 +24,9 @@ class Waypoint(models.Model):
 
 class Trail(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Użytkownik', on_delete=models.CASCADE)
-    start = models.CharField('Początek szlaku', max_length=128)
-    end = models.CharField('Koniec szlaku', max_length=128)
-    last_driven = models.DateField('Ostatniego przejazdu', default=timezone.now)
+    start = models.CharField('Stacja początkowa', validators=[sentence_validator], max_length=128)
+    end = models.CharField('Stacja końcowa', validators=[sentence_validator], max_length=128)
+    last_driven = models.DateField('Data ostatniego przejazdu', default=timezone.now)
     waypoints = models.ManyToManyField(Waypoint, related_name='waypoints', verbose_name='Punkty na szlaku', blank=True)
 
     class Meta:

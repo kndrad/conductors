@@ -3,12 +3,14 @@
 {% block extra_title %}Szlaki | {% endblock %}
 
 {% block content %}
+    <div class="flex items-center flex-col">
     {% for trail in trails %}
-        {{ trail }}
+        <div>{{ trail }}</div>
     {% endfor %}
+    </div>
 
     <a class="w-full" href="{% url 'trail_create' %}">
-        <div class="border border-green-500 text-green-500 w-full rounded py-1">
+        <div class="py-1.5 w-full border border-green-500 rounded text-green-500 text-center">
             + Dodaj szlak
         </div>
     </a>

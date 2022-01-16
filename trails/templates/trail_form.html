@@ -3,5 +3,14 @@
 {% block extra_title %}Stwórz szlak | {% endblock %}
 
 {% block content %}
-    {{ form }}
+    <form class="flex items-center flex-col" method="POST">
+        {% csrf_token %}
+        <div class="text-3xl">Szlak</div>
+        {{ form }}
+        <div class="text-3xl">Punkty</div>
+        {{ waypoint_formset }}
+        <button class="p-2 my-3 w-full border border-green-500 rounded text-green-500" type="submit">
+            Zapisz
+        </button>
+    </form>
 {% endblock %}
