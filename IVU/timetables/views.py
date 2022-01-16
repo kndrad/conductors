@@ -88,7 +88,7 @@ class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectMixin, CalDAVSend
     def get_query_to_send(self):
         return self.object.allocations.all()
 
-    def get_calendar_name(self):
+    def calendar_name(self):
         self.object = self.get_object()
         return self.object.calendar_name
 

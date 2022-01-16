@@ -4,8 +4,12 @@ from django.views.generic import ListView, CreateView
 from trails.models import Trail
 
 
-class TrailListView(LoginRequiredMixin, ListView):
+class TrailModelMixin(LoginRequiredMixin):
     model = Trail
+    context_object_name = 'trail'
+
+
+class TrailListView(TrailModelMixin, ListView):
     context_object_name = 'trails'
     template_name = 'trail_list.html'
 
@@ -13,7 +17,5 @@ class TrailListView(LoginRequiredMixin, ListView):
         return self.model.objects.filter(user=self.request.user).order_by('last_driven')
 
 
-class TrailCreateView(LoginRequiredMixin, CreateView):
-    model = Trail
-    context_object_name = 'trail'
+class TrailCreateView(TrailModelMixin, CreateView):
     template_name = 'trail_form.html'

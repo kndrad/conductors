@@ -21,26 +21,27 @@ class CalDAVSendEventsMixin:
     def final_redirect(self):
         pass
 
+    @property
     @abc.abstractmethod
-    def get_calendar_name(self):
+    def calendar_name(self):
         pass
 
     def post_events(self):
         self.save_events()
 
-    def _get_davclient(self):
+    def _dav_client(self):
         user = self.request.user
-        account_name = 'caldav_account'
+        account = 'caldav_account'
 
-        if hasattr(user, account_name):
-            return getattr(user, account_name).get_client()
+        if hasattr(user, account):
+            return getattr(user, account).get_client()
         else:
             message = "Do wysyłania wydarzeń, potrzebna jest konfiguracja konta CalDAV."
             messages.error(self.request, message)
             raise CalDAVAccountDoesNotExist
 
     def get_dav_calendar(self, name):
-        client = self._get_davclient()
+        client = self._dav_client()
         principal = client.principal()
 
         try:
@@ -68,7 +69,7 @@ class CalDAVSendEventsMixin:
                 self.calendar.save_event(ical)
 
     def post(self, request, **kwargs):
-        calendar_name = self.get_calendar_name()
+        calendar_name = self.calendar_name()
 
         try:
             self.calendar = self.get_dav_calendar(name=calendar_name)

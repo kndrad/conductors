@@ -58,7 +58,7 @@ class CalDAVSendProlongations(ProlongationModelViewMixin, CalDAVSendEventsMixin,
     def final_redirect(self):
         return redirect(reverse('prolongation_list', kwargs={'pk': self.request.user.pk}))
 
-    def get_calendar_name(self):
+    def calendar_name(self):
         return 'Prolongaty biletów'
 
 

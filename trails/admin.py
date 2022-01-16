@@ -1,17 +1,17 @@
 from django.contrib import admin
 
-from trails.models import Trail, StationAtTrail
+from trails.models import Trail, Waypoint
 
 
 class TrailAdmin(admin.ModelAdmin):
-    list_display = ('user', 'beginning', 'finale', 'last_driven')
+    list_display = ('user', 'start', 'end', 'last_driven')
 
 
 admin.site.register(Trail, TrailAdmin)
 
 
-class StationAtTrailAdmin(admin.ModelAdmin):
+class WaypointAdmin(admin.ModelAdmin):
     list_display = ('name',)
 
 
-admin.site.register(StationAtTrail, StationAtTrailAdmin)
+admin.site.register(Waypoint, WaypointAdmin)

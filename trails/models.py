@@ -7,49 +7,48 @@ from django.utils import timezone
 from utils.fields import LowercaseCharField
 
 
-class StationAtTrail(models.Model):
-    name = LowercaseCharField('Nazwa stacji', max_length=128)
+class Waypoint(models.Model):
+    name = LowercaseCharField('Nazwa punktu', max_length=128)
 
     class Meta:
-        verbose_name = 'Stacja na szlaku'
-        verbose_name_plural = 'Stacje na szlaku'
+        verbose_name = 'Punkt na szlaku'
+        verbose_name_plural = 'Punkty na szlaku'
 
     def __repr__(self):
-        return f'TrailStation({self.name})'
+        return f'Waypoint({self.name})'
 
     def __str__(self):
         return self.name.title()
 
 
-# todo: konczymy apkę!
 class Trail(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Użytkownik', on_delete=models.CASCADE)
-    beginning = models.CharField('Początek szlaku', max_length=128)
-    finale = models.CharField('Koniec szlaku', max_length=128)
-    last_driven = models.DateField('Data ostatniego przejazdu', default=timezone.now)
-    stations = models.ManyToManyField(StationAtTrail, verbose_name='Stacje na szlaku', blank=True)
+    start = models.CharField('Początek szlaku', max_length=128)
+    end = models.CharField('Koniec szlaku', max_length=128)
+    last_driven = models.DateField('Ostatniego przejazdu', default=timezone.now)
+    waypoints = models.ManyToManyField(Waypoint, related_name='waypoints', verbose_name='Punkty na szlaku', blank=True)
 
     class Meta:
         verbose_name = 'Szlak'
         verbose_name_plural = 'Szlaki'
         constraints = [
             models.CheckConstraint(
-                check=~Q(beginning=F('finale')),
-                name='trail_beginning_and_finale_cannot_be_equal')
+                check=~Q(start=F('end')),
+                name='trail_start_cannot_be_equal_end')
         ]
 
     def __repr__(self):
-        return f'Trail({self.user},{self.beginning},{self.finale},{self.last_driven})'
+        return f'Trail({self.user},{self.start},{self.end},{self.last_driven})'
 
     def __str__(self):
-        stations = [str(station) for station in self.stations.all()]
-        return f'Szlak od {self.beginning} do {self.finale}, przez {stations}'
+        waypoints = [str(waypoint) for waypoint in self.waypoints.all()]
+        return f'Szlak: {self.start} -> {self.end}, przez {waypoints}'
 
     EXPIRATION_MONTHS = 12
 
     @property
     def expiration_date(self):
-        """By now, expiraton date for a trail is defined in this class as a property.
+        """By now, expiraton date for a trail is defined in this class.
         """
         months = self.EXPIRATION_MONTHS
         expiration_date = self.last_driven + relativedelta(months=+months)
