@@ -57,17 +57,19 @@ class User(AbstractUser):
     def __repr__(self):
         return f'User({self.email})'
 
-    def account_reverse(self, account):
+    def get_account_url(self, account):
+        account += '_account'
+
         if not hasattr(self, account):
-            return reverse(f'{account}_account_create')
+            return reverse(f'{account}_create')
         else:
             pk = getattr(self, account).pk
-            return reverse(f'{account}_account_update', kwargs={'pk': pk})
+            return reverse(f'{account}_update', kwargs={'pk': pk})
 
     @property
     def caldav_account_url(self):
-        return self.account_reverse('caldav')
+        return self.get_account_url('caldav')
 
     @property
     def railroad_account_url(self):
-        return self.account_reverse('railroad')
+        return self.get_account_url('railroad')

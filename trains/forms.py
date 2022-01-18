@@ -18,7 +18,7 @@ def already_verified(stations):
 
 
 class RailroadAccountModelForm(HiddenInputUserForm, forms.ModelForm):
-    class Meta:
+    class Meta(HiddenInputUserForm.Meta):
         model = RailroadAccount
         fields = '__all__'
 

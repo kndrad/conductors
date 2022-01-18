@@ -16,13 +16,11 @@ class RailroadAccountViewMixin(LoginRequiredMixin, HiddenInputUserFormMixin, Mod
 
 
 class RailroadAccountCreateView(RailroadAccountViewMixin, CreateView):
-    """RailroadAccount create view.
-    """
+    pass
 
 
 class RailroadAccountUpdateView(RailroadAccountViewMixin, UpdateView):
-    """RailroadAccount update view.
-    """
+    pass
 
 
 class TrainDetailView(DetailView):

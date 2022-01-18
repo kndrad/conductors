@@ -59,13 +59,13 @@ class CalDAVSendEventsMixin:
             event.delete()
 
         for instance in self.get_query_to_send():
-            ical = instance.to_ical_component().to_ical_component()
+            ical = instance.to_ical_component().to_ical()
             self.calendar.save_event(ical)
 
     def save_other_events(self, other):
         for event in other:
             if event:
-                ical = event.to_ical_component().to_ical_component()
+                ical = event.to_ical_component().to_ical()
                 self.calendar.save_event(ical)
 
     def post(self, request, **kwargs):
@@ -76,7 +76,7 @@ class CalDAVSendEventsMixin:
         except CalDAVAccountDoesNotExist:
             message = "Do wysyłania wydarzeń, potrzebna jest konfiguracja konta CalDAV."
             messages.error(self.request, message)
-            return redirect(self.request.user.account_reverse('caldav'))
+            return redirect(self.request.user.get_account_url('caldav'))
         except caldav.error.DAVError:
             message = "Wystąpił błąd podczas wysyłania kalendarza. Spróbuj jeszcze raz."
             messages.error(self.request, message)
