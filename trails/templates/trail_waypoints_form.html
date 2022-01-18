@@ -1,10 +1,8 @@
 {% extends '_base.html' %}
 
-{% block extra_title %}Szlak | {% endblock %}
-
 {% block content %}
     <form class="flex items-center flex-col" method="POST">{% csrf_token %}
-        <div class="text-3xl">Szlak</div>
+        <div class="text-3xl">Stacje na szlaku</div>
             {{ form }}
         <button class="p-2 my-3 w-full border border-green-500 rounded text-green-500" type="submit">
             Zapisz

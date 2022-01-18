@@ -2,12 +2,20 @@
 
 {% block extra_title %}Szlaki | {% endblock %}
 
+{% block header_items %}
+    <a href={{ user.caldav_account_url }}><div class="text-sm text-white/[.60]">Konto CalDAV</div></a>
+{% endblock %}
+
 {% block content %}
-    <div class="flex items-center flex-col">
     {% for trail in trails %}
-        <div>{{ trail }}</div>
+        <div class="flex items-center flex-col border border-white mb-4 space-y-2">
+            <div>{{ trail }}</div>
+            <a href="{% url 'trail_detail' trail.pk %}">Zobacz szczegóły</a>
+            <a href="{% url 'trail_update' trail.pk %}">Aktualizuj </a>
+            <a href="{% url 'trail_update_waypoints' trail.pk %}">Dodaj stacje na szlaku</a>
+            <a href="{% url 'trail_delete' trail.pk %}">Usuń</a>
+        </div>
     {% endfor %}
-    </div>
 
     <a class="w-full" href="{% url 'trail_create' %}">
         <div class="py-1.5 w-full border border-green-500 rounded text-green-500 text-center">

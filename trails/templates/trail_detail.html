@@ -1,0 +1,16 @@
+{% extends '_base.html' %}
+
+{% block content %}
+    WIDOK SZCZEGÓŁOWY
+    {{ trail.pk }}
+    {{ trail.start }} do {{ trail.end }}
+    {{ trail.last_driven }}
+    {{ trail.expiration_date }}
+    {{ trail.annonucement_date }}
+    {% if trail.waypoints.exists %}
+        Przez stacje:
+        {% for waypoint in trail.waypoints.all %}
+            {{ waypoint.name.title }}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

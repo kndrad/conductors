@@ -2,24 +2,11 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import models
 from django.db.models import Q, F
+from django.urls import reverse
 from django.utils import timezone
 
 from common.fields import LowerCaseCharField
 from .validators import sentence_validator
-
-
-class Waypoint(models.Model):
-    name = LowerCaseCharField('Nazwa', max_length=128, validators=[sentence_validator])
-
-    class Meta:
-        verbose_name = 'Punkt na szlaku'
-        verbose_name_plural = 'Punkty na szlaku'
-
-    def __repr__(self):
-        return f'Waypoint({self.name})'
-
-    def __str__(self):
-        return self.name.title()
 
 
 class Trail(models.Model):
@@ -27,7 +14,6 @@ class Trail(models.Model):
     start = models.CharField('Stacja początkowa', validators=[sentence_validator], max_length=128)
     end = models.CharField('Stacja końcowa', validators=[sentence_validator], max_length=128)
     last_driven = models.DateField('Data ostatniego przejazdu', default=timezone.now)
-    waypoints = models.ManyToManyField(Waypoint, related_name='waypoints', verbose_name='Punkty na szlaku', blank=True)
 
     class Meta:
         verbose_name = 'Szlak'
@@ -45,6 +31,9 @@ class Trail(models.Model):
         waypoints = [str(waypoint) for waypoint in self.waypoints.all()]
         return f'Szlak: {self.start} -> {self.end}, przez {waypoints}'
 
+    def get_absolute_url(self):
+        return reverse('trail_detail', kwargs={'pk': self.pk})
+
     EXPIRATION_MONTHS = 12
 
     @property
@@ -53,7 +42,7 @@ class Trail(models.Model):
         """
         months = self.EXPIRATION_MONTHS
         expiration_date = self.last_driven + relativedelta(months=+months)
-        return timezone.localtime(expiration_date)
+        return expiration_date
 
     @property
     def annonucement_date(self):
@@ -63,4 +52,23 @@ class Trail(models.Model):
         factor = 2
         months = self.EXPIRATION_MONTHS - factor
         announcement_date = self.expiration_date - relativedelta(months=-months)
-        return timezone.localtime(announcement_date)
+        return announcement_date
+
+
+class Waypoint(models.Model):
+    name = LowerCaseCharField('Nazwa', max_length=128, validators=[sentence_validator])
+
+    trail = models.ForeignKey(
+        Trail, verbose_name='Stacje na szlaku', related_name='waypoints',
+        null=True, blank=True, on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = 'Punkt na szlaku'
+        verbose_name_plural = 'Punkty na szlaku'
+
+    def __repr__(self):
+        return f'Waypoint({self.name})'
+
+    def __str__(self):
+        return self.name.title()

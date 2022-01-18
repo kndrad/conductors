@@ -1,10 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.forms import inlineformset_factory
 from django.urls import reverse
-from django.views.generic import ListView, CreateView
-from django.forms import formset_factory
-from trails.forms import WaypointForm, TrailForm
-from trails.models import Trail
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+
 from common.views import HiddenInputUserFormMixin
+from trails.forms import TrailForm, WaypointForm
+from trails.models import Trail, Waypoint
 
 
 class TrailModelMixin(LoginRequiredMixin):
@@ -20,14 +21,54 @@ class TrailListView(TrailModelMixin, ListView):
         return self.model.objects.filter(user=self.request.user).order_by('last_driven')
 
 
-class TrailCreateView(TrailModelMixin, HiddenInputUserFormMixin, CreateView):
+class TrailDetailView(TrailModelMixin, DetailView):
+    template_name = 'trail_detail.html'
+
+
+class TrailFormView(TrailModelMixin, HiddenInputUserFormMixin):
     template_name = 'trail_form.html'
     form_class = TrailForm
+
+
+class TrailCreateView(TrailFormView, CreateView):
+
+    def get_success_url(self):
+        return reverse('trail_update_waypoints', kwargs={'pk': self.object.pk})
+
+
+class TrailUpdateView(TrailFormView, UpdateView):
+    pass
+
+
+class TrailDeleteView(TrailModelMixin, DeleteView):
+    template_name = 'trail_delete.html'
+
+    def get_context_data(self, **kwargs):
+        self.object = self.get_object()
+        message = f'Jesteś pewien, że chcesz usunąć szlak zaczynający się od {self.object.start} do {self.object.end}'
+
+        if self.object.waypoints.exists():
+            message += " przez stacje"
+            for waypoint in self.object.waypoints.all():
+                message += f" {waypoint.name.title()}"
+            message += '?'
+        else:
+            message += '?'
+
+        context = super().get_context_data(**kwargs)
+        context['message'] = message
+        return context
 
     def get_success_url(self):
         return reverse('trail_list', kwargs={'pk': self.request.user.pk})
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['waypoint_formset'] = formset_factory(WaypointForm, extra=5)
-        return context
+
+class TrailUpdateWaypointsView(TrailModelMixin, UpdateView):
+    template_name = 'trail_waypoints_form.html'
+    form_class = inlineformset_factory(
+        Trail, Waypoint, fields=('name',), extra=5, form=WaypointForm, can_delete=False
+    )
+
+    def get_success_url(self):
+        pk = self.object[0].trail.pk
+        return reverse('trail_detail', kwargs={'pk': pk})

@@ -8,7 +8,9 @@ class TrailForm(HiddenInputUserForm, forms.ModelForm):
     class Meta:
         model = Trail
         fields = '__all__'
-        exclude = ['waypoints', ]
+
+        widgets = HiddenInputUserForm.Meta.widgets
+        widgets['last_driven'] = forms.DateInput(attrs={'type': 'date'})
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,6 +30,3 @@ class WaypointForm(forms.ModelForm):
         for key, field in self.fields.items():
             field.widget.attrs['class'] = 'w-full rounded text-black mb-2 text-base'
 
-
-class WaypointFormSet(forms.BaseModelFormSet):
-    pass
