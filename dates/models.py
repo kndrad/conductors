@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
-from utils.models import UUIDModel
+from common.models import UUIDModel
 
 
 class UUIDTimestampedModel(UUIDModel):

@@ -1,4 +1,3 @@
-import requests
 from requests import Session
 
 from . import IVUServerAuthenticationError, IVUServerConnectionNotEstablishedError

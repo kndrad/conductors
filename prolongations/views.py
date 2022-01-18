@@ -1,5 +1,3 @@
-import caldav
-from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -8,7 +6,7 @@ from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 
 from users.caldavs.mixins import CalDAVSendEventsMixin
-from utils.views import HiddenUserFormMixin
+from common.views import HiddenInputUserFormMixin
 from .forms import ProlongationModelForm
 from .models import Prolongation
 
@@ -26,12 +24,12 @@ class ProlongationListView(ProlongationModelViewMixin, ListView):
         return self.model.objects.filter(user=self.request.user).order_by('expiration_date')
 
 
-class ProlongationCreateView(ProlongationModelViewMixin, CreateView, HiddenUserFormMixin):
+class ProlongationCreateView(ProlongationModelViewMixin, CreateView, HiddenInputUserFormMixin):
     template_name = 'prolongation_form.html'
     form_class = ProlongationModelForm
 
 
-class ProlongationUpdateView(ProlongationModelViewMixin, UpdateView, HiddenUserFormMixin):
+class ProlongationUpdateView(ProlongationModelViewMixin, UpdateView, HiddenInputUserFormMixin):
     template_name = 'prolongation_form.html'
     form_class = ProlongationModelForm
 

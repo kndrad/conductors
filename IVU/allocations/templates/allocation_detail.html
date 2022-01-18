@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% load static %}
-{% load date_strings %}
+{% load strdates %}
 
 {% block extra_title %}{{ allocation.title }} | {% endblock %}
 
@@ -39,7 +39,7 @@
                     <a href="{% url 'train_detail' allocation.train.before.pk %}">
                         <div class="rounded border border-blue-400 text-blue-400 flex items-center justify-between rounded p-1 px-2">
                             <div>{{ allocation.train.before.departure_date|time_only }}</div>
-                            <div>{{ allocation.train.before.carrier_initials }}</div>
+                            <div>{{ allocation.train.before.carrier_id }}</div>
                             <div>{{ allocation.train.before.arrival_date|time_only }}</div>
                         </div>
                     </a>
@@ -83,7 +83,7 @@
                         <a href="{% url 'train_detail' allocation.train.after.pk %}">
                             <div class="rounded border border-blue-400 text-blue-400 flex items-center justify-between rounded p-1 px-2">
                                 <div>{{ allocation.train.after.departure_date|time_only }}</div>
-                                <div>{{ allocation.train.after.carrier_initials }}</div>
+                                <div>{{ allocation.train.after.carrier_id }}</div>
                                 <div>{{ allocation.train.after.arrival_date|time_only }}</div>
                             </div>
                         </a>

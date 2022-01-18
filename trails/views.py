@@ -4,7 +4,7 @@ from django.views.generic import ListView, CreateView
 from django.forms import formset_factory
 from trails.forms import WaypointForm, TrailForm
 from trails.models import Trail
-from utils.views import HiddenUserFormMixin
+from common.views import HiddenInputUserFormMixin
 
 
 class TrailModelMixin(LoginRequiredMixin):
@@ -20,7 +20,7 @@ class TrailListView(TrailModelMixin, ListView):
         return self.model.objects.filter(user=self.request.user).order_by('last_driven')
 
 
-class TrailCreateView(TrailModelMixin, HiddenUserFormMixin, CreateView):
+class TrailCreateView(TrailModelMixin, HiddenInputUserFormMixin, CreateView):
     template_name = 'trail_form.html'
     form_class = TrailForm
 

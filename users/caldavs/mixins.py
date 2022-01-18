@@ -59,13 +59,13 @@ class CalDAVSendEventsMixin:
             event.delete()
 
         for instance in self.get_query_to_send():
-            ical = instance.ical_component().to_ical()
+            ical = instance.to_ical_component().to_ical_component()
             self.calendar.save_event(ical)
 
     def save_other_events(self, other):
         for event in other:
             if event:
-                ical = event.ical_component().to_ical()
+                ical = event.to_ical_component().to_ical_component()
                 self.calendar.save_event(ical)
 
     def post(self, request, **kwargs):

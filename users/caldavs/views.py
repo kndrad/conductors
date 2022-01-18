@@ -3,12 +3,12 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
-from utils.views import HiddenUserFormMixin
+from common.views import HiddenInputUserFormMixin
 from .forms import CalDAVAccountModelForm
 from .models import CalDAVAccount
 
 
-class CalDAVAccountModelMixin(LoginRequiredMixin, HiddenUserFormMixin, ModelFormMixin, ProcessFormView):
+class CalDAVAccountModelMixin(LoginRequiredMixin, HiddenInputUserFormMixin, ModelFormMixin, ProcessFormView):
     model = CalDAVAccount
     form_class = CalDAVAccountModelForm
     template_name = 'caldav_account_form.html'

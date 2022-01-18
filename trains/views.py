@@ -3,12 +3,12 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView, UpdateView, DetailView
 from django.views.generic.edit import ModelFormMixin, ProcessFormView
 
-from utils.views import HiddenUserFormMixin
+from common.views import HiddenInputUserFormMixin
 from .forms import RailroadAccountModelForm
 from .models import RailroadAccount, Train
 
 
-class RailroadAccountViewMixin(LoginRequiredMixin, HiddenUserFormMixin, ModelFormMixin, ProcessFormView):
+class RailroadAccountViewMixin(LoginRequiredMixin, HiddenInputUserFormMixin, ModelFormMixin, ProcessFormView):
     model = RailroadAccount
     form_class = RailroadAccountModelForm
     template_name = 'railroad_account_form.html'

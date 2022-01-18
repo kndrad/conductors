@@ -12,7 +12,7 @@ from django.views.generic import ListView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 
 from users.caldavs.mixins import CalDAVSendEventsMixin
-from utils.views import HiddenUserFormMixin
+from common.views import HiddenInputUserFormMixin
 from .forms import ImportTimetableForm
 from .models import Timetable
 from ..allocations.models import Allocation
@@ -59,7 +59,7 @@ class TimetableDetailView(TimetableModelViewMixin, DetailView):
         return context
 
 
-class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, HiddenUserFormMixin, CreateView):
+class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, HiddenInputUserFormMixin, CreateView):
     template_name = 'import_timetable_form.html'
     form_class = ImportTimetableForm
     success_message = 'Importowanie planu powiodło się.'

@@ -1,21 +1,17 @@
 from django import forms
 
+from common.forms import HiddenInputUserForm
 from trails.models import Trail, Waypoint
 
 
-class TrailForm(forms.ModelForm):
+class TrailForm(HiddenInputUserForm, forms.ModelForm):
     class Meta:
         model = Trail
         fields = '__all__'
         exclude = ['waypoints', ]
-        widgets = {
-            'user': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['user'].initial = self.user
 
         for key, field in self.fields.items():
             field.widget.attrs['class'] = 'w-full rounded text-black mb-2 text-base'
@@ -31,8 +27,6 @@ class WaypointForm(forms.ModelForm):
 
         for key, field in self.fields.items():
             field.widget.attrs['class'] = 'w-full rounded text-black mb-2 text-base'
-
-
 
 
 class WaypointFormSet(forms.BaseModelFormSet):

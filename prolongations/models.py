@@ -6,10 +6,10 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 
-from utils.icals import ICalComponentable, TriggeredAlarm
+from icals import ICalConvertable, ICalTriggeredAlarm
 
 
-class Prolongation(models.Model, ICalComponentable):
+class Prolongation(models.Model, ICalConvertable):
     class Ticket(models.TextChoices):
         FINE = ('FINE', 'Wezwania do zapłaty')
         BLANKET = ('BLANKET', 'Bilety blankietowe')
@@ -66,14 +66,14 @@ class Prolongation(models.Model, ICalComponentable):
         else:
             return f'Wygaśnie za {days} dni.'
 
-    def ical_component(self):
+    def to_ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
         event.add('summary', self.get_ticket_display())
         event.add('dtstart', self.expiration_date)
         event.add('dtend', self.expiration_date)
 
-        alarms = [TriggeredAlarm(days=7), TriggeredAlarm(days=3), TriggeredAlarm(hours=8)]
+        alarms = [ICalTriggeredAlarm(days=7), ICalTriggeredAlarm(days=3), ICalTriggeredAlarm(hours=8)]
         for alarm in alarms:
             event.add_component(alarm)
 

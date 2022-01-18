@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import NON_FIELD_ERRORS
 
+from common.forms import HiddenInputUserForm
 from .services import stations_exist
 from .models import RailroadAccount
 from .models import VerifiedStation
@@ -16,18 +17,13 @@ def already_verified(stations):
         return True
 
 
-class RailroadAccountModelForm(forms.ModelForm):
+class RailroadAccountModelForm(HiddenInputUserForm, forms.ModelForm):
     class Meta:
         model = RailroadAccount
         fields = '__all__'
-        widgets = {
-            'user': forms.HiddenInput(),
-        }
 
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user')
         super().__init__(*args, **kwargs)
-        self.fields['user'].initial = self.user
 
         for key, field in self.fields.items():
             field.widget.attrs['class'] = 'w-full rounded text-black mb-2 text-base'

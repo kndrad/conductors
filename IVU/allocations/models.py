@@ -9,11 +9,11 @@ from django.utils import timezone
 from IVU.api.requests import IVURequestWithDateValue
 from IVU.timetables.models import Timetable
 from trains.models import Train
-from utils.icals import ICalComponentable, TriggeredAlarm
+from icals import ICalConvertable, ICalTriggeredAlarm
 from dates.models import UUIDTimestampedModel
 
 
-class Allocation(UUIDTimestampedModel, ICalComponentable):
+class Allocation(UUIDTimestampedModel, ICalConvertable):
     title = models.CharField('Tytuł', max_length=32)
     signature = models.CharField('Sygnatura', max_length=64)
     start_date = models.DateTimeField('Rozpoczęcie')
@@ -62,15 +62,14 @@ class Allocation(UUIDTimestampedModel, ICalComponentable):
             'date': self.start_date_str
         }
 
-    def ical_component(self):
+    def to_ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
         event.add('summary', self.title)
         event.add('dtstart', self.start_date)
         event.add('dtend', self.end_date)
 
-        alarm = TriggeredAlarm(hours=12)
-        event.add_component(alarm)
+        event.add_component(ICalTriggeredAlarm(hours=12))
 
         description = ""
         for action in self.actions.all():

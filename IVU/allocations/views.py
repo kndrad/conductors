@@ -1,9 +1,10 @@
-import abc
 from datetime import timedelta
+
+from dateutil.parser import parse as dateutil_parse
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
-from django.utils.timezone import make_aware, make_naive
+from django.utils.timezone import make_aware
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic.detail import SingleObjectMixin
@@ -12,7 +13,6 @@ from trains.searching import trains_before, DateArrivingTrain, trains_after, Dat
 from .models import Allocation, AllocationTrain, AllocationAction
 from ..api.resources import IVUAllocationActions
 from ..mixins import ManageRelatedResourcesMixin
-from dateutil.parser import parse as dateutil_parse
 
 
 class AllocationModelViewMixin(LoginRequiredMixin, ManageRelatedResourcesMixin, View):

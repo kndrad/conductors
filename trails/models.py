@@ -4,12 +4,12 @@ from django.db import models
 from django.db.models import Q, F
 from django.utils import timezone
 
-from utils.fields import LowercaseCharField
+from common.fields import LowerCaseCharField
 from .validators import sentence_validator
 
 
 class Waypoint(models.Model):
-    name = LowercaseCharField('Nazwa', max_length=128, validators=[sentence_validator])
+    name = LowerCaseCharField('Nazwa', max_length=128, validators=[sentence_validator])
 
     class Meta:
         verbose_name = 'Punkt na szlaku'

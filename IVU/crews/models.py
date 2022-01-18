@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.utils.timezone import make_aware
 
 from dates.models import UUIDTimestampedModel
-from utils.models import UUIDModel
+from common.models import UUIDModel
 
 
 class TrainCrew(UUIDTimestampedModel):

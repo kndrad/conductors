@@ -5,7 +5,7 @@ from django.db.models import Q, F
 from django.urls import reverse
 from django.utils import timezone
 
-from utils.icals import ICalComponentable, TriggeredAlarm
+from icals import ICalTriggeredAlarm, ICalConvertable
 from dates.models import UUIDModel
 
 
@@ -46,7 +46,6 @@ class RailroadAccount(UUIDModel):
         return f'RailroadAccount({self.user}, {self.homeplace}, {self.workplace})'
 
 
-
 class VerifiedStation(models.Model):
     name = models.CharField('Nazwa', max_length=64, unique=True)
 
@@ -61,7 +60,7 @@ class VerifiedStation(models.Model):
         return f'VerifiedStation({self.name})'
 
 
-class Train(models.Model, ICalComponentable):
+class Train(models.Model, ICalConvertable):
     number = models.CharField('Numer', max_length=64)
     carrier = models.CharField('Przewoźnik', max_length=64, null=True, blank=True)
 
@@ -83,7 +82,7 @@ class Train(models.Model, ICalComponentable):
         departure_hour = local_departure_date.strftime(fmt)
         local_arrival_date = timezone.localtime(self.arrival_date)
         arrival_hour = local_arrival_date.strftime(fmt)
-        return f'{departure_hour} {self.carrier_initials} {self.number} {arrival_hour}'
+        return f'{departure_hour} {self.carrier_id} {self.number} {arrival_hour}'
 
     def __repr__(self):
         return f"""
@@ -100,7 +99,7 @@ class Train(models.Model, ICalComponentable):
         return self.departure_date.day
 
     @property
-    def carrier_initials(self):
+    def carrier_id(self):
         if not self.carrier:
             return
         if 'PKP' in self.carrier:
@@ -112,18 +111,15 @@ class Train(models.Model, ICalComponentable):
             return self.carrier
 
     @property
-    def summary(self):
-        return f'{self.carrier_initials} {self.number} | {self.departure_station.title()} -> {self.arrival_station.title()}'
+    def ical_summary(self):
+        return f'{self.carrier_id} {self.number} | {self.departure_station.title()} -> {self.arrival_station.title()}'
 
-    def ical_component(self):
+    def to_ical_component(self):
         cal = icalendar.Calendar()
         event = icalendar.Event()
-        summary = (
-            f'{self.carrier_initials} {self.number} | {self.departure_station.title()} -> {self.arrival_station.title()}'
-        )
-        event.add('summary', summary)
+        event.add('summary', self.ical_summary)
         event.add('dtstart', self.departure_date)
-        for alarm in [TriggeredAlarm(hours=2), TriggeredAlarm(minutes=30)]:
+        for alarm in [ICalTriggeredAlarm(hours=2), ICalTriggeredAlarm(minutes=30)]:
             event.add_component(alarm)
         event.add('dtend', self.arrival_date)
         description = (

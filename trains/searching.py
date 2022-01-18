@@ -2,7 +2,7 @@ import abc
 import datetime
 
 from dateutil.parser import parse as dateutil_parse
-from django.utils.timezone import make_aware, is_aware, localtime
+from django.utils.timezone import make_aware, is_aware
 
 from trains.services import SearchingTrainScheduleService
 from .models import Train
@@ -13,7 +13,7 @@ def search_train(date, departure, arrival):
         raise ValueError(f'date must be instance of {datetime.datetime}.')
 
     service = SearchingTrainScheduleService(hide_actions=False)
-    hour, date = localtime(date).strftime('%H:%M'), localtime(date).strftime('%d.%m.%Y')
+    hour, date = date.strftime('%H:%M'), date.strftime('%d.%m.%Y')
     trains = service.get_trains(date, hour, departure, arrival)
 
     for parsed in trains:
@@ -81,10 +81,10 @@ class NearestTrain:
         pass
 
     def inspect(self, trains):
-        period_date = f'{self.journey_period}_date'
-        dates = [getattr(train, period_date) for train in trains]
+        periodic_date = f'{self.journey_period}_date'
+        dates = [getattr(train, periodic_date) for train in trains]
         closest_date = self.sort_dates(dates)
-        return next(train for train in trains if getattr(train, period_date) == closest_date)
+        return next(train for train in trains if getattr(train, periodic_date) == closest_date)
 
 
 class DateArrivingTrain(NearestTrain):
