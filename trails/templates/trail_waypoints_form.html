@@ -1,11 +1,27 @@
 {% extends '_base.html' %}
 
 {% block content %}
-    <form class="flex items-center flex-col" method="POST">{% csrf_token %}
-        <div class="text-3xl">Stacje na szlaku</div>
-            {{ form }}
+    <div class="text-3xl mb-3">Stacje na szlaku</div>
+    <form class="flex flex-col" method="POST">{% csrf_token %}
+        {{ form }}
         <button class="p-2 my-3 w-full border border-green-500 rounded text-green-500" type="submit">
             Zapisz
         </button>
     </form>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+        $(function(){
+          $('.errorlist').each(function(){
+            $(this).addClass('text-red-500').addClass('font-medium').addClass('mb-1');
+          });
+        });
+
+        $(function(){
+            for (let i of Array(6).keys()){
+                $(`#id_waypoints-${i}-name`).attr('placeholder', `${i+1}. Nazwa stacji`);
+            }
+        });
+    </script>
 {% endblock %}

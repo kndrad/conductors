@@ -1,5 +1,8 @@
+from collections import Counter
+
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, F
 from django.urls import reverse
@@ -66,6 +69,11 @@ class Waypoint(models.Model):
     class Meta:
         verbose_name = 'Punkt na szlaku'
         verbose_name_plural = 'Punkty na szlaku'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['trail_id', 'name'],
+                name='trail_waypoints_cant_repeat')
+        ]
 
     def __repr__(self):
         return f'Waypoint({self.name})'

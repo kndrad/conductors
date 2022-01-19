@@ -10,8 +10,9 @@
     {% for trail in trails %}
         <div class="flex items-center flex-col border border-white mb-4 space-y-2">
             <div>{{ trail }}</div>
+            <div>{{ trail.last_driven }}</div>
             <a href="{% url 'trail_detail' trail.pk %}">Zobacz szczegóły</a>
-            <a href="{% url 'trail_update' trail.pk %}">Aktualizuj </a>
+            <a href="{% url 'trail_update' trail.pk %}">Edytuj</a>
             <a href="{% url 'trail_update_waypoints' trail.pk %}">Dodaj stacje na szlaku</a>
             <a href="{% url 'trail_delete' trail.pk %}">Usuń</a>
         </div>

@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
@@ -66,10 +67,8 @@ class TrailDeleteView(TrailModelMixin, DeleteView):
 class TrailUpdateWaypointsView(TrailModelMixin, UpdateView):
     template_name = 'trail_waypoints_form.html'
     form_class = inlineformset_factory(
-        Trail, Waypoint, fields=('name',), extra=4, max_num=5, form=WaypointForm, can_delete=False
+        Trail, Waypoint, fields=('name',), extra=5, max_num=5, form=WaypointForm, can_delete=False
     )
-    # TODO: Dodać walidacje czy stację się nie powtarzają.
 
     def get_success_url(self):
-        pk = self.object[0].trail.pk
-        return reverse('trail_detail', kwargs={'pk': pk})
+        return reverse('trail_detail', kwargs={'pk': self.get_object().pk})
