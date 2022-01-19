@@ -1,12 +1,17 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.forms import inlineformset_factory
+from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils import timezone
+from django.views import View
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
+from django.views.generic.detail import SingleObjectMixin
 
 from common.views import HiddenInputUserFormMixin
 from trails.forms import TrailForm, WaypointForm, BaseInlineWaypointFormSet
 from trails.models import Trail, Waypoint
+from users.caldavs.mixins import CalDAVSendEventsMixin
 
 
 class TrailModelMixin(LoginRequiredMixin):
@@ -52,8 +57,8 @@ class TrailDeleteView(TrailModelMixin, DeleteView):
         if self.object.waypoints.exists():
             message += " przez stacje"
             for waypoint in self.object.waypoints.all():
-                message += f" {waypoint.name.title()}"
-            message += '?'
+                message += f" {waypoint.name.title()}, "
+            message = message[:-2] + '?'
         else:
             message += '?'
 
@@ -72,9 +77,29 @@ class TrailUpdateWaypointsView(TrailModelMixin, UpdateView):
         form=WaypointForm, formset=BaseInlineWaypointFormSet, can_delete=False
     )
 
-    # TODO Walidacja czy podane stacje w formularzu nie są czasem stacjami krańcowymi na szlaku
-
     def get_success_url(self):
         return reverse('trail_detail', kwargs={'pk': self.get_object().pk})
 
-# TODO: Widok dla aktualizacji obiektu dzisiaj!
+
+class TrailLastDrivenTodayView(TrailModelMixin, SingleObjectMixin, View):
+
+    def get_success_url(self):
+        return reverse('trail_list', kwargs={'pk': self.request.user.pk})
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.last_driven = timezone.now().date()
+        self.object.save()
+        return redirect(self.get_success_url())
+
+
+class CalDAVSendTrails(TrailModelMixin, CalDAVSendEventsMixin, View):
+
+    def get_query_to_send(self):
+        return self.model.objects.filter(user=self.request.user)
+
+    def final_redirect(self):
+        return redirect(reverse('trail_list', kwargs={'pk': self.request.user.pk}))
+
+    def calendar_name(self):
+        return 'Szlaki'

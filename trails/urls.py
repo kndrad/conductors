@@ -7,6 +7,8 @@ from .views import (
     TrailUpdateView,
     TrailDeleteView,
     TrailUpdateWaypointsView,
+    TrailLastDrivenTodayView,
+    CalDAVSendTrails,
 )
 
 urlpatterns = [
@@ -16,4 +18,6 @@ urlpatterns = [
     path('update/<int:pk>/', TrailUpdateView.as_view(), name='trail_update'),
     path('delete/<int:pk>/', TrailDeleteView.as_view(), name='trail_delete'),
     path('update/waypoints/<int:pk>/', TrailUpdateWaypointsView.as_view(), name='trail_update_waypoints'),
+    path('update/today/<int:pk>/', TrailLastDrivenTodayView.as_view(), name='trail_last_driven_today'),
+    path('caldav/send/', CalDAVSendTrails.as_view(), name='caldav_send_trails'),
 ]

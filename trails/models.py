@@ -1,3 +1,4 @@
+import icalendar
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import models
@@ -6,10 +7,12 @@ from django.urls import reverse
 from django.utils import timezone
 
 from common.fields import LowerCaseCharField
+from icals import ICalConvertable
+from icals.components import ICalTriggeredAlarm
 from .validators import sentence_validator
 
 
-class Trail(models.Model):
+class Trail(models.Model, ICalConvertable):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Użytkownik', on_delete=models.CASCADE)
     start = LowerCaseCharField('Początek', validators=[sentence_validator], max_length=128)
     end = LowerCaseCharField('Koniec', validators=[sentence_validator], max_length=128)
@@ -53,6 +56,37 @@ class Trail(models.Model):
         months = self.EXPIRATION_MONTHS - factor
         announcement_date = self.expiration_date - relativedelta(months=-months)
         return announcement_date
+
+    @property
+    def ical_summary(self):
+        return f'Wygaśnięcie szlaku {self.start.title()} - {self.end.title()}'
+
+    @property
+    def ical_description(self):
+        if not self.waypoints.exists():
+            return ''
+        else:
+            description = 'Przez stacje: \n'
+
+            for i, waypoint in enumerate(self.waypoints.all()):
+                description += f'{i+1}. {waypoint.name.title()} \n'
+
+            return description[:-2]
+
+    def to_ical_component(self):
+        cal = icalendar.Calendar()
+        event = icalendar.Event()
+        event.add('summary', self.ical_summary)
+        event.add('dtstart', self.expiration_date)
+        event.add('dtend', self.expiration_date)
+
+        alarms = [ICalTriggeredAlarm(days=60), ICalTriggeredAlarm(days=30), ICalTriggeredAlarm(days=7)]
+        for alarm in alarms:
+            event.add_component(alarm)
+
+        event.add('description', self.ical_description)
+        cal.add_component(event)
+        return cal
 
 
 class Waypoint(models.Model):
