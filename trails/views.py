@@ -1,11 +1,11 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import NON_FIELD_ERRORS
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.forms import inlineformset_factory
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 
 from common.views import HiddenInputUserFormMixin
-from trails.forms import TrailForm, WaypointForm
+from trails.forms import TrailForm, WaypointForm, BaseInlineWaypointFormSet
 from trails.models import Trail, Waypoint
 
 
@@ -29,6 +29,7 @@ class TrailDetailView(TrailModelMixin, DetailView):
 class TrailFormView(TrailModelMixin, HiddenInputUserFormMixin):
     template_name = 'trail_form.html'
     form_class = TrailForm
+    extra_context = {'verbose_name': Trail._meta.verbose_name}
 
 
 class TrailCreateView(TrailFormView, CreateView):
@@ -67,8 +68,13 @@ class TrailDeleteView(TrailModelMixin, DeleteView):
 class TrailUpdateWaypointsView(TrailModelMixin, UpdateView):
     template_name = 'trail_waypoints_form.html'
     form_class = inlineformset_factory(
-        Trail, Waypoint, fields=('name',), extra=5, max_num=5, form=WaypointForm, can_delete=False
+        Trail, Waypoint, fields=('name',), extra=5, max_num=5,
+        form=WaypointForm, formset=BaseInlineWaypointFormSet, can_delete=False
     )
+
+    # TODO Walidacja czy podane stacje w formularzu nie są czasem stacjami krańcowymi na szlaku
 
     def get_success_url(self):
         return reverse('trail_detail', kwargs={'pk': self.get_object().pk})
+
+# TODO: Widok dla aktualizacji obiektu dzisiaj!

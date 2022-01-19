@@ -9,7 +9,6 @@ from trails.models import Trail, Waypoint
 
 
 class TrailForm(HiddenInputUserForm, forms.ModelForm):
-
     class Meta:
         model = Trail
         fields = '__all__'
@@ -33,7 +32,6 @@ class TrailForm(HiddenInputUserForm, forms.ModelForm):
 
 
 class WaypointForm(forms.ModelForm):
-
     class Meta:
         model = Waypoint
         fields = '__all__'
@@ -49,3 +47,18 @@ class WaypointForm(forms.ModelForm):
 
         for key, field in self.fields.items():
             field.widget.attrs['class'] = 'w-full rounded text-black mb-3 text-base'
+
+
+class BaseInlineWaypointFormSet(forms.BaseInlineFormSet):
+
+    def clean(self):
+        super().clean()
+
+        for form in self.forms:
+            name = form.cleaned_data.get('name', None)
+            if name:
+                if name.strip().lower() in [self.instance.start, self.instance.end]:
+                    return form.add_error(
+                        NON_FIELD_ERRORS, 'Stacja na szlaku nie może być jedną ze stacji krańcowych szlaku.'
+                    )
+        return self.cleaned_data

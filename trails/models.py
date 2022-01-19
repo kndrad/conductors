@@ -1,8 +1,5 @@
-from collections import Counter
-
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q, F
 from django.urls import reverse
@@ -14,8 +11,8 @@ from .validators import sentence_validator
 
 class Trail(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name='Użytkownik', on_delete=models.CASCADE)
-    start = models.CharField('Stacja początkowa', validators=[sentence_validator], max_length=128)
-    end = models.CharField('Stacja końcowa', validators=[sentence_validator], max_length=128)
+    start = LowerCaseCharField('Początek', validators=[sentence_validator], max_length=128)
+    end = LowerCaseCharField('Koniec', validators=[sentence_validator], max_length=128)
     last_driven = models.DateField('Data ostatniego przejazdu', default=timezone.now)
 
     class Meta:
@@ -79,4 +76,4 @@ class Waypoint(models.Model):
         return f'Waypoint({self.name})'
 
     def __str__(self):
-        return self.name.title()
+        return self.name

@@ -10,7 +10,7 @@
     {% if trail.waypoints.exists %}
         Przez stacje:
         {% for waypoint in trail.waypoints.all %}
-            {{ waypoint.name.title }}
+            {{ waypoint.name }}
         {% endfor %}
     {% endif %}
 {% endblock %}

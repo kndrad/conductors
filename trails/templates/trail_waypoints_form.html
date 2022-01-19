@@ -1,7 +1,8 @@
 {% extends '_base.html' %}
 
 {% block content %}
-    <div class="text-3xl mb-3">Stacje na szlaku</div>
+    <div class="text-3xl">Edytuj stacje na szlaku</div>
+    <div class="mb-1">{{ trail.start }} - {{ trail.end }}</div>
     <form class="flex flex-col" method="POST">{% csrf_token %}
         {{ form }}
         <button class="p-2 my-3 w-full border border-green-500 rounded text-green-500" type="submit">
