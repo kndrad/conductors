@@ -11,7 +11,7 @@ admin.site.register(Trail, TrailAdmin)
 
 
 class WaypointAdmin(admin.ModelAdmin):
-    list_display = ('name',)
+    list_display = ('name', 'trail')
 
 
 admin.site.register(Waypoint, WaypointAdmin)

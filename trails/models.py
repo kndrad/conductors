@@ -56,10 +56,10 @@ class Trail(models.Model):
 
 
 class Waypoint(models.Model):
-    name = LowerCaseCharField('Nazwa', max_length=128, validators=[sentence_validator])
+    name = LowerCaseCharField('Stacja', max_length=128, validators=[sentence_validator])
 
     trail = models.ForeignKey(
-        Trail, verbose_name='Stacje na szlaku', related_name='waypoints',
+        Trail, verbose_name='Punkt', related_name='waypoints',
         null=True, blank=True, on_delete=models.CASCADE
     )
 
