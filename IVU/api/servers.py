@@ -7,13 +7,13 @@ from .requests import IVURequest
 class IVUServer:
 
     def __init__(self):
-        self._session = Session()
+        self.session = Session()
         self._connection_established = False
 
     def login(self, username, password):
         authenticated = False
 
-        with self._session as session:
+        with self.session as session:
             session.get(url='https://irena1.intercity.pl/mbweb/main/matter/desktop/').raise_for_status()
 
             payload = {
@@ -21,7 +21,7 @@ class IVUServer:
                 'j_password': password.strip(),
             }
 
-            response = self._session.post(url='https://irena1.intercity.pl/mbweb/j_security_check', data=payload)
+            response = self.session.post(url='https://irena1.intercity.pl/mbweb/j_security_check', data=payload)
             response.raise_for_status()
 
             if response.request.path_url == '/mbweb/login?login-status=failed':
@@ -36,7 +36,7 @@ class IVUServer:
         if not self._connection_established:
             raise IVUServerConnectionNotEstablishedError()
 
-        request = self._session.prepare_request(request)
-        response = self._session.send(request)
+        request = self.session.prepare_request(request)
+        response = self.session.send(request)
         response.raise_for_status()
         return response

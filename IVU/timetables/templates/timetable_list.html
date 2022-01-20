@@ -36,8 +36,16 @@
                 <div class="w-full text-center">
                     <form method='POST' action='{% url 'caldav_send_timetable' timetable.pk %}'>
                         {% csrf_token %}
-                        <button class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mb-2" type="submit">
+                        <button class="rounded border border-blue-400 text-blue-400 w-full py-1.5" type="submit">
                             Wyślij do kalendarza DAV
+                        </button>
+                    </form>
+                </div>
+                <div class="w-full text-center">
+                    <form method='POST' action='{% url 'send_allocations_registers' timetable.pk %}'>
+                        {% csrf_token %}
+                        <button class="rounded border border-green-500 text-green-500 w-full py-1.5 mb-2" type="submit">
+                            Wyślij wszystkie wykazy pracy
                         </button>
                     </form>
                 </div>

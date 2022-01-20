@@ -1,6 +1,6 @@
 from requests import Request
 
-from . import date_re, DateRegexError, text_re, TextRegexError
+from . import date_regex, DateRegexError, text_regex, TextRegexError
 from .parsers.responses import (
     IVUTimetableAllocationsRequestResponseParser,
     IVUAllocationActionsRequestResponseParser,
@@ -24,14 +24,14 @@ class IVURequestWithDateValue(IVURequest):
     fmt = '%Y-%m-%d'
 
     def __init__(self, date, *args, **kwargs):
-        if not date_re.match(date):
+        if not date_regex.match(date):
             raise DateRegexError(date)
         super().__init__(*args, **kwargs)
 
 
 class IVURequestWithTextValue(IVURequest):
     def __init__(self, text, *args, **kwargs):
-        if not text_re.match(text):
+        if not text_regex.match(text):
             raise TextRegexError(text)
         super().__init__(*args, **kwargs)
 
@@ -68,3 +68,17 @@ class IVUTrainCrewRequest(IVURequestWithTextValue, IVURequestWithDateValue):
         url = (f'https://irena1.intercity.pl/mbweb/main/matter/desktop/'
                f'_-crew-on-trip-table?tripNumber={train_number}&beginDate={date}&')
         super().__init__(text=train_number, date=date, url=url, *args, **kwargs)
+
+
+class IVUTimetableAllocationsRegisterIDRequest(IVURequestWithDateValue):
+
+    def __init__(self, date, *args, **kwargs):
+        url = f'https://irena1.intercity.pl/mbweb/main/matter/desktop/_-actual-duties-table?beginDate={date}'
+        super().__init__(date=date, url=url, *args, **kwargs)
+
+
+class IVUAllocationRegisterComponentsRequest(IVURequestWithTextValue):
+
+    def __init__(self, id, *args, **kwargs):
+        url = f'https://irena1.intercity.pl/mbweb/main/matter/desktop/actual-duty-details?allocatableId={id}'
+        super().__init__(text=id, url=url, *args, **kwargs)

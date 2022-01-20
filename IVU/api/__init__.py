@@ -46,6 +46,6 @@ Day cases:
     True 
 '''
 
-date_re = compile('(?P<date>(19|20\d\d)[-\.](0[1-9]|[1-9]|1[012])[- \.](0[1-9]|[12][0-9]|3[01]|[1-9]))')
-hour_re = compile('(\d+:\d+)')
-text_re = compile('\w+')
+date_regex = compile('(?P<date>(19|20\d\d)[-\.](0[1-9]|[1-9]|1[012])[- \.](0[1-9]|[12][0-9]|3[01]|[1-9]))')
+hour_regex = compile('(\d+:\d+)')
+text_regex = compile('\w+')

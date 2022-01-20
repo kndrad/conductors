@@ -5,7 +5,7 @@ from re import compile
 from dateutil.parser import parse as parse_date
 from django.utils.timezone import make_aware
 
-from IVU.api import text_re, hour_re, date_re
+from IVU.api import text_regex, hour_regex, date_regex
 
 info_cls = compile('^allocation-info ((?!comparison).)*$')
 begin, end = 'begin', 'end'
@@ -34,7 +34,7 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
 
     def _get_title(self):
         value = self._inner_markup.find('div', class_='title-text').text.strip()
-        title = text_re.search(value).group()
+        title = text_regex.search(value).group()
         return title
 
     def _get_signature(self):
@@ -47,11 +47,11 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
             raise ValueError(f'{timeline} expression does not match {timeline_re}.')
 
         value = self._inner_markup.find('span', class_=f'time {timeline}').text.strip()
-        return hour_re.search(value).group()
+        return hour_regex.search(value).group()
 
     def _get_date(self):
         value = self.markup['data-date']
-        return date_re.search(value).group()
+        return date_regex.search(value).group()
 
     def to_dict(self):
         try:

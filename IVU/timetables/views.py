@@ -18,6 +18,7 @@ from .models import Timetable
 from ..allocations.models import Allocation
 from ..api.resources import IVUTimetableAllocations
 from ..mixins import ManageRelatedResourcesMixin
+from ..registers import send_allocations_registers
 
 
 class TimetableModelViewMixin(LoginRequiredMixin, ManageRelatedResourcesMixin, View):
@@ -79,7 +80,7 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
         return redirect(self.object.get_absolute_url())
 
 
-class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectMixin, CalDAVSendEventsMixin):
+class CalDAVSendTimetableView(TimetableModelViewMixin, SingleObjectMixin, CalDAVSendEventsMixin):
     model = Timetable
     related_model = Allocation
     context_object_name = 'timetable'
@@ -102,3 +103,12 @@ class CalDAVSendTimetable(TimetableModelViewMixin, SingleObjectMixin, CalDAVSend
 
     def final_redirect(self):
         return redirect(reverse('timetable_list', kwargs={'pk': self.request.user.pk}))
+
+
+class SendAllocationsRegistersView(TimetableModelViewMixin, SingleObjectMixin, View):
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        date = self.object.date_formatted
+        send_allocations_registers(self.request, date)
+        return redirect(self.object.get_absolute_url())
