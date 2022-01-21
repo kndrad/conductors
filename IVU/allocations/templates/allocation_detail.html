@@ -126,7 +126,7 @@
                     <div>{{ action.name }}</div>
                 </div>
                 {% if action.train_number %}
-                <a href="{% url 'train_crew_detail' action.train_number action.date_to_str %}">
+                <a href="{% url 'train_crew_detail' action.train_number action.api_date %}">
                     <div class="text-blue-400 text-xl">{{ action.train_number }}</div>
                 </a>
                 {% endif %}

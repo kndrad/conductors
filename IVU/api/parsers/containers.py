@@ -37,10 +37,10 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
         title = text_regex.search(value).group()
         return title
 
-    def _get_signature(self):
-        attr = 'data-allocationid'
-        signature = self._inner_markup[attr]
-        return signature
+    # def _get_signature(self):
+    #     attr = 'data-allocationid'
+    #     signature = self._inner_markup[attr]
+    #     return signature
 
     def _get_hour(self, timeline):
         if not timeline_re.match(timeline):
@@ -64,7 +64,6 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
 
             return {
                 'title': self._get_title(),
-                'signature': self._get_signature(),
                 'start_date': start_date,
                 'end_date': end_date,
             }

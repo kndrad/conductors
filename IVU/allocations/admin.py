@@ -5,7 +5,7 @@ from .models import Allocation, AllocationAction
 
 class AllocationAdmin(admin.ModelAdmin):
     list_display = (
-        'title', 'signature', 'start_date', 'end_date', 'last_updated',
+        'title', 'start_date', 'end_date', 'last_updated',
     )
 
 

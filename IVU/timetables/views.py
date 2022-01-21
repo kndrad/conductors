@@ -60,7 +60,7 @@ class TimetableDetailView(TimetableModelViewMixin, DetailView):
         return context
 
 
-class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, HiddenInputUserFormMixin, CreateView):
+class TimetableImportFormView(TimetableModelViewMixin, SuccessMessageMixin, HiddenInputUserFormMixin, CreateView):
     template_name = 'import_timetable_form.html'
     form_class = ImportTimetableForm
     success_message = 'Importowanie planu powiodło się.'
@@ -71,7 +71,7 @@ class ImportTimetableFormView(TimetableModelViewMixin, SuccessMessageMixin, Hidd
         return super().form_valid(form)
 
 
-class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
+class TimetableUpdateView(TimetableModelViewMixin, SingleObjectMixin, View):
     http_method_names = ['post']
 
     def post(self, request, **kwargs):
@@ -80,7 +80,7 @@ class UpdateTimetableView(TimetableModelViewMixin, SingleObjectMixin, View):
         return redirect(self.object.get_absolute_url())
 
 
-class CalDAVSendTimetableView(TimetableModelViewMixin, SingleObjectMixin, CalDAVSendEventsMixin):
+class TimetableSendToCalDAVView(TimetableModelViewMixin, SingleObjectMixin, CalDAVSendEventsMixin):
     model = Timetable
     related_model = Allocation
     context_object_name = 'timetable'
@@ -105,7 +105,7 @@ class CalDAVSendTimetableView(TimetableModelViewMixin, SingleObjectMixin, CalDAV
         return redirect(reverse('timetable_list', kwargs={'pk': self.request.user.pk}))
 
 
-class SendAllocationsRegistersView(TimetableModelViewMixin, SingleObjectMixin, View):
+class TimetableSendAllocationsRegistersView(TimetableModelViewMixin, SingleObjectMixin, View):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()

@@ -24,7 +24,7 @@ class AllocationModelViewMixin(LoginRequiredMixin, ManageRelatedResourcesMixin, 
     def add_related_resources(self, instance):
         super().add_related_resources(instance=instance)
         for action in instance.actions.all():
-            date = make_aware(dateutil_parse(f'{instance.start_date_str} {action.start_hour}'))
+            date = make_aware(dateutil_parse(f'{instance.date_for_api} {action.start_hour}'))
 
             if date < instance.start_date:
                 date += timedelta(days=1)
@@ -55,6 +55,7 @@ class SearchAllocationTrainViewMixin(AllocationModelViewMixin, SingleObjectMixin
     http_method_names = ['post']
 
     def get_user_place(self, place):
+        # TODO: Dodać wiadomość do templatki.
         if not self.request.user.railroad_account:
             messages.warning(
                 self.request, "Aby załadować pociąg, potrzebna jest konfiguracja konta kolejowego."

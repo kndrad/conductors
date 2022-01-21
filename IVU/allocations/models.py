@@ -15,7 +15,6 @@ from dates.models import UUIDTimestampedModel
 
 class Allocation(UUIDTimestampedModel, ICalConvertable):
     title = models.CharField('Tytuł', max_length=32)
-    signature = models.CharField('Sygnatura', max_length=64)
     start_date = models.DateTimeField('Rozpoczęcie')
     end_date = models.DateTimeField('Zakończenie')
 
@@ -52,18 +51,18 @@ class Allocation(UUIDTimestampedModel, ICalConvertable):
         return int(self.start_date.day)
 
     @property
-    def start_date_str(self):
+    def date_for_api(self):
         return self.start_date.strftime(IVURequestWithDateValue.fmt)
 
     @property
     def attrs_dict(self):
         return {
             'title': self.title,
-            'date': self.start_date_str
+            'date': self.date_for_api
         }
 
     def to_ical_component(self):
-        cal = icalendar.Calendar()
+        component = icalendar.Calendar()
         event = icalendar.Event()
         event.add('summary', self.title)
         event.add('dtstart', self.start_date)
@@ -76,8 +75,8 @@ class Allocation(UUIDTimestampedModel, ICalConvertable):
             description += f'{action.ical_description} \n'
 
         event.add('description', description)
-        cal.add_component(event)
-        return cal
+        component.add_component(event)
+        return component
 
     @property
     def is_month_old(self):
@@ -136,7 +135,8 @@ class AllocationAction(models.Model):
         {self.end_location} {self.end_hour}
         """
 
-    def date_to_str(self):
+    @property
+    def date_for_api(self):
         return timezone.localtime(self.date).strftime(IVURequestWithDateValue.fmt)
 
     @property
