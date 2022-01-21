@@ -6,7 +6,7 @@
 {% block extra_title %}Plany | {% endblock %}
 
 {% block scripts %}
-<script type="module" src="{% static 'timetables.js' %}"></script>
+    <script type="module" src="{% static 'timetables.js' %}"></script>
 {% endblock %}
 
 {% block header_items %}
@@ -19,7 +19,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col items-center rounded text-center space-y-3">
+    <div class="flex flex-col items-center rounded text-center space-y-4">
     {% for timetable in timetables %}
         <div id="{{ timetable.month }}-{{ timetable.year }}-not-empty-{{ timetable.allocation_set.exists }}"
              class="p-3 w-screen bg-[#181818]">
@@ -28,29 +28,29 @@
             </div>
             <div class="space-y-3">
                 {% if timetable.allocations.exists %}
-                <a href="{% url 'timetable_detail' timetable.pk %}">
-                    <div class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mt-4">
-                        Zobacz służby
+                    <a href="{% url 'timetable_detail' timetable.pk %}">
+                        <div class="rounded border border-blue-400 text-blue-400 w-full py-1.5 mt-3">
+                            Zobacz służby
+                        </div>
+                    </a>
+                    <div class="w-full text-center">
+                        <form method='POST' action='{% url 'caldav_send_timetable' timetable.pk %}'>
+                            {% csrf_token %}
+                            <button class="rounded border border-blue-400 text-blue-400 w-full py-1.5" type="submit">
+                                Wyślij do kalendarza DAV
+                            </button>
+                        </form>
                     </div>
-                </a>
-                <div class="w-full text-center">
-                    <form method='POST' action='{% url 'caldav_send_timetable' timetable.pk %}'>
-                        {% csrf_token %}
-                        <button class="rounded border border-blue-400 text-blue-400 w-full py-1.5" type="submit">
-                            Wyślij do kalendarza DAV
-                        </button>
-                    </form>
-                </div>
-                <div class="w-full text-center">
-                    <form method='POST' action='{% url 'send_allocations_registers' timetable.pk %}'>
-                        {% csrf_token %}
-                        <button class="rounded border border-green-500 text-green-500 w-full py-1.5 mb-2" type="submit">
-                            Wyślij wszystkie wykazy pracy
-                        </button>
-                    </form>
-                </div>
+                    <div class="w-full text-center">
+                        <form method='POST' action='{% url 'send_allocations_registers' timetable.pk %}'>
+                            {% csrf_token %}
+                            <button class="rounded border border-green-500 text-green-500 w-full py-1.5 mb-2" type="submit">
+                                Wyślij zaległe wykazy pracy
+                            </button>
+                        </form>
+                    </div>
                 {% else %}
-                    <div class="text-red-500 italic">
+                    <div class="text-red-500 italic mt-1">
                         Brak służb
                     </div>
                 {% endif %}
