@@ -7,70 +7,68 @@
 {% endblock %}
 
 {% block content %}
-    <form method="post" class="px-1 mb-1 text-center" action="{% url 'caldav_send_trails' %}">
-        {% csrf_token %}
-        <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1" type="submit">
-                Wyślij do kalendarza DAV
-        </button>
-    </form>
+    <div class="flex items-center justify-between space-x-2.5 text-sm md:text-base">
+        <a class="w-full" href="{% url 'trail_create' %}">
+            <div class="w-full border border-green-500 rounded-xl text-green-500 text-center p-0.5 md:p-1">
+                + Nowy szlak
+            </div>
+        </a>
+        <form method="post" class="w-full text-center" action="{% url 'caldav_send_trails' %}">
+            {% csrf_token %}
+            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-0.5 md:p-1" type="submit">
+                    Wyślij do kalendarza
+            </button>
+        </form>
+    </div>
 
     {% for trail in trails %}
-        <div class="flex items-center flex-col bg-[#181818] rounded w-full my-2 mt-3 p-2">
-            <div class="text-2xl">{{ trail.start.title }} - {{ trail.end.title }}</div>
+        <div class="flex items-center flex-col bg-[#181818] rounded md:rounded-xl w-full my-2 mt-3 p-1.5 pb-3 md:p-6 md:px-12">
+            <div class="text-2xl md:text-3xl">{{ trail.start.title }} - {{ trail.end.title }}</div>
                 {% if trail.waypoints.exists %}
                     <div class="flex space-x-1">
                         {% for waypoint in trail.waypoints.all %}
-                            <div class=" text-white/[.60] text-sm tracking-tight">
+                            <div class="text-white/[.60] text-sm md:text-base tracking-tight md:tracking-normal">
                                 {{ waypoint.name.title }}
                             </div>
                         {% endfor %}
                     </div>
                 {% endif %}
-            <div class="my-2.5 w-full">
+            <div class="my-2.5 md:my-5 w-full">
                 <div class="flex items-center justify-between px-2">
-                    <div class="text-white/[.50] italic tracking-tighter">Ostatni przejazd</div>
-                    <div class="tracking-tighter">{{ trail.last_driven }}</div>
+                    <div class="text-white/[.50] italic tracking-tighter md:tracking-normal">Ostatni przejazd</div>
+                    <div class="tracking-tighter md:tracking-normal">{{ trail.last_driven }}</div>
                 </div>
                 <div class="flex items-center justify-between px-2">
-                    <div class="text-white/[.50] italic tracking-tighter">Utrata szlaku</div>
-                    <div class="tracking-tighter">{{ trail.expiration_date }}</div>
+                    <div class="text-white/[.50] italic tracking-tighter md:tracking-normal">Utrata szlaku</div>
+                    <div class="tracking-tighter md:tracking-normal">{{ trail.expiration_date }}</div>
                 </div>
             </div>
-            <div class="flex items-center justify-between w-full mb-2">
-                <a class="w-full mx-1.5" href="{% url 'trail_update_waypoints' trail.pk %}">
-                    <div class="rounded border border-green-400 text-green-400 text-center py-1 px-3 text-sm">
-                        Edytuj stacje pośr.
-                    </div>
-                </a>
-                <form class="w-full mx-1.5" method="POST" action="{% url 'trail_last_driven_today' trail.pk %}">
-                    <button class="w-full rounded border border-teal-400 text-teal-400 text-center py-1 px-3 text-sm">
-                        Odśwież dzisiaj
-                    </button>
-                </form>
-            </div>
-            <div class="flex items-center justify-between w-full mb-2">
-                <a class="w-full mx-1.5" href="{% url 'trail_update' trail.pk %}">
-                    <div class="rounded border border-blue-400 text-blue-400 text-center py-1 px-3 text-sm">
-                        Konfiguruj
-                    </div>
-                </a>
-                <a class="w-full mx-1.5" href="{% url 'trail_detail' trail.pk %}">
-                    <div class="rounded border border-blue-400 text-blue-400 text-center py-1 px-3 text-sm">
-                        Szczegóły
-                    </div>
-                </a>
-            </div>
-            <a class="w-full mt-1" href="{% url 'trail_delete' trail.pk %}">
-                <div class="rounded border border-red-500 text-red-500 text-center px-2 mx-1.5 text-sm">
-                    Usuń
+            <div class="w-full px-5 md:px-12">
+                <div class="flex items-center flex-col space-y-2 w-full mt-2 mb-2 md:mb-3">
+                    <a class="w-full mx-1.5" href="{% url 'trail_update_waypoints' trail.pk %}">
+                        <div class="rounded border border-green-400 text-green-400 text-center py-1 md:py-1.5 px-3 text-sm md:text-base">
+                            Edytuj stacje
+                        </div>
+                    </a>
+                    <form class="w-full mx-1.5" method="POST" action="{% url 'trail_last_driven_today' trail.pk %}">
+                        <button class="w-full rounded border border-teal-400 text-teal-400 text-center py-1 md:py-1.5 px-3 text-sm md:text-base">
+                            Odśwież dzisiaj
+                        </button>
+                    </form>
                 </div>
-            </a>
+                <div class="flex items-center justify-between w-full space-x-2 mt-4 mb-1">
+                    <a class="w-full" href="{% url 'trail_update' trail.pk %}">
+                        <div class="w-full rounded border border-blue-400 text-blue-400 text-center py-0.5 md:py-1 px-3 text-sm md:text-base">
+                            Konfiguruj
+                        </div>
+                    </a>
+                    <a class="w-full" href="{% url 'trail_delete' trail.pk %}">
+                        <div class="w-full rounded border border-red-500 text-red-500 text-center py-0.5 md:py-1 px-3 text-sm md:text-base">
+                            Usuń
+                        </div>
+                    </a>
+                </div>
+            </div>
         </div>
     {% endfor %}
-
-    <a class="w-full" href="{% url 'trail_create' %}">
-        <div class="py-1.5 w-full border border-green-500 rounded-xl  text-green-500 text-center">
-            + Nowy szlak
-        </div>
-    </a>
 {% endblock %}
