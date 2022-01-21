@@ -19,13 +19,10 @@
 {% endblock %}
 
 {% block content %}
-    <div class="flex flex-col items-center rounded text-center space-y-4">
+    <div class="flex flex-col items-center rounded text-center space-y-4 md:space-y-6 md:mt-5">
     {% for timetable in timetables %}
-        <div id="{{ timetable.month }}-{{ timetable.year }}-not-empty-{{ timetable.allocation_set.exists }}"
-             class="p-3 w-screen bg-[#181818]">
-            <div class="font-medium text-center text-2xl">
-                {{ timetable.get_month_display }} {{ timetable.year }}
-            </div>
+        <div id="{{ timetable.month }}-{{ timetable.year }}-not-empty-{{ timetable.allocation_set.exists }}" class="p-3 w-screen bg-[#181818]">
+            <div class="font-medium text-center text-2xl md:text-3xl">{{ timetable.get_month_display }} {{ timetable.year }}</div>
             <div class="space-y-3">
                 {% if timetable.allocations.exists %}
                     <a href="{% url 'timetable_detail' timetable.pk %}">
