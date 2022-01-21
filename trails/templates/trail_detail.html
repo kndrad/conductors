@@ -1,16 +1,44 @@
 {% extends '_base.html' %}
 
 {% block content %}
-    WIDOK SZCZEGÓŁOWY
-    {{ trail.pk }}
-    {{ trail.start }} do {{ trail.end }}
-    {{ trail.last_driven }}
-    {{ trail.expiration_date }}
-    {{ trail.annonucement_date }}
-    {% if trail.waypoints.exists %}
-        Przez stacje:
-        {% for waypoint in trail.waypoints.all %}
-            {{ waypoint.name }}
-        {% endfor %}
-    {% endif %}
+    <div class="bg-[#181818] rounded md:rounded-xl md:mx-20 p-3 md:p-6 md:py-8 md:px-52 px-4 mt-10">
+        <div class="w-full text-center text-3xl md:text-5xl">Dane o szlaku</div>
+        <div class="flex items-center flex-col w-full">
+            <div class="flex items-center justify-between w-full mt-2 md:mt-5">
+                <div class="italic text-white/[.60]">Stacja początkowa</div>
+                <div class="">{{ trail.start.title }}</div>
+            </div>
+            <div class="flex items-center justify-between w-full">
+                <div class="italic text-white/[.60]">Stacja końcowa</div>
+                <div class="">{{ trail.end.title }}</div>
+            </div>
+            <div class="flex items-center justify-between w-full mt-2">
+                <div class="italic text-white/[.60]">Data ostatniego przejazdu</div>
+                <div class="tracking-tight md:tracking-normal">{{ trail.last_driven }}</div>
+            </div>
+            <div class="flex items-center justify-between w-full">
+                <div class="italic text-white/[.60]">Data wygaśnięcia</div>
+                <div class="tracking-tight md:tracking-normal">{{ trail.expiration_date }}</div>
+            </div>
+            <div class="flex items-center justify-between w-full">
+                <div class="italic text-white/[.60]">Data powiadomienia</div>
+                <div class="tracking-tight md:tracking-normal">{{ trail.annonucement_date }}</div>
+            </div>
+        </div>
+        {% if trail.waypoints.exists %}
+        <div class="w-full mt-3 md:mt-5 mb-2">
+            <div class="text-center w-full text-lg md:text-3xl">Stacje pośrednie</div>
+            <div class="flex flex-col">
+            {% for waypoint in trail.waypoints.all %}
+                <div>{{ forloop.counter }}. {{ waypoint.name.title }}</div>
+            {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <a class="w-full" href="{% url 'trail_list' user.pk %}">
+        <div class="md:mx-40 mt-5 md:mt-10 py-0.5 md:py-1 border border-blue-500 text-blue-500 rounded text-center">
+            Wróć
+        </div>
+    </a>
 {% endblock %}

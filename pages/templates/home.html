@@ -6,21 +6,21 @@
         Cześć, {{ user.first_name }}!
     </div>
     <div class="flex items-center flex-col md:text-xl space-y-3 md:space-y-5 py-5 bg-[#161618] rounded-xl">
-        <div id="timetables-href" class="md:w-3/5 px-4 text-center">
+        <div id="timetables-href" class="md:w-3/5 w-full px-4 text-center">
             <a href="{% url 'timetable_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
                     Harmonogramy
                 </div>
             </a>
         </div>
-        <div id="prolongations-href" class="md:w-3/5 px-4 text-center">
+        <div id="prolongations-href" class="md:w-3/5 w-full px-4 text-center">
             <a href="{% url 'prolongation_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
                     Prolongaty
                 </div>
             </a>
         </div>
-        <div id="trails-href" class="md:w-3/5 px-4 text-center">
+        <div id="trails-href" class="md:w-3/5 px-4 w-full text-center">
             <a href="{% url 'trail_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
                     Szlaki
