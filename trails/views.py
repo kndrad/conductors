@@ -52,7 +52,7 @@ class TrailDeleteView(TrailModelMixin, DeleteView):
 
     def get_context_data(self, **kwargs):
         self.object = self.get_object()
-        message = f'Jesteś pewien, że chcesz usunąć szlak zaczynający się od {self.object.start} do {self.object.end}'
+        message = f'Jesteś pewien, że chcesz usunąć szlak od {self.object.start.title()} do {self.object.end.title()}'
 
         if self.object.waypoints.exists():
             message += " przez stacje"

@@ -3,16 +3,16 @@
 {% load strdates %}
 
 {% block content %}
-    <div class="bg-[#181818] rounded p-3 px-4 mt-10">
+    <div class="bg-[#181818] rounded md:rounded-xl p-3 px-4 md:py-6 mt-10">
         <div class="text-center mb-2">
             <div class="italic">
                 {{ message }}
             </div>
-            <div class="italic">Wygasa {{ trail.expiration_date }}</div>
+            <div class="mt-1 italic text-white/[.60]">Wygasa {{ trail.expiration_date }}r.</div>
         </div>
-        <form class="w-full" method="POST">{% csrf_token %}
+        <form class="w-full md:px-80" method="POST">{% csrf_token %}
             {{ form }}
-            <button type="submit" class="my-3 p-2 w-full bg-red-800 text-center text-white font-medium text-lg rounded">
+            <button type="submit" class="my-2 md:my-5 p-2 w-full bg-red-800 text-center text-white font-medium text-lg rounded">
                 Usuń
             </button>
         </form>
