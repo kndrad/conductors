@@ -43,16 +43,16 @@ class Prolongation(models.Model, ICalConvertable):
     def get_absolute_url(self):
         return reverse('prolongation_list', kwargs={'pk':  self.user.pk})
 
+    DEFAULT_EXPIRATION = {'days': 30}
+
     def save(self, *args, **kwargs):
         self.clean_fields()
-        self.expiration_date = self.last_renewal_date + datetime.timedelta(days=30)
+        self.expiration_date = self.last_renewal_date + datetime.timedelta(**self.DEFAULT_EXPIRATION)
         return super().save(*args, **kwargs)
 
     @property
     def days_until_expiration(self):
-        now = timezone.now().date()
-        date = self.expiration_date - now
-        return date.days
+        return self.expiration_date - timezone.now().date()
 
     def get_expiration_message(self):
         days = self.days_until_expiration

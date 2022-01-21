@@ -1,8 +1,5 @@
-from collections import Counter
-
 from django import forms
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
-from django.forms import inlineformset_factory
 
 from common.forms import HiddenInputUserForm
 from trails.models import Trail, Waypoint
