@@ -3,11 +3,13 @@
 {% block extra_title %}Szlak | {% endblock %}
 
 {% block content %}
-    <form class="flex items-center flex-col" method="POST">{% csrf_token %}
-        <div class="text-3xl">{{ verbose_name }}</div>
-            {{ form }}
-        <button class="p-2 my-3 w-full border border-green-500 rounded text-green-500" type="submit">
-            Zapisz
-        </button>
-    </form>
+    <div class="bg-[#181818] rounded md:rounded-xl p-3 md:p-6 md:py-8 md:px-52 px-4 mt-10">
+        <div class="w-full text-center text-3xl md:text-4xl">{{ verbose_name }}</div>
+        <form class="flex flex-col italic text-white/[.60]" method="POST">{% csrf_token %}
+                {{ form }}
+            <button class="p-2 my-3 w-full bg-green-700 rounded text-base text-white" type="submit">
+                Zapisz
+            </button>
+        </form>
+    </div>
 {% endblock %}
