@@ -5,7 +5,7 @@
     <div class="mb-2 text-white/[.60] md:text-xl">
         Cześć, {{ user.first_name }}!
     </div>
-    <div class="flex items-center flex-col md:text-xl space-y-3 md:space-y-5 py-5 bg-[#161618] rounded">
+    <div class="flex items-center flex-col md:text-xl space-y-3 md:space-y-5 py-5 bg-[#161618] rounded-xl">
         <div id="timetables-href" class="md:w-3/5 px-4 text-center">
             <a href="{% url 'timetable_list' user.pk %}">
                 <div class="py-2 border border-blue-400 text-blue-400 rounded">
