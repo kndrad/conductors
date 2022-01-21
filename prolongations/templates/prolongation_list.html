@@ -3,7 +3,7 @@
 {% block extra_title %}Prolongaty | {% endblock %}
 
 {% block header_items %}
-    <div class="flex items-center justify-between text-sm space-x-2">
+    <div class="flex items-center justify-between text-sm md:text-base space-x-2 md:space-x-4">
         {% include 'date_now.html' %}
         <a class="text-white/[.60]" href={{ user.caldav_account_url }}>
             Konto CalDAV
@@ -18,13 +18,13 @@
     <div class="flex items-center justify-between">
         <form method="post" class="px-1 mb-1 text-center" action="{% url 'update_prolongations_today' %}">
             {% csrf_token %}
-            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5" type="submit">
+            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5 md:px-4" type="submit">
                 Aktualizuj od dzisiaj
             </button>
         </form>
         <form method="post" class="px-1 mb-1 text-center" action="{% url 'caldav_send_prolongations' %}">
             {% csrf_token %}
-            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5" type="submit">
+            <button class="rounded-xl border border-blue-400 text-blue-400 w-full p-1.5 md:px-4" type="submit">
                     Wyślij do kalendarza
             </button>
         </form>
@@ -33,7 +33,7 @@
 
         <div class="p-2 w-full space-y-4">
             {% for prolongation in prolongations %}
-                <div class="bg-[#181818] text-center w-full rounded px-2 py-4">
+                <div class="bg-[#181818] text-center w-full rounded md:rounded-xl px-2 md:px-20 py-4">
                     <div class="py-1.5 mb-2">
                         <div class="text-2xl font-medium">
                             {{ prolongation.get_ticket_display }}
@@ -49,11 +49,11 @@
                         {% endif %}
                     </div>
                     <div class="flex items-center justify-between px-2">
-                        <div class="text-white/[.50] italic tracking-tighter text-sm">Data ostatniego przedłużenia</div>
+                        <div class="text-white/[.50] italic tracking-tighter text-sm md:text-base">Data ostatniego przedłużenia</div>
                         <div class="tracking-tighter">{{ prolongation.last_renewal_date }}</div>
                     </div>
                     <div class="flex items-center justify-between px-2">
-                        <div class="text-white/[.50] italic tracking-tighter text-sm">Data wygaśnięcia</div>
+                        <div class="text-white/[.50] italic tracking-tighter text-sm md:text-base">Data wygaśnięcia</div>
                         <div class="tracking-tighter">{{ prolongation.expiration_date }}</div>
                     </div>
                     <div class="flex items-center text-center justify-between mt-3 mb-1 space-x-3 px-2">

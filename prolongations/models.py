@@ -55,7 +55,7 @@ class Prolongation(models.Model, ICalConvertable):
         return self.expiration_date - timezone.now().date()
 
     def get_expiration_message(self):
-        days = self.days_until_expiration
+        days = self.days_until_expiration.days
 
         if days < 0:
             return 'Prolongata wygasła.'

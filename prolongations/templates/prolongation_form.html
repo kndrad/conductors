@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="mt-10 mx-2 p-4 bg-[#181818] rounded">
+    <div class="mt-10 mx-2 p-4 md:px-52 bg-[#181818] rounded md:rounded-xl">
         <form method="POST" class="text-white/[.60] w-full flex items-center flex-wrap mt-2 italic">
             {% csrf_token %}
             {{ form }}
