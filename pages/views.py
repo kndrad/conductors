@@ -6,5 +6,9 @@ class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = 'home.html'
 
 
+class AboutPageView(TemplateView):
+    template_name = 'about.html'
+
+
 class NotAllowedView(TemplateView):
     template_name = 'not_allowed.html'

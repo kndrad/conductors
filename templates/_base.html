@@ -37,15 +37,14 @@
         <div id="page-content" class="mb-auto px-3 my-3">
             {% block content %}(no content){% endblock %}
         </div>
-        <div id="footer" class="bg-[#181818]/50 p-2 text-sm text-white/[.38]">
+        <div id="footer" class="bg-[#181818]/50 p-3 text-sm text-white/[.38]">
             <div class="flex flex-row justify-between items-center">
-                <div class="w-2/4">
+                <div class="w-5/12">
                     <img src="{% static 'logo.png' %}" alt="Logo">
                 </div>
-                <div class="space-y-1 mr-5">
-                    <div>O projekcie</div>
-                    <div>Kod źrodłowy</div>
-                    <div>Kontakt</div>
+                <div class="space-y-2 mr-5">
+                    <a href="{% url 'about' %}"><div>O projekcie</div></a>
+                    <a href="https://github.com/kndrad/conductors"><div>GitHub</div></a>
                 </div>
             </div>
         </div>

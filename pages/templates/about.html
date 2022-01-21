@@ -1,0 +1,38 @@
+{% extends '_base.html' %}
+
+{% block content %}
+    <div class="rounded-md bg-[#181818] w-full p-3 pb-5 mb-5">
+        <div class="text-2xl text-center">Stworzony z myślą o pracownikach PKP Intercity S.A.</div>
+        <div class="space-y-4 mt-3">
+            <div>
+                <div class="text-2xl mb-1">Harmonogramy</div>
+                <div class="italic">🞄 Wysyłanie służb do serwera CalDAV wraz z powiadomieniami i dokładnym opisem służby,
+                wymagane "Konto CalDAV".</div>
+                <div class="italic">🞄 Wysyłanie wszystkich zaległych wykazów służb.</div>
+            </div>
+            <div>
+                <div class="text-2xl mb-1">Służby</div>
+                <div class="italic">🞄 Zautomatyzowane wyszukiwanie pociągów przed i po, wymagane "Konto kolejowe".</div>
+                <div class="italic">🞄 Ułatwione sprawdzanie załogi poprzez kliknięcie w obsługiwany numer pociągu.</div>
+            </div>
+            <div>
+                <div class="text-2xl mb-1">Prolongaty</div>
+                <div class="italic">🞄 Wysyłanie wygaśnięcia jako wydarzenia do kalendarza DAV, wymagane "Konto CalDAV".</div>
+                <div class="italic">🞄 Możliwość aktualizacji daty podbicia prolongaty jako teraźniejsza.</div>
+            </div>
+            <div>
+                <div class="text-2xl mb-1">Szlaki</div>
+                <div class="italic">🞄 Wysyłanie utraty szlaku jako wydarzenia do kalendarza DAV, wymagane "Konto CalDAV".</div>
+                <div class="italic">🞄 Możliwość aktualizacji daty ostatniego przebycia szlaku jako teraźniejsza.</div>
+                <div class="italic">🞄 Informacje dotyczące kiedy powiadomić dyspozytora o utracie szlaku.</div>
+            </div>
+            <div class="space-y-2">
+                <div>Do obsługi niektórych funkcjonalności aplikacji są wymagane konta:</div>
+                <div class="italic">🞄 CalDAV - Obsługa kalendarzy Google, Apple.</div>
+                <div class="italic">🞄 Kolejowe - Wyszukiwanie pociągów dla służb. Użytkownik określa stacje kolejowe miejsca zamieszkania i pracy.</div>
+                <div class="mt-4">Rejestracja odbywa się poprzez bezpośrednią komunikację z portalem pracowniczym podczas logowania.</div>
+                <div class="text-lg font-medium">Hasła użytkowników nie są zapisywanie w bazie danych. </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
