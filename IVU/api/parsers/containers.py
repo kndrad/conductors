@@ -7,9 +7,9 @@ from django.utils.timezone import make_aware
 
 from IVU.api import text_regex, hour_regex, date_regex
 
-info_cls = compile('^allocation-info ((?!comparison).)*$')
+proper_element_class_re = compile('^allocation-info ((?!comparison).)*$')
 begin, end = 'begin', 'end'
-timeline_re = compile(f'^({begin}|{end})')
+timeline_regex = compile(f'^({begin}|{end})')
 
 
 class IVUContainerHTML(ABC):
@@ -30,7 +30,7 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
 
     def __init__(self, markup):
         super().__init__(markup)
-        self._inner_markup = self.markup.find('div', class_=info_cls)
+        self._inner_markup = self.markup.find('div', class_=proper_element_class_re)
 
     def _get_title(self):
         value = self._inner_markup.find('div', class_='title-text').text.strip()
@@ -43,8 +43,8 @@ class IVUAllocationHTMLContainer(IVUContainerHTML):
     #     return signature
 
     def _get_hour(self, timeline):
-        if not timeline_re.match(timeline):
-            raise ValueError(f'{timeline} expression does not match {timeline_re}.')
+        if not timeline_regex.match(timeline):
+            raise ValueError(f'{timeline} expression does not match {timeline_regex}.')
 
         value = self._inner_markup.find('span', class_=f'time {timeline}').text.strip()
         return hour_regex.search(value).group()

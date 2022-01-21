@@ -109,6 +109,5 @@ class TimetableSendAllocationsRegistersView(TimetableModelViewMixin, SingleObjec
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        date = self.object.date_formatted
-        send_allocations_registers(self.request, date)
+        send_allocations_registers(self.request, self.object.date_formatted)
         return redirect(self.object.get_absolute_url())

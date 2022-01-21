@@ -58,9 +58,9 @@ class Timetable(UUIDTimestampedModel):
         return range(1, days + 1)
 
     @property
-    def date_formatted(self):
+    def date_for_api(self):
         return self.date.strftime(IVURequestWithDateValue.fmt)
 
     @property
     def attrs_dict(self):
-        return {'date': self.date_formatted}
+        return {'date': self.date_for_api}
