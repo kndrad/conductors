@@ -203,6 +203,3 @@ ACCOUNT_SESSION_REMEMBER = False
 ACCOUNT_FORMS = {
     'login': 'users.forms.RoundedFieldsLoginForm',
 }
-
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
