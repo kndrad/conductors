@@ -160,7 +160,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = PROJECT_ROOT / 'media'
 
 STATIC_URL = 'static/'
-STATIC_ROOT = PROJECT_ROOT / '.staticfiles'
+STATIC_ROOT = PROJECT_ROOT / 'staticfiles'
 
 STATIC_DIR = PROJECT_ROOT / 'static'
 
