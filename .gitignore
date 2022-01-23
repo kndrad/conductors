@@ -4,8 +4,6 @@ __pycache__/
 .idea/
 *.sublime-*
 
-conductors/settings/production.py
-
 *.py[cod]
 *$py.class
 *.so
@@ -93,15 +91,11 @@ conductors/.env
 .tmp/
 */git-secrets/
 /git-secrets/
-/staticfiles/
 /conductors/setup.cfg
 */static/media/tmp/*
 /static/media/tmp/
 /conductors/tmp/
-/conductors/config/settings/production.py
-/conductors/config/production.py
 /setup.cfg
-/conductors/staticfiles/
 /static/node_modules/
 /static/package-lock.json
 
