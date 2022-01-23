@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'theme',
     'django.contrib.staticfiles',
     'django.contrib.sites',
 
@@ -73,7 +74,6 @@ INSTALLED_APPS = [
     'common',
 
     'tailwind',
-    'theme',
 ]
 
 if DEBUG:
