@@ -773,3 +773,4 @@ modules.xml
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django
 /conductors-env/
 /.staticfiles/
+/node_modules/
