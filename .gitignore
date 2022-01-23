@@ -81,7 +81,6 @@ cython_debug/
 /production.yml
 .git-secrets/
 coverage/
-.staticfiles/
 .static/admin/
 *.pyc
 *.pyo
