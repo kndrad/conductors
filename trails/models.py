@@ -7,8 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 
 from common.fields import LowerCaseCharField
-from icals import ICalConvertable
-from icals.components import ICalTriggeredAlarm
+from icals import ICalConvertable, ICalTriggeredAlarm
 from .validators import sentence_validator
 
 
