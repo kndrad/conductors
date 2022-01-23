@@ -95,8 +95,6 @@ conductors/.env
 /static/media/tmp/
 /conductors/tmp/
 /setup.cfg
-/static/node_modules/
-/static/package-lock.json
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm+all,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm+all,django
