@@ -12,7 +12,7 @@ def search_train(date, departure, arrival):
     if not isinstance(date, datetime.datetime):
         raise ValueError(f'date must be instance of {datetime.datetime}.')
 
-    service = SearchingTrainScheduleService(hide_actions=False)
+    service = SearchingTrainScheduleService(hide_actions=True)
     hour, date = date.strftime('%H:%M'), date.strftime('%d.%m.%Y')
     trains = service.get_trains(date, hour, departure, arrival)
 

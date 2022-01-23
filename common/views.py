@@ -3,6 +3,8 @@ from .forms import HiddenInputUserForm
 
 
 class HiddenInputUserFormMixin(FormMixin):
+    """ FormMxin which form_class attr is form class which inherits from HiddenInputUserForm.
+    """
 
     def get_form_kwargs(self):
         if not issubclass(self.form_class, HiddenInputUserForm):

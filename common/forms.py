@@ -2,6 +2,8 @@ from django import forms
 
 
 class HiddenInputUserForm(forms.BaseForm):
+    """ BaseForm that sets 'user' field to be hidden. Initial value is set to user in a request.
+    """
     class Meta:
         widgets = {
             'user': forms.HiddenInput(),

@@ -3,6 +3,7 @@ from collections import UserDict
 
 
 class YEARS:
+    """ Works just like MONTHS utility in Django """
     def __init__(
             self, first: int = datetime.datetime.now().year, last: int = datetime.datetime.now().year + 1
     ):

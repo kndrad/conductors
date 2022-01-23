@@ -1,9 +1,10 @@
 """
-Contains filter which returns aware datetime object in common local date format. "%H:%M %d.%m.%Yr.".
+Contains template tags which display datetime objects in any given string format.
 """
 
 from django import template
 from django.utils import timezone
+
 
 register = template.Library()
 
