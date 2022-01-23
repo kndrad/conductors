@@ -35,6 +35,7 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = [
     "*",
+    "https://conductors-project.herokuapp.com/",
 ]
 
 INTERNAL_IPS = [
