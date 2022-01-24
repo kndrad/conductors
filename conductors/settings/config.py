@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 import environ
+import django_heroku
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -44,7 +45,10 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 
-CSRF_TRUSTED_ORIGINS = [HEROKU_APP_URL, ]
+CSRF_TRUSTED_ORIGINS = [
+    HEROKU_APP_URL,
+
+]
 
 PROJECT_ROOT = BASE_DIR.parent
 
@@ -207,3 +211,5 @@ ACCOUNT_SESSION_REMEMBER = False
 ACCOUNT_FORMS = {
     'login': 'users.forms.RoundedFieldsLoginForm',
 }
+
+django_heroku.settings(locals())

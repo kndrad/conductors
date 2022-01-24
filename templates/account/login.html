@@ -14,7 +14,8 @@
             </ul>
         {% endif %}
 
-        <form class="text-black" method="POST">{% csrf_token %}
+        <form class="text-black" method="POST">
+            {% csrf_token %}
             {% for field in form.visible_fields %}
                 {{ field }}
             {% endfor %}
