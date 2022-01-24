@@ -37,8 +37,8 @@ class IVUServerAuthenticationBackend(AuthenticationBackend):
             server.login(username, password)
         except IVUServerAuthenticationError:
             raise ValidationError('Nieprawidłowy email lub hasło. Sprawdź dane logowania.')
-        except requests.HTTPError:
-            raise ValidationError('Wystąpił błąd. Spróbuj ponownie później')
+        # except requests.HTTPError:
+        #     raise ValidationError('Wystąpił błąd. Spróbuj ponownie później')
         else:
             request.session[settings.SESSION_PASSWORD_KEY] = password
 

@@ -16,6 +16,7 @@ class IVUServer:
         authenticated = False
 
         with self.session as session:
+            self.session.headers.update(self.HEADERS)
             response = session.get(
                 url='https://irena1.intercity.pl/mbweb/main/matter/desktop/',
                 headers=self.HEADERS
