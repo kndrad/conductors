@@ -772,3 +772,4 @@ modules.xml
 /conductors-env/
 /.staticfiles/
 /staticfiles/debug_toolbar/
+/staticfiles/
