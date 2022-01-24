@@ -3,10 +3,13 @@ from requests import Session
 from . import IVUServerAuthenticationError, IVUServerConnectionNotEstablishedError
 from .requests import IVURequest
 
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) '
+                  'Chrome/50.0.2661.102 Safari/537.36',
+    'Referer': 'https://irena1.intercity.pl/mbweb/main/matter/desktop/main-menu'
+}
 
 class IVUServer:
-
-    HEADERS = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0'}
 
     def __init__(self):
         self.session = Session()
@@ -16,10 +19,10 @@ class IVUServer:
         authenticated = False
 
         with self.session as session:
-            self.session.headers.update(self.HEADERS)
+            self.session.headers.update(HEADERS)
             response = session.get(
                 url='https://irena1.intercity.pl/mbweb/main/matter/desktop/',
-                headers=self.HEADERS
+                headers=HEADERS
             )
             response.raise_for_status()
 
@@ -27,10 +30,10 @@ class IVUServer:
                 'j_username': username.lower().strip(),
                 'j_password': password.strip(),
             }
-            self.session.headers.update(self.HEADERS)
+            self.session.headers.update(HEADERS)
             response = self.session.post(
                 url='https://irena1.intercity.pl/mbweb/j_security_check',
-                data=payload, headers=self.HEADERS
+                data=payload, headers=HEADERS
             )
             response.raise_for_status()
 
