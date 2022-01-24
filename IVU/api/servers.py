@@ -4,10 +4,14 @@ from . import IVUServerAuthenticationError, IVUServerConnectionNotEstablishedErr
 from .requests import IVURequest
 
 HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) '
-                  'Chrome/50.0.2661.102 Safari/537.36',
-    'Referer': 'https://irena1.intercity.pl/mbweb/main/matter/desktop/main-menu'
+    'Host': 'irena1.intercity.pl',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'en-US, en;q=0.5',
+    'Connection': 'keep-alive',
 }
+
 
 class IVUServer:
 
@@ -20,21 +24,15 @@ class IVUServer:
 
         with self.session as session:
             self.session.headers.update(HEADERS)
-            response = session.get(
-                url='https://irena1.intercity.pl/mbweb/main/matter/desktop/',
-                headers=HEADERS
-            )
+            url = 'https://irena1.intercity.pl/mbweb/main/matter/desktop/main-menu'
+            response = session.get(url=url, headers=HEADERS)
             response.raise_for_status()
 
             payload = {
                 'j_username': username.lower().strip(),
                 'j_password': password.strip(),
             }
-            self.session.headers.update(HEADERS)
-            response = self.session.post(
-                url='https://irena1.intercity.pl/mbweb/j_security_check',
-                data=payload, headers=HEADERS
-            )
+            response = self.session.post(url='https://irena1.intercity.pl/mbweb/j_security_check', data=payload)
             response.raise_for_status()
 
             if response.request.path_url == '/mbweb/login?login-status=failed':
