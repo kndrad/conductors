@@ -33,14 +33,18 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
+HEROKU_APP_URL = "https://conductors-project.herokuapp.com/"
+
 ALLOWED_HOSTS = [
     "*",
-    "https://conductors-project.herokuapp.com/",
+    HEROKU_APP_URL,
 ]
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+CSRF_TRUSTED_ORIGINS = [HEROKU_APP_URL, ]
 
 PROJECT_ROOT = BASE_DIR.parent
 
