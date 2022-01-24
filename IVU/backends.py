@@ -26,7 +26,7 @@ def get_credentials(request):
 class IVUServerAuthenticationBackend(AuthenticationBackend):
 
     def authenticate(self, request, **credentials):
-        """Authenticates using IVUServer.
+        """ Authenticates using IVUServer.
         On success, password is stored in request.session object to be used later in views.
         """
         username = credentials.get(settings.ACCOUNT_AUTHENTICATION_METHOD, None)
@@ -37,16 +37,14 @@ class IVUServerAuthenticationBackend(AuthenticationBackend):
             server.login(username, password)
         except IVUServerAuthenticationError:
             raise ValidationError('Nieprawidłowy email lub hasło. Sprawdź dane logowania.')
-        except requests.HTTPError:
-            raise ValidationError('Wystąpił błąd. Spróbuj ponownie później')
+        except requests.HTTPError as e:
+            raise ValidationError('Wystąpił błąd. Spróbuj ponownie później', e.args, e.request)
         else:
             request.session[settings.SESSION_PASSWORD_KEY] = password
 
-        data = {
-            settings.ACCOUNT_AUTHENTICATION_METHOD: username
-        }
+        kwargs = {settings.ACCOUNT_AUTHENTICATION_METHOD: username}
 
-        user = User.objects.get_or_create_passwordless(**data)
+        user = User.objects.get_or_create_passwordless(**kwargs)
         return user
 
 

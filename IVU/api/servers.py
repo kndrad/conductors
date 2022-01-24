@@ -46,7 +46,6 @@ class IVUServer:
             raise IVUServerConnectionNotEstablishedError()
 
         request = self.session.prepare_request(request)
-        self.session.headers.update(self.HEADERS)
         response = self.session.send(request)
         response.raise_for_status()
         return response
