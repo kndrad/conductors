@@ -55,7 +55,6 @@ class SearchAllocationTrainViewMixin(AllocationModelViewMixin, SingleObjectMixin
     http_method_names = ['post']
 
     def get_user_place(self, place):
-        # TODO: Dodać wiadomość do templatki.
         if not self.request.user.railroad_account:
             messages.warning(
                 self.request, "Aby załadować pociąg, potrzebna jest konfiguracja konta kolejowego."

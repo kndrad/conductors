@@ -48,8 +48,7 @@ class IVUAllocationIDRequestResponseParser(IVURequestResponseContentParser):
     def perform(self):
         try:
             element = self.soup.find(name='div', class_='clickable')
-            data = element['data-url']
-            return id_re.search(data)['id']
+            return id_re.search(element['data-url'])['id']
         except AttributeError:
             return
 

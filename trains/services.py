@@ -182,7 +182,7 @@ def stations_exist(departure, arrival):
     """Verifies stations existence by submitting them to webpage fields and
     awaiting schedule appearance. When the schedule appears, the stations are correct, otherwise not.
     """
-    engine = SearchingTrainScheduleService(hide_actions=False)
+    engine = SearchingTrainScheduleService(hide_actions=True)
     engine.start()
     engine.send_stations(departure, arrival)
     engine.click_enter()
